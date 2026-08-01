@@ -1,0 +1,400 @@
+[
+  {
+    "id": 1,
+    "name": "Miguel",
+    "number": 13,
+    "position": "Portero",
+    "category": "porteros",
+    "emoji": "🧤",
+    "stats": {
+      "matches": 9,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 7,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 24
+    }
+  },
+  {
+    "id": 2,
+    "name": "Javier Chimeno",
+    "number": 12,
+    "position": "Defensa",
+    "category": "defensas",
+    "emoji": "🛡️",
+    "stats": {
+      "matches": 8,
+      "goals": 1,
+      "assists": 1,
+      "yellowCards": 2,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 6,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 25
+    }
+  },
+  {
+    "id": 3,
+    "name": "Joni",
+    "number": 89,
+    "position": "Defensa",
+    "category": "defensas",
+    "emoji": "🛡️",
+    "stats": {
+      "matches": 6,
+      "goals": 0,
+      "assists": 1,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 23
+    }
+  },
+  {
+    "id": 4,
+    "name": "Marcos Posligua",
+    "number": 67,
+    "position": "Defensa",
+    "category": "defensas",
+    "emoji": "🛡️",
+    "stats": {
+      "matches": 5,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 1,
+      "wins": 4,
+      "draws": 0,
+      "losses": 1
+    },
+    "info": {
+      "age": 24
+    }
+  },
+  {
+    "id": 5,
+    "name": "Hugo Uría",
+    "number": 2,
+    "position": "Carrilero",
+    "category": "carrileros",
+    "emoji": "⚡",
+    "stats": {
+      "matches": 10,
+      "goals": 1,
+      "assists": 3,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 7,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 23
+    }
+  },
+  {
+    "id": 6,
+    "name": "Enol",
+    "number": 4,
+    "position": "Carrilero",
+    "category": "carrileros",
+    "emoji": "🏃",
+    "stats": {
+      "matches": 9,
+      "goals": 2,
+      "assists": 4,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 6,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 25
+    }
+  },
+  {
+    "id": 7,
+    "name": "Héctor Uría",
+    "number": 11,
+    "position": "Carrilero",
+    "category": "carrileros",
+    "emoji": "⚡",
+    "stats": {
+      "matches": 7,
+      "goals": 1,
+      "assists": 2,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 5,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 23
+    }
+  },
+  {
+    "id": 8,
+    "name": "David Sánchez",
+    "number": 15,
+    "position": "Carrilero - Defensa",
+    "category": "carrileros",
+    "emoji": "🎯",
+    "stats": {
+      "matches": 6,
+      "goals": 0,
+      "assists": 1,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 24
+    }
+  },
+  {
+    "id": 9,
+    "name": "Diego Riobello",
+    "number": 5,
+    "position": "Medio",
+    "category": "medios",
+    "emoji": "🧠",
+    "stats": {
+      "matches": 8,
+      "goals": 2,
+      "assists": 2,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 6,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 26
+    }
+  },
+  {
+    "id": 10,
+    "name": "Cristian Muñoz",
+    "number": 6,
+    "position": "Medio - Delantero",
+    "category": "medios",
+    "emoji": "🔥",
+    "stats": {
+      "matches": 10,
+      "goals": 4,
+      "assists": 3,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 1,
+      "wins": 7,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 24
+    },
+    "nickname": "",
+    "photo": ""
+  },
+  {
+    "id": 11,
+    "name": "Dario Álvarez",
+    "number": 8,
+    "position": "Medio",
+    "category": "medios",
+    "emoji": "🪄",
+    "stats": {
+      "matches": 10,
+      "goals": 3,
+      "assists": 6,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 7,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 25
+    }
+  },
+  {
+    "id": 12,
+    "name": "Rubén Montes",
+    "number": 10,
+    "position": "Medio - Delantero / Capitán",
+    "category": "medios",
+    "emoji": "🪄",
+    "stats": {
+      "matches": 10,
+      "goals": 8,
+      "assists": 9,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 1,
+      "wins": 7,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 27
+    }
+  },
+  {
+    "id": 13,
+    "name": "Sergio",
+    "number": 17,
+    "position": "Medio",
+    "category": "medios",
+    "emoji": "⚽",
+    "stats": {
+      "matches": 6,
+      "goals": 1,
+      "assists": 1,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 22
+    }
+  },
+  {
+    "id": 14,
+    "name": "Juan Diego",
+    "number": 21,
+    "position": "Medio",
+    "category": "medios",
+    "emoji": "🎯",
+    "stats": {
+      "matches": 5,
+      "goals": 0,
+      "assists": 2,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 0,
+      "losses": 1
+    },
+    "info": {
+      "age": 23
+    }
+  },
+  {
+    "id": 15,
+    "name": "Álvaro Chimeno",
+    "number": 23,
+    "position": "Medio",
+    "category": "medios",
+    "emoji": "⚽",
+    "stats": {
+      "matches": 6,
+      "goals": 1,
+      "assists": 1,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 25
+    }
+  },
+  {
+    "id": 16,
+    "name": "Adrián",
+    "number": 7,
+    "position": "Delantero",
+    "category": "delanteros",
+    "emoji": "⚡",
+    "stats": {
+      "matches": 9,
+      "goals": 6,
+      "assists": 4,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 6,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 24
+    }
+  },
+  {
+    "id": 17,
+    "name": "Rodrigo Cuesta",
+    "number": 9,
+    "position": "Delantero",
+    "category": "delanteros",
+    "emoji": "🔥",
+    "stats": {
+      "matches": 10,
+      "goals": 12,
+      "assists": 5,
+      "yellowCards": 1,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 7,
+      "draws": 2,
+      "losses": 1
+    },
+    "info": {
+      "age": 26
+    }
+  },
+  {
+    "id": 18,
+    "name": "Thiago",
+    "number": 80,
+    "position": "Delantero",
+    "category": "delanteros",
+    "emoji": "🚀",
+    "stats": {
+      "matches": 6,
+      "goals": 3,
+      "assists": 1,
+      "yellowCards": 0,
+      "redCards": 0,
+      "blueCards": 0,
+      "wins": 4,
+      "draws": 1,
+      "losses": 1
+    },
+    "info": {
+      "age": 21
+    }
+  }
+]
