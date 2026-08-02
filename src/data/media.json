@@ -1,11 +1,96 @@
 [
-  { "id": 408, "type": "photo", "title": "Nuevo Fichaje Oficial: Presentación con la equipación rosinegra", "category": "fichajes", "image": "./src/assets/fichaje_1.jpg", "thumbnail": "✨", "date": "Reciente" },
-  { "id": 409, "type": "photo", "title": "Nuevo Fichaje Oficial: Incorporación de garantía para la temporada", "category": "fichajes", "image": "./src/assets/fichaje_2.jpg", "thumbnail": "✨", "date": "Reciente" },
-  { "id": 401, "type": "photo", "title": "Javier Chimeno #12 listo para saltar al terreno de juego", "category": "partidos", "image": "./src/assets/match-photo-1.jpg", "thumbnail": "🏃", "date": "Último Partido" },
-  { "id": 402, "type": "photo", "title": "Reunión táctica con el colegiado previo al choque", "category": "partidos", "image": "./src/assets/match-photo-2.jpg", "thumbnail": "📋", "date": "Último Partido" },
-  { "id": 403, "type": "photo", "title": "Rubén Montes #10 conectando un potente disparo de zurda", "category": "partidos", "image": "./src/assets/match-photo-3.jpg", "thumbnail": "🔥", "date": "Último Partido" },
-  { "id": 404, "type": "photo", "title": "Remate cruzado en zona de peligro del rival", "category": "partidos", "image": "./src/assets/match-photo-4.jpg", "thumbnail": "⚽", "date": "Último Partido" },
-  { "id": 405, "type": "video", "title": "Resumen: Victoria histórica vs Real Titanes (3-1)", "category": "partidos", "thumbnail": "🎮", "duration": "03:45", "views": "15.4k", "videoUrl": "./src/assets/video_1.mp4" },
-  { "id": 406, "type": "video", "title": "Entrenamiento de intensidad: Preparando la Final", "category": "entrenos", "thumbnail": "🔥", "duration": "02:10", "views": "8.2k", "videoUrl": "./src/assets/video_2.mp4" },
-  { "id": 407, "type": "video", "title": "Entrevista exclusiva con Rodrigo Cuesta #9", "category": "entrevistas", "thumbnail": "🎤", "duration": "05:15", "views": "12.3k", "videoUrl": "./src/assets/video_3.mp4" }
+  {
+    "id": 1785694988968,
+    "type": "video",
+    "title": "El portero la deja por respeto.",
+    "category": "partidos",
+    "duration": "02:30",
+    "videoUrl": "blob:http://localhost:8089/18c97d86-7c38-4eea-81cb-efec5418e63b",
+    "thumbnail": "🎥",
+    "views": "1"
+  },
+  {
+    "id": 408,
+    "type": "photo",
+    "title": "Nuevo Fichaje Oficial: Presentación con la equipación rosinegra",
+    "category": "fichajes",
+    "image": "./src/assets/fichaje_1.jpg",
+    "thumbnail": "✨",
+    "date": "Reciente"
+  },
+  {
+    "id": 409,
+    "type": "photo",
+    "title": "Nuevo Fichaje Oficial: Incorporación de garantía para la temporada",
+    "category": "fichajes",
+    "image": "./src/assets/fichaje_2.jpg",
+    "thumbnail": "✨",
+    "date": "Reciente"
+  },
+  {
+    "id": 401,
+    "type": "photo",
+    "title": "Javier Chimeno #12 listo para saltar al terreno de juego",
+    "category": "partidos",
+    "image": "./src/assets/match-photo-1.jpg",
+    "thumbnail": "🏃",
+    "date": "Último Partido"
+  },
+  {
+    "id": 402,
+    "type": "photo",
+    "title": "Reunión táctica con el colegiado previo al choque",
+    "category": "partidos",
+    "image": "./src/assets/match-photo-2.jpg",
+    "thumbnail": "📋",
+    "date": "Último Partido"
+  },
+  {
+    "id": 403,
+    "type": "photo",
+    "title": "Rubén Montes #10 conectando un potente disparo de zurda",
+    "category": "partidos",
+    "image": "./src/assets/match-photo-3.jpg",
+    "thumbnail": "🔥",
+    "date": "Último Partido"
+  },
+  {
+    "id": 404,
+    "type": "photo",
+    "title": "Remate cruzado en zona de peligro del rival",
+    "category": "partidos",
+    "image": "./src/assets/match-photo-4.jpg",
+    "thumbnail": "⚽",
+    "date": "Último Partido"
+  },
+  {
+    "id": 405,
+    "type": "video",
+    "title": "Gol venezolano.",
+    "category": "partidos",
+    "thumbnail": "🎮",
+    "duration": "03:45",
+    "views": "15.4k",
+    "videoUrl": "./src/assets/video_1.mp4"
+  },
+  {
+    "id": 406,
+    "type": "video",
+    "title": "Asistencia de Javi, gol del larguero.",
+    "category": "entrenos",
+    "thumbnail": "🔥",
+    "duration": "02:10",
+    "views": "8.2k",
+    "videoUrl": "./src/assets/video_2.mp4"
+  },
+  {
+    "id": 407,
+    "type": "video",
+    "title": "Un par de pases y gol; FÚTBOL.",
+    "category": "entrevistas",
+    "thumbnail": "🎤",
+    "duration": "05:15",
+    "views": "12.3k",
+    "videoUrl": "./src/assets/video_3.mp4"
+  }
 ]

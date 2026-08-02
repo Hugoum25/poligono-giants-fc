@@ -6,6 +6,7 @@ import { state } from '../state.js';
 import { teamData } from '../data/teamData.js';
 import { Icon3D } from './Icon3D.js';
 import { ClubLogo } from './ClubLogo.js';
+import { AuthService } from '../services/authService.js';
 
 export const HomeView = {
     timerInterval: null,
@@ -175,14 +176,15 @@ export const HomeView = {
     render() {
         const nextMatch = teamData.matches.find(m => m.type === "next") || teamData.matches[0];
         const lastMatch = teamData.matches.find(m => m.type === "past") || teamData.matches[1];
+        const isAdmin = AuthService.isAdmin();
         
         const channels = [
-            { id: "news",      title: "Noticias",     emoji: "📰" },
-            { id: "squad",     title: "Plantilla",    emoji: "🏃" },
-            { id: "matches",   title: "Partidos",     emoji: "⚽" },
-            { id: "sponsors",  title: "Patrocinadores", emoji: "🤝" },
-            { id: "multimedia",title: "Media",        emoji: "📸" },
-            { id: "games",     title: "Juegos",       emoji: "🎮" }
+            { id: "news",       title: "Noticias",       emoji: "📰" },
+            { id: "squad",      title: "Plantilla",      emoji: "🏃" },
+            { id: "matches",    title: "Partidos",       emoji: "⚽" },
+            { id: "sponsors",   title: "Patrocinadores", emoji: "🤝" },
+            { id: "multimedia", title: "Media",          emoji: "📸" },
+            ...(isAdmin ? [{ id: "games", title: "Juegos", emoji: "🎮" }] : [])
         ];
 
         const channelsHtml = channels.map(ch => `

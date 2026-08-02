@@ -4,6 +4,7 @@
 
 import { state } from '../state.js';
 import { Icon3D } from './Icon3D.js';
+import { AuthService } from '../services/authService.js';
 
 export const GamesView = {
     // Estado del Quiz Carnet de Poligonero
@@ -168,6 +169,20 @@ export const GamesView = {
     },
 
     render() {
+        if (!AuthService.isAdmin()) {
+            return `
+                <div class="container" style="padding-top:60px; padding-bottom:80px; text-align:center;">
+                    <div class="glass-card" style="max-width:520px; margin:0 auto; padding:40px 24px; border:1px solid var(--border-color-glow);">
+                        <div style="font-size:3.5rem; margin-bottom:16px;">🔒</div>
+                        <h2 style="font-family:'VT323', var(--font-mono); font-size:2.2rem; color:var(--club-primary); margin-bottom:12px;">ACCESO RESTRINGIDO A ADMINISTRADORES</h2>
+                        <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.5; margin-bottom:0;">
+                            El apartado de juegos solo está disponible para usuarios con rol de administrador.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
         return `
             <div class="container" style="padding-top:40px; padding-bottom:80px;">
                 <h2 class="section-title" style="display:flex; align-items:center; gap:10px; font-family:'VT323', var(--font-mono); font-size:2.2rem;">

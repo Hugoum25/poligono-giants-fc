@@ -20,8 +20,8 @@ export const Navbar = {
             { id: 'matches',    label: 'Partidos' },
             { id: 'sponsors',   label: 'Patrocinadores' },
             { id: 'multimedia', label: 'Media' },
-            { id: 'games',      label: 'Juegos' },
-            { id: 'palmares',   label: 'Palmarés' }
+            ...(isAdmin ? [{ id: 'games',      label: 'Juegos' }] : []),
+            { id: 'palmares',   label: 'Historia del Club' }
         ];
 
         const navLinksHtml = navItems.map(item => {
