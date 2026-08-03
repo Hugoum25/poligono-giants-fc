@@ -3,7 +3,7 @@ import socketserver
 import os
 import json
 
-PORT = 8089
+PORT = int(os.environ.get('PORT', 8089))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 class CustomHandler(http.server.SimpleHTTPRequestHandler):
