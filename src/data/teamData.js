@@ -350,7 +350,6 @@ export const teamData = {
     sponsors: [
         { id: 301, name: "Javi Frey", logo: "⚡", isJaviFrey: true, desc: "En Javi Frey somos una empresa de electricidad con base en Gijón y toda Asturias, comprometiéndonos con la máxima excelencia y seguridad." },
         { id: 302, name: "Mamba Shaved", logo: "💈", isMambaShaved: true, desc: "Mamba Shaved By Samu Barber • Barbería Oficial de Polígono Giants F7." },
-        { id: 303, name: "FITMASTER", logo: "🏋️", isFitmaster: true, desc: "Asesoramiento personalizado con Pablo Álvarez, Campeón de España de Culturismo. Plan, seguimiento real y resultados medibles." },
         { id: 304, name: "Cafetería Bambi", logo: "🦌", isBambi: true, desc: "Cafetería Oficial y punto de encuentro de la afición de Polígono Giants F7." },
         { id: 305, name: "Saneamientos Hergo", logo: "🔧", desc: "Calefacción y Fontanería - Materiales, Reforma Integral de edificios e Interiorismo de viviendas y locales comerciales y Saneamiento" },
         { id: 308, name: "La Base Tattoo", logo: "🎨", isLaBase: true, desc: "Estudio de Tatuajes y Arte Corporal Oficial de Polígono Giants F7." },

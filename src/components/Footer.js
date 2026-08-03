@@ -2,10 +2,10 @@
    FC HUB - COMPONENTE PIE DE PÁGINA TV (SOLO FOTO PATROCINADORES Y DERECHOS RESERVADOS)
    ========================================== */
 
+import { state } from '../state.js';
 import { teamData } from '../data/teamData.js';
 import { SponsorJaviFrey } from './SponsorJaviFrey.js';
 import { SponsorMambaShaved } from './SponsorMambaShaved.js';
-import { SponsorFitmaster } from './SponsorFitmaster.js';
 import { SponsorBambi } from './SponsorBambi.js';
 import { SponsorLaBaseTattoo } from './SponsorLaBaseTattoo.js';
 import { SponsorTrmSports } from './SponsorTrmSports.js';
@@ -14,6 +14,11 @@ import { SponsorPastur } from './SponsorPastur.js';
 
 export const Footer = {
     render() {
+        // No renderizar pie de página en la vista de alineación / IG (herramienta admin)
+        if (state.activePage === 'lineup' || state.activePage === 'alineacion') {
+            return '';
+        }
+
         const currentYear = new Date().getFullYear();
         const sponsorsListHtml = teamData.sponsors.map(sp => {
             let logoImgHtml = '';
@@ -21,8 +26,6 @@ export const Footer = {
                 logoImgHtml = SponsorJaviFrey.render(28);
             } else if (sp.isMambaShaved) {
                 logoImgHtml = SponsorMambaShaved.render(28);
-            } else if (sp.isFitmaster) {
-                logoImgHtml = SponsorFitmaster.render(28);
             } else if (sp.isBambi) {
                 logoImgHtml = SponsorBambi.render(28);
             } else if (sp.isLaBase) {

@@ -10,6 +10,14 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
+    def do_GET(self):
+        try:
+            import excel_db
+            excel_db.sync_excel_if_modified()
+        except Exception as e:
+            pass
+        super().do_GET()
+
     def do_POST(self):
         endpoints = {
             '/api/save-news': 'news.json',
@@ -28,6 +36,13 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 with open(target_file, 'w', encoding='utf-8') as f:
                     json.dump(data, f, ensure_ascii=False, indent=2)
                 
+                # Sincronizar automáticamente con la base de datos Excel
+                try:
+                    import excel_db
+                    excel_db.export_all_to_excel()
+                except Exception as ex_err:
+                    print(f"[Server] Advertencia sincronizando Excel: {ex_err}")
+
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')

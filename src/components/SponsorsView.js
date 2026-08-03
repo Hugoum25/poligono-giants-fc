@@ -6,7 +6,6 @@ import { teamData } from '../data/teamData.js';
 import { Icon3D } from './Icon3D.js';
 import { SponsorJaviFrey } from './SponsorJaviFrey.js';
 import { SponsorMambaShaved } from './SponsorMambaShaved.js';
-import { SponsorFitmaster } from './SponsorFitmaster.js';
 import { SponsorBambi } from './SponsorBambi.js';
 import { SponsorLaBaseTattoo } from './SponsorLaBaseTattoo.js';
 import { SponsorTrmSports } from './SponsorTrmSports.js';
@@ -23,8 +22,6 @@ export const SponsorsView = {
                 logoHtml = SponsorJaviFrey.render(56);
             } else if (sp.isMambaShaved) {
                 logoHtml = SponsorMambaShaved.render(56);
-            } else if (sp.isFitmaster) {
-                logoHtml = SponsorFitmaster.render(56);
             } else if (sp.isBambi) {
                 logoHtml = SponsorBambi.render(56);
             } else if (sp.isLaBase) {

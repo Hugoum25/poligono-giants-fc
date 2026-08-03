@@ -13,10 +13,9 @@ export const Navbar = {
         const currentUser = AuthService.getCurrentUser();
         const isAdmin = AuthService.isAdmin();
         const navItems = [
-            { id: 'home',       label: 'Inicio' },
             { id: 'news',       label: 'Noticias' },
             { id: 'squad',      label: 'Plantilla' },
-            ...(isAdmin ? [{ id: 'lineup', label: 'Alineación' }] : []),
+            ...(isAdmin ? [{ id: 'lineup', label: 'IG' }] : []),
             { id: 'matches',    label: 'Partidos' },
             { id: 'sponsors',   label: 'Patrocinadores' },
             { id: 'multimedia', label: 'Media' },
@@ -63,8 +62,8 @@ export const Navbar = {
                             ${ClubLogo.render(32)}
                         </div>
                         <div style="display:flex; flex-direction:column; line-height:1.1;">
-                            <span class="tv-logo-badge" style="font-size:clamp(0.95rem, 4vw, 1.25rem); font-family:var(--font-heading); font-weight:800; color:var(--club-primary); letter-spacing:0.04em;">POLÍGONO GIANTS</span>
-                            <span class="tv-logo-sub" style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Fútbol 7 Official Hub</span>
+                            <span class="tv-logo-badge" style="font-size:clamp(0.95rem, 4vw, 1.25rem); font-family:var(--font-heading); font-weight:800; color:var(--club-primary); letter-spacing:0.04em;">POLÍGONO GIANTS F7</span>
+                            <span class="tv-logo-sub" style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Official Club Hub</span>
                         </div>
                     </div>
 

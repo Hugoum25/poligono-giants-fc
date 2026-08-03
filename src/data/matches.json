@@ -4,108 +4,143 @@
     "type": "next",
     "competition": "Liga F7 Gijón - Jornada 1",
     "opponent": "Gijón United",
-    "opponentEmoji": "🔴",
     "date": "2026-10-01T20:30",
     "stadium": "Campo Municipal La Camocha (Gijón)",
-    "isHome": true
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 102,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 2",
     "opponent": "Desatascos Pelayo",
-    "opponentEmoji": "🛠️",
     "date": "2026-10-08T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 103,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 3",
     "opponent": "Aston Birra",
-    "opponentEmoji": "🍺",
     "date": "2026-10-15T20:30",
-    "isHome": false
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": false,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 104,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 4",
     "opponent": "Mesón el Refugio",
-    "opponentEmoji": "🍷",
     "date": "2026-10-22T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 105,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 5",
     "opponent": "Casa Toni",
-    "opponentEmoji": "🏠",
     "date": "2026-10-29T20:30",
-    "isHome": false
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": false,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 106,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 6",
     "opponent": "Samara FC",
-    "opponentEmoji": "⚡",
     "date": "2026-11-05T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 107,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 7",
     "opponent": "Puntolab",
-    "opponentEmoji": "🔬",
     "date": "2026-11-12T20:30",
-    "isHome": false
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": false,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 108,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 8",
     "opponent": "Leyendas Retiradas",
-    "opponentEmoji": "👑",
     "date": "2026-11-19T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 109,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 9",
     "opponent": "El Equipo A",
-    "opponentEmoji": "🚐",
     "date": "2026-11-26T20:30",
-    "isHome": false
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": false,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 110,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 10",
     "opponent": "Monos del Norte",
-    "opponentEmoji": "🐒",
     "date": "2026-12-03T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 111,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 11",
     "opponent": "Monsters United",
-    "opponentEmoji": "👾",
     "date": "2026-12-10T20:30",
-    "isHome": false
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": false,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   },
   {
     "id": 112,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 12",
     "opponent": "Chatarrería Cebrián",
-    "opponentEmoji": "⚙️",
     "date": "2026-12-17T20:30",
-    "isHome": true
+    "stadium": "Campo Municipal La Camocha (Gijón)",
+    "isHome": true,
+    "goalsGiants": null,
+    "goalsOpponent": null,
+    "isWin": false
   }
 ]

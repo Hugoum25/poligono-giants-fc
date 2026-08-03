@@ -952,6 +952,11 @@ body.retro-mode-active .glass-card {
     grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
     gap: 10px;
 }
+.player-card-compact:hover {
+    border-color: var(--club-primary) !important;
+    box-shadow: 4px 4px 0px #000 !important;
+    transform: none !important;
+}
 .player-card {
     cursor: pointer; text-align: center; padding: 12px 8px;
 }
@@ -1309,21 +1314,21 @@ body.modal-open .tv-screen,
     text-shadow: 0 0 10px rgba(var(--club-primary-rgb), 0.6);
 }
 .stats-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px; }
-.stat-box {
-    background:rgba(255,255,255,0.02); border:1px solid var(--border-color);
-    padding:9px; border-radius:2px; text-align:center;
-    box-shadow:2px 2px 0px #000;
+.stat-box,
+.stat-box:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 9px;
+    border-radius: 2px;
+    text-align: center;
+    box-shadow: 2px 2px 0px #000 !important;
     transition: none !important;
     transform: none !important;
     cursor: default !important;
+    filter: none !important;
 }
-.stat-box:hover {
-    transform: none !important;
-    border-color: var(--border-color) !important;
-    box-shadow: 2px 2px 0px #000 !important;
-}
-.stat-val { font-size:1.3rem; font-family:var(--font-heading); font-weight:700; }
-.stat-label { font-size:0.68rem; color:var(--text-muted); text-transform:uppercase; }
+.stat-val { font-size:1.3rem; font-family:var(--font-heading); font-weight:700; color:var(--text-main) !important; }
+.stat-label { font-size:0.68rem; color:var(--text-muted) !important; text-transform:uppercase; }
 
 /* ==========================================
    ANIMACIONES
@@ -1434,4 +1439,35 @@ body.modal-open .tv-screen,
     .modal-overlay { padding: 10px !important; align-items: center !important; }
     .modal-overlay .glass-card { padding: 20px !important; max-height: 88vh !important; margin: auto !important; }
     .squad-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN FOR SOCIAL LINEUP (IG VIEW)
+   ========================================== */
+.social-lineup-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .social-lineup-layout {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    #social-lineup-card {
+        padding: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #social-lineup-card {
+        padding: 10px 8px !important;
+        border-radius: 8px !important;
+    }
 }
