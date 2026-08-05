@@ -1,5 +1,5 @@
 /* ==========================================
-   FC HUB - VISTA MULTIMEDIA (VÍDEOS Y FOTOS CON EDICIÓN ADMIN)
+   FC HUB - VISTA MULTIMEDIA (VÍDEOS Y FOTOS CON EDICIÓN ADMIN Y SUBIDA DE CONTENIDO)
    ========================================== */
 
 import { state } from '../state.js';
@@ -9,7 +9,7 @@ import { AuthService } from '../services/authService.js';
 
 export const MultimediaView = {
     activeTab: "videos", // videos, fotos
-    showAddVideoModal: false,
+    showAddMediaModal: false,
     editingMediaId: null,
 
     render() {
@@ -100,51 +100,57 @@ export const MultimediaView = {
             }
         }
 
-        // Modal de añadir vídeo (Local / Enlace)
-        let addVideoModalHtml = '';
-        if (this.showAddVideoModal) {
-            addVideoModalHtml = `
-                <div class="modal-overlay active" id="add-video-modal-overlay">
+        // Modal de añadir contenido multimedia (Vídeo o Foto)
+        let addMediaModalHtml = '';
+        if (this.showAddMediaModal) {
+            addMediaModalHtml = `
+                <div class="modal-overlay active" id="add-media-modal-overlay">
                     <div class="glass-card customizer-card" style="max-width:540px; width:100%; padding:28px; position:relative; animation:slideUp 0.35s ease;">
-                        <button class="modal-close" id="close-add-video-btn">✕</button>
-                        <h3 style="font-size:1.4rem; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-                            ${Icon3D.render('🎥', 'sm')} Subir / Añadir Vídeo
+                        <button class="modal-close" id="close-add-media-btn">✕</button>
+                        <h3 style="font-size:1.3rem; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                            ${Icon3D.render('🎬', 'sm')} Subir Contenido Multimedia
                         </h3>
-                        <form id="add-video-form">
-                            <div class="form-group">
-                                <label>Título del Vídeo</label>
-                                <input type="text" id="input-video-title" class="form-input" placeholder="Ej: Golazo de Rubén Montes #10 vs Galácticos" required />
+                        <form id="add-media-form">
+                            <div class="form-group" style="margin-bottom:12px;">
+                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Tipo de Contenido *</label>
+                                <select id="input-media-type" class="form-input" style="width:100%; background:var(--bg-dark); color:#fff; padding:8px;">
+                                    <option value="video" ${this.activeTab === 'videos' ? 'selected' : ''}>🎥 Vídeo (Se guardará en la pestaña Vídeos)</option>
+                                    <option value="photo" ${this.activeTab === 'fotos' ? 'selected' : ''}>📸 Fotografía (Se guardará en la pestaña Fotografías)</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                                <label>Categoría</label>
-                                <select id="input-video-category" class="form-input" style="background:#0e1120;">
+
+                            <div class="form-group" style="margin-bottom:12px;">
+                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Título / Pie de Foto *</label>
+                                <input type="text" id="input-media-title" class="form-input" placeholder="Ej: Golazo de Rubén Montes #10 vs Galácticos" required />
+                            </div>
+
+                            <div class="form-group" style="margin-bottom:12px;">
+                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Categoría</label>
+                                <select id="input-media-category" class="form-input" style="width:100%; background:var(--bg-dark); color:#fff; padding:8px;">
                                     <option value="partidos">Partidos</option>
-                                    <option value="jugadas">Mejores Jugadas</option>
+                                    <option value="fichajes">Fichajes</option>
                                     <option value="entrenos">Entrenamientos</option>
                                     <option value="entrevistas">Entrevistas</option>
                                 </select>
                             </div>
                             
-                            <div class="form-group" style="background:rgba(255,255,255,0.02); padding:12px; border:2px dashed var(--border-color-glow); border-radius:4px;">
-                                <label style="color:var(--club-primary); font-weight:700;">📁 Opción A: Subir Archivo desde tu Equipo (.mp4, .mov, .webm)</label>
-                                <input type="file" id="input-video-file" class="form-input" accept="video/*" style="padding:8px; margin-top:6px; cursor:pointer;" />
+                            <div class="form-group" style="background:rgba(255,255,255,0.02); padding:12px; border:2px dashed var(--border-color-glow); border-radius:4px; margin-bottom:12px;">
+                                <label style="color:var(--club-primary); font-weight:700; font-size:0.8rem; display:block;">📁 Opción A: Subir Archivo (.mp4, .png, .jpg, .webm)</label>
+                                <input type="file" id="input-media-file" class="form-input" accept="video/*,image/*" style="padding:8px; margin-top:6px; cursor:pointer; width:100%; box-sizing:border-box;" />
                             </div>
 
-                            <div style="text-align:center; color:var(--text-muted); font-size:0.75rem; margin:10px 0; font-weight:700;">
+                            <div style="text-align:center; color:var(--text-muted); font-size:0.75rem; margin:8px 0; font-weight:700;">
                                 — O BIEN —
                             </div>
 
-                            <div class="form-group">
-                                <label>🌐 Opción B: Enlace de Vídeo (URL MP4 / Web)</label>
-                                <input type="url" id="input-video-url" class="form-input" placeholder="https://..." />
+                            <div class="form-group" style="margin-bottom:16px;">
+                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">🌐 Opción B: Enlace URL (Imagen o Vídeo)</label>
+                                <input type="url" id="input-media-url" class="form-input" placeholder="https://..." />
                             </div>
-                            <div class="form-group">
-                                <label>Duración (mm:ss)</label>
-                                <input type="text" id="input-video-duration" class="form-input" placeholder="02:30" value="02:30" />
-                            </div>
+
                             <div style="display:flex; gap:12px; margin-top:20px;">
-                                <button type="submit" class="btn btn-primary" style="flex:1;">Guardar y Reproducir</button>
-                                <button type="button" class="btn btn-secondary" id="cancel-add-video-btn">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" style="flex:1; font-weight:800; padding:10px;">Guardar Contenido</button>
+                                <button type="button" class="btn btn-secondary" id="cancel-add-media-btn" style="padding:10px;">Cancelar</button>
                             </div>
                         </form>
                     </div>
@@ -190,21 +196,21 @@ export const MultimediaView = {
 
         return `
             <div class="container" style="padding-top:24px; padding-bottom:80px;">
-                ${canEdit ? `
-                    <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:16px;">
-                        <button class="btn btn-primary" id="btn-open-add-video" style="padding:6px 12px; font-size:0.75rem; font-weight:700;">
-                            Añadir Vídeo
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                    <div class="squad-filters" style="margin:0;">
+                        <button class="filter-btn ${this.activeTab === 'videos' ? 'active' : ''}" id="tab-btn-videos">
+                            Vídeos (${videos.length})
+                        </button>
+                        <button class="filter-btn ${this.activeTab === 'fotos' ? 'active' : ''}" id="tab-btn-fotos">
+                            Fotografías (${photos.length})
                         </button>
                     </div>
-                ` : ''}
-                
-                <div class="squad-filters" style="margin-bottom:28px;">
-                    <button class="filter-btn ${this.activeTab === 'videos' ? 'active' : ''}" id="tab-btn-videos">
-                        Vídeos (${videos.length})
-                    </button>
-                    <button class="filter-btn ${this.activeTab === 'fotos' ? 'active' : ''}" id="tab-btn-fotos">
-                        Fotografías (${photos.length})
-                    </button>
+
+                    ${canEdit ? `
+                        <button class="btn btn-primary" id="btn-open-add-media" style="padding:8px 16px; font-size:0.85rem; font-weight:800; display:flex; align-items:center; gap:6px;">
+                            <span>➕ Subir Contenido (Vídeo / Foto)</span>
+                        </button>
+                    ` : ''}
                 </div>
 
                 ${this.activeTab === 'videos' ? `
@@ -220,7 +226,7 @@ export const MultimediaView = {
 
             ${videoModalHtml}
             ${photoModalHtml}
-            ${addVideoModalHtml}
+            ${addMediaModalHtml}
             ${editMediaModalHtml}
         `;
     },
@@ -242,58 +248,70 @@ export const MultimediaView = {
             });
         }
 
-        const btnOpenAdd = document.getElementById('btn-open-add-video');
+        const btnOpenAdd = document.getElementById('btn-open-add-media');
         if (btnOpenAdd) {
             btnOpenAdd.addEventListener('click', () => {
-                this.showAddVideoModal = true;
+                this.showAddMediaModal = true;
                 state.notify();
             });
         }
 
-        const closeAddBtn = document.getElementById('close-add-video-btn');
-        const cancelAddBtn = document.getElementById('cancel-add-video-btn');
+        const closeAddBtn = document.getElementById('close-add-media-btn');
+        const cancelAddBtn = document.getElementById('cancel-add-media-btn');
         const closeAddModal = () => {
-            this.showAddVideoModal = false;
+            this.showAddMediaModal = false;
             state.notify();
         };
 
         if (closeAddBtn) closeAddBtn.addEventListener('click', closeAddModal);
         if (cancelAddBtn) cancelAddBtn.addEventListener('click', closeAddModal);
 
-        const addForm = document.getElementById('add-video-form');
+        // Formulario subir multimedia (Vídeos o Fotografías)
+        const addForm = document.getElementById('add-media-form');
         if (addForm) {
             addForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const title = document.getElementById('input-video-title').value;
-                const category = document.getElementById('input-video-category').value;
-                const fileInput = document.getElementById('input-video-file');
-                const urlInput = document.getElementById('input-video-url').value;
-                const duration = document.getElementById('input-video-duration').value || '03:00';
+                const type = document.getElementById('input-media-type').value;
+                const title = document.getElementById('input-media-title').value.trim();
+                const category = document.getElementById('input-media-category').value;
+                const fileInput = document.getElementById('input-media-file');
+                const urlInput = document.getElementById('input-media-url').value.trim();
 
-                let videoSrc = urlInput;
-                if (fileInput && fileInput.files && fileInput.files[0]) {
-                    videoSrc = URL.createObjectURL(fileInput.files[0]);
-                }
+                const processAndSave = (src) => {
+                    const newMedia = {
+                        id: Date.now(),
+                        type: type,
+                        title: title,
+                        category: category,
+                        views: 0
+                    };
 
-                if (!videoSrc) {
-                    videoSrc = 'https://www.w3schools.com/html/mov_bbb.mp4';
-                }
+                    if (type === 'video') {
+                        newMedia.videoUrl = src;
+                        this.activeTab = 'videos';
+                    } else {
+                        newMedia.image = src;
+                        this.activeTab = 'fotos';
+                    }
 
-                const newMedia = {
-                    id: Date.now(),
-                    type: 'video',
-                    title: title,
-                    category: category,
-                    duration: duration,
-                    videoUrl: videoSrc,
-                    thumbnail: '🎥',
-                    views: '1'
+                    teamData.media.unshift(newMedia);
+                    saveMediaToStorage();
+                    this.showAddMediaModal = false;
+                    state.notify();
                 };
 
-                teamData.media.unshift(newMedia);
-                saveMediaToStorage();
-                this.showAddVideoModal = false;
-                state.notify();
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        processAndSave(event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (urlInput) {
+                    processAndSave(urlInput);
+                } else {
+                    alert('Por favor selecciona un archivo de tu equipo o introduce una URL.');
+                }
             });
         }
 
@@ -389,7 +407,7 @@ export const MultimediaView = {
         };
         if (closePhotoBtn) closePhotoBtn.addEventListener('click', closePhoto);
         if (photoOverlay) {
-            photoModalHtml && photoOverlay.addEventListener('click', (e) => {
+            photoOverlay.addEventListener('click', (e) => {
                 if (e.target === photoOverlay) closePhoto();
             });
         }

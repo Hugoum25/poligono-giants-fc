@@ -10,7 +10,7 @@
   {
     "id": 408,
     "type": "photo",
-    "title": "Nuevo Fichaje Oficial: Presentación con la equipación rosinegra",
+    "title": "NUEVO FICHAJE: J. Epstein, dicen q es buen ojeador de filiales.",
     "category": "fichajes",
     "views": 0,
     "image": "./src/assets/fichaje_1.jpg"
@@ -18,7 +18,7 @@
   {
     "id": 409,
     "type": "photo",
-    "title": "Nuevo Fichaje Oficial: Incorporación de garantía para la temporada",
+    "title": "NUEVO FICHAJE: RHLM",
     "category": "fichajes",
     "views": 0,
     "image": "./src/assets/fichaje_2.jpg"
@@ -26,7 +26,7 @@
   {
     "id": 401,
     "type": "photo",
-    "title": "Javier Chimeno #12 listo para saltar al terreno de juego",
+    "title": "Javi poniéndose guantes, no sé pa q. No es portero.",
     "category": "partidos",
     "views": 0,
     "image": "./src/assets/match-photo-1.jpg"
@@ -34,7 +34,7 @@
   {
     "id": 402,
     "type": "photo",
-    "title": "Reunión táctica con el colegiado previo al choque",
+    "title": "Amañando el partido ofreciéndole 2.500.000 millones de Bolívares (2€).",
     "category": "partidos",
     "views": 0,
     "image": "./src/assets/match-photo-2.jpg"
@@ -42,7 +42,7 @@
   {
     "id": 403,
     "type": "photo",
-    "title": "Rubén Montes #10 conectando un potente disparo de zurda",
+    "title": "Rubo dándole a la bola. Fútbol vaya.",
     "category": "partidos",
     "views": 0,
     "image": "./src/assets/match-photo-3.jpg"
@@ -50,7 +50,7 @@
   {
     "id": 404,
     "type": "photo",
-    "title": "Remate cruzado en zona de peligro del rival",
+    "title": "No fue gol, tranquis.",
     "category": "partidos",
     "views": 0,
     "image": "./src/assets/match-photo-4.jpg"
