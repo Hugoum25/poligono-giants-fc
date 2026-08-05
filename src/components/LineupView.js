@@ -20,6 +20,7 @@ export const LineupView = {
     matchTitle: "vs. Sporting La Camocha F7",
     competitionTitle: "Liga F7 Gijón - Jornada 12",
     matchDateTime: "Sábado 18:00h | Campo Municipal La Camocha",
+    selectedSlotForSwap: null,
 
     lineup: {
         gk: 1,      // Miguel #13
@@ -173,6 +174,7 @@ export const LineupView = {
         const pitchSlotsHtml = currentSlots.map(slot => {
             const assignedPlayerId = this.lineup[slot.id];
             const player = assignedPlayerId ? teamData.players.find(p => p.id === assignedPlayerId) : null;
+            const isSelectedForSwap = this.selectedSlotForSwap === slot.id;
 
             return `
                 <div class="pitch-slot ${player ? 'occupied' : 'empty'}" 
@@ -180,7 +182,7 @@ export const LineupView = {
                      data-slot-id="${slot.id}"
                      style="grid-row:${slot.row}; grid-column:${slot.col}; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; cursor:pointer;">
                     
-                    <div style="width:50px; height:50px; border-radius:50%; background:${player ? 'rgba(255,42,133,0.25)' : 'rgba(0,0,0,0.5)'}; border:2px solid ${player ? 'var(--club-primary)' : 'rgba(255,255,255,0.4)'}; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 0 15px rgba(0,0,0,0.6); position:relative;">
+                    <div style="width:50px; height:50px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.25)' : 'rgba(0,0,0,0.5)')}; border:3px solid ${isSelectedForSwap ? '#ffffff' : (player ? 'var(--club-primary)' : 'rgba(255,255,255,0.4)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:${isSelectedForSwap ? '0 0 25px var(--club-primary), 0 0 10px #ffffff' : '0 0 15px rgba(0,0,0,0.6)'}; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; transition:all 0.2s ease;">
                         ${player 
                             ? (player.photo 
                                 ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
@@ -209,6 +211,7 @@ export const LineupView = {
         const benchSlotsHtml = benchSlotsConfig.map(bench => {
             const assignedPlayerId = this.lineup[bench.id];
             const player = assignedPlayerId ? teamData.players.find(p => p.id === assignedPlayerId) : null;
+            const isSelectedForSwap = this.selectedSlotForSwap === bench.id;
 
             return `
                 <div class="bench-slot ${player ? 'occupied' : 'empty'}" 
@@ -216,7 +219,7 @@ export const LineupView = {
                      data-slot-id="${bench.id}"
                      style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
                     
-                    <div style="width:38px; height:38px; border-radius:50%; background:${player ? 'rgba(255,42,133,0.2)' : 'rgba(0,0,0,0.4)'}; border:1.5px solid ${player ? 'var(--club-primary)' : 'rgba(255,255,255,0.3)'}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative;">
+                    <div style="width:38px; height:38px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.2)' : 'rgba(0,0,0,0.4)')}; border:${isSelectedForSwap ? '2px solid #ffffff' : (player ? '1.5px solid var(--club-primary)' : 'rgba(255,255,255,0.3)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; box-shadow:${isSelectedForSwap ? '0 0 15px var(--club-primary)' : 'none'}; transition:all 0.2s ease;">
                         ${player 
                             ? (player.photo 
                                 ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
@@ -504,11 +507,37 @@ export const LineupView = {
             });
         });
 
-        // Eventos Drag & Drop entre posiciones del campo y banquillo (Intercambiar / Sustituir posiciones)
+        // Eventos de sustitución por clic (Click-to-Swap) y Drag & Drop
         let draggedSourceSlotId = null;
 
         document.querySelectorAll('.pitch-slot, .bench-slot').forEach(slot => {
             const slotId = slot.getAttribute('data-slot-id');
+
+            // Clic para seleccionar primer jugador y luego segundo jugador para intercambiar
+            slot.addEventListener('click', (e) => {
+                if (!this.selectedSlotForSwap) {
+                    // Clic 1: Seleccionar jugador origen si existe en la ranura
+                    if (this.lineup[slotId]) {
+                        this.selectedSlotForSwap = slotId;
+                        state.notify();
+                    }
+                } else if (this.selectedSlotForSwap === slotId) {
+                    // Clic en el mismo jugador: Desmarcar selección
+                    this.selectedSlotForSwap = null;
+                    state.notify();
+                } else {
+                    // Clic 2: Intercambiar / Sustituir las dos posiciones
+                    const sourceSlot = this.selectedSlotForSwap;
+                    const targetSlot = slotId;
+
+                    const temp = this.lineup[sourceSlot];
+                    this.lineup[sourceSlot] = this.lineup[targetSlot];
+                    this.lineup[targetSlot] = temp;
+
+                    this.selectedSlotForSwap = null;
+                    state.notify();
+                }
+            });
 
             slot.addEventListener('dragstart', (e) => {
                 if (this.lineup[slotId]) {
@@ -531,12 +560,12 @@ export const LineupView = {
                 const targetSlotId = slot.getAttribute('data-slot-id');
 
                 if (sourceSlotId && targetSlotId && sourceSlotId !== targetSlotId) {
-                    // Intercambiar jugadores entre ranuras
                     const temp = this.lineup[sourceSlotId];
                     this.lineup[sourceSlotId] = this.lineup[targetSlotId];
                     this.lineup[targetSlotId] = temp;
 
                     draggedSourceSlotId = null;
+                    this.selectedSlotForSwap = null;
                     state.notify();
                 }
             });
