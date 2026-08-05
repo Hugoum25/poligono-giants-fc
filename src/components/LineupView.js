@@ -258,8 +258,16 @@ export const LineupView = {
             return `<option value="${team}" ${isSelected ? 'selected' : ''}>vs. ${team}</option>`;
         }).join('');
 
+        const jornadaList = Array.from({ length: 26 }, (_, i) => `Jornada ${i + 1}`);
+        const currentJornadaVal = this.selectedJornada || (this.competitionTitle.replace(/^Liga\s*F7\s*Gijón\s*-\s*/i, '').trim()) || 'Jornada 12';
+
+        const jornadaOptionsHtml = jornadaList.map(j => {
+            const isSel = currentJornadaVal.toLowerCase() === j.toLowerCase();
+            return `<option value="${j}" ${isSel ? 'selected' : ''}>${j}</option>`;
+        }).join('');
+
         const opponentName = (this.selectedOpponent || this.matchTitle.replace(/^vs\.\s*/i, '')).trim();
-        const jornadaText = (this.competitionTitle || '').replace(/^Liga\s*F7\s*Gijón\s*-\s*/i, '').trim();
+        const jornadaText = currentJornadaVal;
 
         return `
             <div class="container" style="padding-top:24px; padding-bottom:80px;">
@@ -283,8 +291,10 @@ export const LineupView = {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Competición / Jornada</label>
-                                    <input type="text" id="input-comp-title" class="form-input" style="width:100%; padding:6px 8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${this.competitionTitle}">
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Jornada de la Liga</label>
+                                    <select id="select-jornada" class="form-input" style="width:100%; padding:6px 8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;">
+                                        ${jornadaOptionsHtml}
+                                    </select>
                                 </div>
                                 <div>
                                     <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Fecha, Hora y Campo</label>
@@ -425,6 +435,16 @@ export const LineupView = {
             selectOpponent.onchange = (e) => {
                 this.selectedOpponent = e.target.value;
                 this.matchTitle = "vs. " + e.target.value;
+                state.notify();
+            };
+        }
+
+        // Selector de Jornada de la Liga
+        const selectJornada = document.getElementById('select-jornada');
+        if (selectJornada) {
+            selectJornada.onchange = (e) => {
+                this.selectedJornada = e.target.value;
+                this.competitionTitle = "Liga F7 Gijón - " + e.target.value;
                 state.notify();
             };
         }
