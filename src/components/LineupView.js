@@ -402,15 +402,15 @@ export const LineupView = {
                                     <span style="font-weight:900; color:var(--club-primary); letter-spacing:0.04em;">#PoligonoGiants</span>
                                 </div>
 
-                                <!-- TIRA DE PATROCINADORES OFICIALES EN FILA -->
-                                <div style="display:flex; justify-content:space-around; align-items:center; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:6px 8px; gap:6px; flex-wrap:nowrap; overflow:hidden;">
-                                    ${SponsorJaviFrey.render(18)}
-                                    ${SponsorMambaShaved.render(18)}
-                                    ${SponsorBambi.render(18)}
-                                    ${SponsorLaBaseTattoo.render(18)}
-                                    ${SponsorTrmSports.render(18)}
-                                    ${SponsorSohoBar.render(18)}
-                                    ${SponsorPastur.render(18)}
+                                <!-- TIRA DE PATROCINADORES OFICIALES EN FILA (SOLO ICONOS SIN CAJA) -->
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 2px; gap:8px; flex-wrap:nowrap; overflow:hidden;">
+                                    ${SponsorJaviFrey.render(22)}
+                                    ${SponsorMambaShaved.render(22)}
+                                    ${SponsorBambi.render(22)}
+                                    ${SponsorLaBaseTattoo.render(22)}
+                                    ${SponsorTrmSports.render(22)}
+                                    ${SponsorSohoBar.render(22)}
+                                    ${SponsorPastur.render(22)}
                                 </div>
                             </div>
 
