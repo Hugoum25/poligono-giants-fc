@@ -182,7 +182,7 @@ export const LineupView = {
                      data-slot-id="${slot.id}"
                      style="grid-row:${slot.row}; grid-column:${slot.col}; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; cursor:pointer;">
                     
-                    <div style="width:50px; height:50px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.25)' : 'rgba(0,0,0,0.5)')}; border:3px solid ${isSelectedForSwap ? '#ffffff' : (player ? 'var(--club-primary)' : 'rgba(255,255,255,0.4)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:${isSelectedForSwap ? '0 0 25px var(--club-primary), 0 0 10px #ffffff' : '0 0 15px rgba(0,0,0,0.6)'}; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; transition:all 0.2s ease;">
+                    <div style="width:50px; height:50px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.25)' : 'rgba(0,0,0,0.5)')}; border:3px solid ${isSelectedForSwap ? '#ffffff' : (player ? 'var(--club-primary)' : 'rgba(255,255,255,0.4)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:${isSelectedForSwap ? '0 0 10px rgba(255,255,255,0.6)' : '0 0 10px rgba(0,0,0,0.5)'}; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; transition:all 0.2s ease;">
                         ${player 
                             ? (player.photo 
                                 ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
@@ -219,7 +219,7 @@ export const LineupView = {
                      data-slot-id="${bench.id}"
                      style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
                     
-                    <div style="width:38px; height:38px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.2)' : 'rgba(0,0,0,0.4)')}; border:${isSelectedForSwap ? '2px solid #ffffff' : (player ? '1.5px solid var(--club-primary)' : 'rgba(255,255,255,0.3)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; box-shadow:${isSelectedForSwap ? '0 0 15px var(--club-primary)' : 'none'}; transition:all 0.2s ease;">
+                    <div style="width:38px; height:38px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.2)' : 'rgba(0,0,0,0.4)')}; border:${isSelectedForSwap ? '2px solid #ffffff' : (player ? '1.5px solid var(--club-primary)' : 'rgba(255,255,255,0.3)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; box-shadow:${isSelectedForSwap ? '0 0 10px rgba(255,255,255,0.6)' : 'none'}; transition:all 0.2s ease;">
                         ${player 
                             ? (player.photo 
                                 ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
@@ -341,7 +341,7 @@ export const LineupView = {
 
                     <!-- COLUMNA DERECHA: CARTEL OFICIAL DE REDES SOCIALES (EXPORTABLE A IMAGEN PNG) -->
                     <div style="display:flex; justify-content:center; width:100%;">
-                        <div id="social-lineup-card" style="width:100%; max-width:540px; background:linear-gradient(135deg, #0d0e15 0%, #161824 100%); border:2px solid var(--club-primary); border-radius:12px; padding:18px; box-shadow:0 0 35px rgba(255,42,133,0.3); position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box;">
+                        <div id="social-lineup-card" style="width:100%; max-width:540px; background:linear-gradient(135deg, #0d0e15 0%, #161824 100%); border:2px solid var(--club-primary); border-radius:12px; padding:18px; box-shadow:none; position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box;">
                             
                             <!-- MARCA DE AGUA DE FONDO CON ESCUDO -->
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.04; user-select:none; pointer-events:none; z-index:0;">
@@ -360,7 +360,7 @@ export const LineupView = {
                                 </div>
 
                                 <!-- ELEMENTO VS CENTRADO -->
-                                <div style="background:rgba(255,42,133,0.2); border:1.5px solid var(--club-primary); color:var(--club-primary); font-weight:900; font-size:0.85rem; font-style:italic; padding:3px 9px; border-radius:20px; text-shadow:0 0 10px rgba(255,42,133,0.8); user-select:none; flex-shrink:0;">
+                                <div style="background:rgba(255,42,133,0.2); border:1.5px solid var(--club-primary); color:var(--club-primary); font-weight:900; font-size:0.85rem; font-style:italic; padding:3px 9px; border-radius:20px; text-shadow:none; user-select:none; flex-shrink:0;">
                                     VS
                                 </div>
 
@@ -421,7 +421,7 @@ export const LineupView = {
 
                 <!-- BOTÓN GENERAR CONVOCATORIA (ABAJO DEL TODO, SIN ICONO) -->
                 <div style="max-width:1080px; margin:24px auto 0 auto; text-align:center;">
-                    <button class="btn btn-primary" id="btn-download-social-card" style="font-size:1rem; padding:12px 36px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; box-shadow:0 0 25px rgba(var(--club-primary-rgb),0.5);">
+                    <button class="btn btn-primary" id="btn-download-social-card" style="font-size:1rem; padding:12px 36px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; box-shadow:none;">
                         Generar Convocatoria
                     </button>
                 </div>
