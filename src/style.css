@@ -1439,6 +1439,10 @@ body.modal-open .tv-screen,
     .modal-overlay { padding: 10px !important; align-items: center !important; }
     .modal-overlay .glass-card { padding: 20px !important; max-height: 88vh !important; margin: auto !important; }
     .squad-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .sponsors-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+    .sponsor-detail-card { padding: 14px 10px !important; min-height: auto !important; }
+    .sponsor-detail-card h3 { font-size: 0.95rem !important; margin-bottom: 4px !important; }
+    .sponsor-detail-card p { font-size: 0.72rem !important; line-height: 1.3 !important; }
 }
 
 /* ==========================================
