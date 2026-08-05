@@ -1,0 +1,57 @@
+[
+  {
+    "id": 301,
+    "name": "Javi Frey",
+    "logo": "⚡",
+    "isJaviFrey": true,
+    "desc": "En Javi Frey somos una empresa de electricidad con base en Gijón y toda Asturias, comprometiéndonos con la máxima excelencia y seguridad."
+  },
+  {
+    "id": 302,
+    "name": "Mamba Shaved",
+    "logo": "💈",
+    "isMambaShaved": true,
+    "desc": "Mamba Shaved By Samu Barber • Barbería Oficial de Polígono Giants F7."
+  },
+  {
+    "id": 304,
+    "name": "Cafetería Bambi",
+    "logo": "🦌",
+    "isBambi": true,
+    "desc": "Cafetería Oficial y punto de encuentro de la afición de Polígono Giants F7."
+  },
+  {
+    "id": 305,
+    "name": "Saneamientos Hergo",
+    "logo": "🔧",
+    "desc": "Calefacción y Fontanería - Materiales, Reforma Integral de edificios e Interiorismo de viviendas y locales comerciales y Saneamiento"
+  },
+  {
+    "id": 308,
+    "name": "La Base Tattoo",
+    "logo": "🎨",
+    "isLaBase": true,
+    "desc": "Estudio de Tatuajes y Arte Corporal Oficial de Polígono Giants F7."
+  },
+  {
+    "id": 309,
+    "name": "TRM Sports",
+    "logo": "👕",
+    "isTrmSports": true,
+    "desc": "Equipaciones deportivas personalizadas para clubes que quieren diferenciarse."
+  },
+  {
+    "id": 310,
+    "name": "Soho Bar",
+    "logo": "🍸",
+    "isSohoBar": true,
+    "desc": "Bar musical desde 1992, especialidad pop español de los 80 y actual."
+  },
+  {
+    "id": 311,
+    "name": "Pastur",
+    "logo": "🏠",
+    "isPastur": true,
+    "desc": "Especialistas en Construcción, Reforma y Aislamiento de Tejados y Cubiertas Tradicionales."
+  }
+]

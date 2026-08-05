@@ -380,6 +380,7 @@ const MATCHES_STORAGE_KEY = 'fc_hub_matches_v1';
 const PLAYERS_STORAGE_KEY = 'fc_hub_players_v2';
 const NEWS_STORAGE_KEY = 'fc_hub_news_v1';
 const MEDIA_STORAGE_KEY = 'fc_hub_media_v1';
+const SPONSORS_STORAGE_KEY = 'fc_hub_sponsors_v1';
 
 // Cargar estado inicial desde localStorage
 try {
@@ -399,6 +400,12 @@ try {
     if (savedMedia) {
         const parsed = JSON.parse(savedMedia);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.media = parsed;
+    }
+
+    const savedSponsors = localStorage.getItem(SPONSORS_STORAGE_KEY);
+    if (savedSponsors) {
+        const parsed = JSON.parse(savedSponsors);
+        if (Array.isArray(parsed) && parsed.length > 0) teamData.sponsors = parsed;
     }
 } catch (e) {
     console.error('[teamData] Error cargando inicial de localStorage:', e);
@@ -430,6 +437,13 @@ fetch('./src/data/news.json?t=' + Date.now()).then(r => r.json()).then(data => {
     if (Array.isArray(data) && data.length > 0) {
         teamData.news = data;
         localStorage.setItem(NEWS_STORAGE_KEY, JSON.stringify(teamData.news));
+    }
+}).catch(() => {});
+
+fetch('./src/data/sponsors.json?t=' + Date.now()).then(r => r.json()).then(data => {
+    if (Array.isArray(data) && data.length > 0) {
+        teamData.sponsors = data;
+        localStorage.setItem(SPONSORS_STORAGE_KEY, JSON.stringify(teamData.sponsors));
     }
 }).catch(() => {});
 
@@ -467,6 +481,15 @@ export function saveMediaToStorage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.media)
+    }).catch(() => {});
+}
+
+export function saveSponsorsToStorage() {
+    try { localStorage.setItem(SPONSORS_STORAGE_KEY, JSON.stringify(teamData.sponsors)); } catch (e) {}
+    fetch('/api/save-sponsors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(teamData.sponsors)
     }).catch(() => {});
 }
 

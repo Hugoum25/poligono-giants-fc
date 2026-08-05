@@ -23,7 +23,8 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             '/api/save-news': 'news.json',
             '/api/save-players': 'players.json',
             '/api/save-media': 'media.json',
-            '/api/save-matches': 'matches.json'
+            '/api/save-matches': 'matches.json',
+            '/api/save-sponsors': 'sponsors.json'
         }
         
         if self.path in endpoints:
