@@ -17,28 +17,33 @@ import { SponsorPastur } from './SponsorPastur.js';
 
 export const LineupView = {
     activeIgTab: "convocatoria", // "convocatoria" | "resultado"
-    activeFormation: "3-2-1", // 3-2-1, 2-3-1, 2-2-2, 3-1-2
+    activeFormation: "3-2-1",
     matchTitle: "vs. Sporting La Camocha F7",
     competitionTitle: "Liga F7 Gijón - Jornada 12",
     matchDateTime: "Sábado 18:00h | Campo Municipal La Camocha",
     selectedSlotForSwap: null,
 
     // Estado del resultado
-    resultScoreLocal: 3,
-    resultScoreVisitor: 1,
+    selectedMatchId: null,
+    resultScoreLocal: 4,
+    resultScoreVisitor: 2,
     resultScorers: {
         6: 2, // Rubén Montes 2 goles
-        7: 1  // Rodrigo Cuesta 1 gol
+        7: 2  // Rodrigo Cuesta 2 goles
+    },
+    resultAssists: {
+        5: 2, // Dario Álvarez 2 asistencias
+        2: 1  // Javier Chimeno 1 asistencia
     },
 
     lineup: {
-        gk: 1,      // Miguel #13
-        def1: 2,    // Javier Chimeno #12
-        def2: 3,    // Hugo Uría #2
-        def3: 4,    // Enol #4
-        mid1: 5,    // Dario Álvarez #8
-        mid2: 6,    // Rubén Montes #10
-        fwd1: 7,    // Rodrigo Cuesta #9
+        gk: 1,
+        def1: 2,
+        def2: 3,
+        def3: 4,
+        mid1: 5,
+        mid2: 6,
+        fwd1: 7,
         bench1: 8,
         bench2: 9,
         bench3: 10,
@@ -116,7 +121,6 @@ export const LineupView = {
         this.lineup.fwd1 = findByPos('Delantero') || findByPos('Pívot') || available.find(p => !assigned.has(p.id))?.id || null;
         if (this.lineup.fwd1) assigned.add(this.lineup.fwd1);
 
-        // Suplentes
         const benchKeys = ['bench1', 'bench2', 'bench3', 'bench4', 'bench5'];
         benchKeys.forEach(k => {
             const nextP = available.find(p => !assigned.has(p.id));
@@ -161,7 +165,6 @@ export const LineupView = {
             `;
         }
 
-        // Obtener lista completa de equipos rivales de la liga
         const defaultTeams = [
             "Gijón United",
             "Desatascos Pelayo",
@@ -197,7 +200,6 @@ export const LineupView = {
         const opponentName = (this.selectedOpponent || this.matchTitle.replace(/^vs\.\s*/i, '')).trim();
         const jornadaText = currentJornadaVal;
 
-        // Renderizado del contenido según la pestaña activa (CONVOCATORIA o RESULTADO)
         let tabContentHtml = '';
 
         if (this.activeIgTab === 'convocatoria') {
@@ -248,10 +250,10 @@ export const LineupView = {
                         </div>
                         
                         ${player ? `
-                            <div style="background:var(--club-primary); color:#fff; font-family:var(--font-mono); font-weight:900; font-size:0.65rem; padding:1px 5px; border-radius:10px; margin-top:-6px; z-index:3; border:1px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.5);">
+                            <div style="position:absolute; bottom:22px; left:50%; transform:translateX(-50%); color:#ffffff; font-family:var(--font-mono); font-weight:900; font-size:0.85rem; text-shadow:0 2px 4px #000, 0 0 6px #000; z-index:4; line-height:1; pointer-events:none;">
                                 ${player.number}
                             </div>
-                            <div style="font-size:0.75rem; font-weight:800; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.9); margin-top:2px; text-transform:uppercase; max-width:85px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-heading);">
+                            <div style="font-size:0.75rem; font-weight:800; color:#fff; text-shadow:0 2px 4px #000, 0 0 4px #000; margin-top:4px; text-transform:uppercase; max-width:85px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-heading);">
                                 ${player.name.split(' ')[0]}
                             </div>
                         ` : ''}
@@ -263,31 +265,44 @@ export const LineupView = {
                 { id: "bench1" }, { id: "bench2" }, { id: "bench3" }, { id: "bench4" }, { id: "bench5" }
             ];
 
-            const benchSlotsHtml = benchSlotsConfig.map(bench => {
-                const assignedPlayerId = this.lineup[bench.id];
-                const player = assignedPlayerId ? teamData.players.find(p => p.id === assignedPlayerId) : null;
+            const activeBenchSlots = benchSlotsConfig
+                .map(bench => {
+                    const assignedPlayerId = this.lineup[bench.id];
+                    const player = assignedPlayerId ? teamData.players.find(p => p.id === assignedPlayerId) : null;
+                    return { bench, player };
+                })
+                .filter(item => item.player !== null);
+
+            const benchSlotsHtml = activeBenchSlots.map(({ bench, player }) => {
                 const isSelectedForSwap = this.selectedSlotForSwap === bench.id;
 
                 return `
-                    <div class="bench-slot ${player ? 'occupied' : 'empty'}" 
-                         draggable="${!!player}"
+                    <div class="bench-slot occupied" 
+                         draggable="true"
                          data-slot-id="${bench.id}"
-                         style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
+                         style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; cursor:pointer;">
                         
-                        <div style="width:38px; height:38px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : (player ? 'rgba(255,42,133,0.2)' : 'rgba(0,0,0,0.4)')}; border:${isSelectedForSwap ? '2px solid #ffffff' : (player ? '1.5px solid var(--club-primary)' : 'rgba(255,255,255,0.3)')}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; box-shadow:${isSelectedForSwap ? '0 0 10px rgba(255,255,255,0.6)' : 'none'}; transition:all 0.2s ease;">
-                            ${player 
-                                ? (player.photo 
-                                    ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
-                                    : `<span style="font-size:1.1rem;">👤</span>`)
-                                : `<span style="font-size:0.75rem; color:rgba(255,255,255,0.4);">+</span>`
+                        <div style="width:38px; height:38px; border-radius:50%; background:${isSelectedForSwap ? 'rgba(255,42,133,0.6)' : 'rgba(255,42,133,0.2)'}; border:${isSelectedForSwap ? '2px solid #ffffff' : '1.5px solid var(--club-primary)'}; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; transform:${isSelectedForSwap ? 'scale(1.15)' : 'scale(1)'}; box-shadow:${isSelectedForSwap ? '0 0 10px rgba(255,255,255,0.6)' : 'none'}; transition:all 0.2s ease;">
+                            ${player.photo 
+                                ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:cover;" />`
+                                : `<span style="font-size:1.1rem;">${player.position && player.position.includes('Portero') ? '🧤' : '👤'}</span>`
                             }
                         </div>
-                        <div style="font-size:0.65rem; font-weight:800; color:#fff; text-shadow:0 1px 3px #000; margin-top:2px; text-transform:uppercase; max-width:65px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                            ${player ? `#${player.number} ${player.name.split(' ')[0]}` : 'Suplente'}
-                        </div>
+                        <div style="font-size:0.64rem; font-weight:800; color:#fff; text-transform:uppercase; text-shadow:0 1px 3px #000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:6px; max-width:65px;">${player.name.split(' ')[0]}</div>
                     </div>
                 `;
             }).join('');
+
+            const benchSectionHtml = activeBenchSlots.length > 0 ? `
+                <div style="position:relative; z-index:2; margin-top:10px;">
+                    <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; text-align:center;">
+                        BANCO
+                    </div>
+                    <div style="display:flex; justify-content:center; align-items:center; gap:16px; flex-wrap:wrap;">
+                        ${benchSlotsHtml}
+                    </div>
+                </div>
+            ` : '';
 
             tabContentHtml = `
                 <div class="social-lineup-layout">
@@ -325,11 +340,6 @@ export const LineupView = {
                                         <button class="formation-btn ${this.activeFormation === '3-1-2' ? 'active' : ''}" data-formation="3-1-2" style="font-size:0.75rem; padding:4px;">3-1-2</button>
                                     </div>
                                 </div>
-
-                                <div style="display:flex; gap:6px; margin-top:8px;">
-                                    <button class="btn btn-secondary" id="btn-autofill-lineup" style="flex:1; font-size:0.72rem; padding:6px;">⚡ Seleccionar 12</button>
-                                    <button class="btn btn-secondary" id="btn-reset-lineup" style="flex:1; font-size:0.72rem; padding:6px;">🗑️ Desmarcar Todo</button>
-                                </div>
                             </div>
                         </div>
 
@@ -345,18 +355,24 @@ export const LineupView = {
                             <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:6px; max-height:380px; overflow-y:auto; padding-right:2px;">
                                 ${checkboxListHtml}
                             </div>
+                            <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
+                                <button class="btn btn-secondary" id="btn-reset-lineup" style="width:100%; font-size:0.75rem; padding:7px; font-weight:800; color:var(--text-muted);">
+                                    🗑️ Vaciar Convocatoria
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- COLUMNA DERECHA: CARTEL CONVOCATORIA -->
                     <div style="display:flex; justify-content:center; width:100%;">
                         <div id="social-lineup-card" style="width:100%; max-width:540px; background:linear-gradient(135deg, #0d0e15 0%, #161824 100%); border:2px solid var(--club-primary); border-radius:12px; padding:18px; box-shadow:none; position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box;">
-                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.04; user-select:none; pointer-events:none; z-index:0;">
-                                ${ClubLogo.render(380)}
-                            </div>
 
                             <div style="position:relative; z-index:2; border-bottom:2px solid rgba(255,42,133,0.3); padding-bottom:12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                                <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                                <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:900; font-style:italic; color:rgba(255,255,255,0.22); font-family:var(--font-heading); user-select:none; pointer-events:none; z-index:1; letter-spacing:0.05em;">
+                                    VS
+                                </div>
+
+                                <div style="display:flex; align-items:center; gap:8px; flex:1; position:relative; z-index:2;">
                                     ${ClubLogo.render(42)}
                                     <div style="text-align:left;">
                                         <div style="font-size:1.05rem; font-weight:900; color:var(--club-primary); letter-spacing:0.03em; line-height:1.1;">POLÍGONO GIANTS F7</div>
@@ -364,34 +380,28 @@ export const LineupView = {
                                     </div>
                                 </div>
 
-                                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
+                                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; flex:1; position:relative; z-index:2;">
                                     <div style="font-size:0.82rem; font-weight:900; color:#fff; text-transform:uppercase; background:var(--club-primary); padding:2px 8px; border-radius:4px; display:inline-block; letter-spacing:0.05em;">CONVOCATORIA</div>
-                                    <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em; display:flex; align-items:center; gap:6px;">
-                                        <span style="background:rgba(255,42,133,0.2); border:1.5px solid var(--club-primary); color:var(--club-primary); font-weight:900; font-size:0.75rem; font-style:italic; padding:1px 6px; border-radius:12px; display:inline-block; flex-shrink:0;">VS</span>
-                                        <span>${opponentName}</span>
-                                    </div>
+                                    <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em;">${opponentName}</div>
                                 </div>
                             </div>
 
-                            <div style="position:relative; z-index:2; width:100%; height:380px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.25); background:linear-gradient(180deg, #092e17 0%, #051a0d 50%, #092e17 100%); box-shadow:inset 0 0 25px rgba(0,0,0,0.8);">
-                                <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.25);"></div>
-                                <div style="position:absolute; top:50%; left:50%; width:80px; height:80px; transform:translate(-50%, -50%); border:2px solid rgba(255,255,255,0.25); border-radius:50%;"></div>
-                                <div style="position:absolute; top:0; left:50%; width:56%; height:16%; transform:translateX(-50%); border:2px solid rgba(255,255,255,0.25); border-top:none;"></div>
-                                <div style="position:absolute; bottom:0; left:50%; width:56%; height:16%; transform:translateX(-50%); border:2px solid rgba(255,255,255,0.25); border-bottom:none;"></div>
+                            <div style="position:relative; z-index:2; width:100%; height:380px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.25); background:linear-gradient(180deg, rgba(9,46,23,0.45) 0%, rgba(5,26,13,0.55) 50%, rgba(9,46,23,0.45) 100%); backdrop-filter:blur(2px); box-shadow:inset 0 0 25px rgba(0,0,0,0.8);">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.35; filter:blur(2.5px); user-select:none; pointer-events:none; z-index:1; display:flex; align-items:center; justify-content:center;">
+                                    ${ClubLogo.render(350)}
+                                </div>
+
+                                <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.25); z-index:2;"></div>
+                                <div style="position:absolute; top:50%; left:50%; width:80px; height:80px; transform:translate(-50%, -50%); border:2px solid rgba(255,255,255,0.25); border-radius:50%; z-index:2;"></div>
+                                <div style="position:absolute; top:0; left:50%; width:56%; height:16%; transform:translateX(-50%); border:2px solid rgba(255,255,255,0.25); border-top:none; z-index:2;"></div>
+                                <div style="position:absolute; bottom:0; left:50%; width:56%; height:16%; transform:translateX(-50%); border:2px solid rgba(255,255,255,0.25); border-bottom:none; z-index:2;"></div>
 
                                 <div style="display:grid; grid-template-rows:repeat(4, 1fr); grid-template-columns:repeat(3, 1fr); height:100%; padding:10px; box-sizing:border-box; position:relative; z-index:3;">
                                     ${pitchSlotsHtml}
                                 </div>
                             </div>
 
-                            <div style="position:relative; z-index:2; margin-top:12px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:8px 10px;">
-                                <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; text-align:center;">
-                                    SUPLENTES / BANQUILLO
-                                </div>
-                                <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:6px;">
-                                    ${benchSlotsHtml}
-                                </div>
-                            </div>
+                            ${benchSectionHtml}
 
                             <div style="position:relative; z-index:2; margin-top:10px; border-top:1px solid rgba(255,42,133,0.25); padding-top:8px; display:flex; flex-direction:column; gap:6px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.65rem; color:var(--text-muted);">
@@ -421,6 +431,13 @@ export const LineupView = {
             `;
         } else {
             // Pestaña RESULTADO
+            const finishedMatches = (teamData.matches || []).filter(m => m.type === 'past' || (m.goalsGiants !== null && m.goalsGiants !== undefined));
+
+            const finishedMatchOptionsHtml = finishedMatches.map(m => {
+                const isSel = this.selectedMatchId === m.id;
+                return `<option value="${m.id}" ${isSel ? 'selected' : ''}>${m.competition} - vs ${m.opponent} (${m.goalsGiants} - ${m.goalsOpponent})</option>`;
+            }).join('');
+
             const resultStatus = this.resultScoreLocal > this.resultScoreVisitor 
                 ? { label: 'VICTORIA 🟢', color: '#00e676' }
                 : (this.resultScoreLocal === this.resultScoreVisitor 
@@ -428,34 +445,45 @@ export const LineupView = {
                     : { label: 'DERROTA 🔴', color: '#ff1744' });
 
             const sortedPlayers = [...teamData.players].sort((a, b) => a.number - b.number);
-            const scorersControlHtml = sortedPlayers.map(p => {
+            const statsControlHtml = sortedPlayers.map(p => {
                 const goalsCount = this.resultScorers[p.id] || 0;
+                const assistsCount = this.resultAssists[p.id] || 0;
+
                 return `
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 6px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:4px; font-size:0.75rem;">
-                        <span style="font-weight:700; color:#fff;">#${p.number} ${p.name}</span>
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <button class="btn-scorer-minus btn btn-secondary" data-player-id="${p.id}" style="padding:1px 6px; font-size:0.7rem; font-weight:800;">-</button>
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:5px 8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:4px; font-size:0.75rem; gap:8px;">
+                        <span style="font-weight:700; color:#fff; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">#${p.number} ${p.name}</span>
+                        
+                        <!-- GOLES -->
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <span style="font-size:0.68rem; color:var(--text-muted);">⚽</span>
+                            <button class="btn-scorer-minus btn btn-secondary" data-player-id="${p.id}" style="padding:0px 5px; font-size:0.7rem; font-weight:800;">-</button>
                             <span style="font-weight:900; font-family:var(--font-mono); color:${goalsCount > 0 ? 'var(--club-primary)' : 'var(--text-muted)'}; min-width:14px; text-align:center;">${goalsCount}</span>
-                            <button class="btn-scorer-plus btn btn-secondary" data-player-id="${p.id}" style="padding:1px 6px; font-size:0.7rem; font-weight:800;">+</button>
+                            <button class="btn-scorer-plus btn btn-secondary" data-player-id="${p.id}" style="padding:0px 5px; font-size:0.7rem; font-weight:800;">+</button>
+                        </div>
+
+                        <!-- ASISTENCIAS -->
+                        <div style="display:flex; align-items:center; gap:4px; margin-left:6px;">
+                            <span style="font-size:0.68rem; color:var(--text-muted);">🎯</span>
+                            <button class="btn-assist-minus btn btn-secondary" data-player-id="${p.id}" style="padding:0px 5px; font-size:0.7rem; font-weight:800;">-</button>
+                            <span style="font-weight:900; font-family:var(--font-mono); color:${assistsCount > 0 ? '#00e676' : 'var(--text-muted)'}; min-width:14px; text-align:center;">${assistsCount}</span>
+                            <button class="btn-assist-plus btn btn-secondary" data-player-id="${p.id}" style="padding:0px 5px; font-size:0.7rem; font-weight:800;">+</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // Lista formateada de goleadores para la tarjeta
-            const scorersListForCard = Object.keys(this.resultScorers).filter(id => this.resultScorers[id] > 0).map(id => {
-                const player = teamData.players.find(p => p.id === parseInt(id));
-                const goals = this.resultScorers[id];
-                if (!player) return null;
-                return `
-                    <div style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#ffffff; font-weight:800;">
-                        <span>⚽</span>
-                        <span style="color:var(--club-primary); font-family:var(--font-mono);">#${player.number}</span>
-                        <span>${player.name}</span>
-                        ${goals > 1 ? `<span style="background:rgba(255,42,133,0.3); border:1px solid var(--club-primary); color:#fff; font-size:0.7rem; padding:1px 6px; border-radius:10px;">(${goals})</span>` : ''}
-                    </div>
-                `;
-            }).filter(Boolean);
+            // Texto formateado de goleadores separado por slashes ( / ) estilo la imagen de referencia
+            const scorersSlashText = Object.keys(this.resultScorers)
+                .filter(id => this.resultScorers[id] > 0)
+                .map(id => {
+                    const player = teamData.players.find(p => p.id === parseInt(id));
+                    if (!player) return null;
+                    const count = this.resultScorers[id];
+                    const firstName = player.name.split(' ')[0].toUpperCase();
+                    return count > 1 ? `${firstName} (${count})` : firstName;
+                })
+                .filter(Boolean)
+                .join(' / ');
 
             tabContentHtml = `
                 <div class="social-lineup-layout">
@@ -463,20 +491,15 @@ export const LineupView = {
                     <div style="display:flex; flex-direction:column; gap:14px; width:100%;">
                         <div class="glass-card" style="padding:14px; border:1px solid var(--border-color);">
                             <div style="font-size:0.8rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; margin-bottom:10px; letter-spacing:0.05em;">
-                                Configuración del Resultado
+                                Selección de Partido Finalizado
                             </div>
 
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Rival (Equipo de la Liga)</label>
-                                    <select id="select-result-opponent" class="form-input" style="width:100%; padding:6px 8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;">
-                                        ${opponentOptionsHtml}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Jornada de la Liga</label>
-                                    <select id="select-result-jornada" class="form-input" style="width:100%; padding:6px 8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;">
-                                        ${jornadaOptionsHtml}
+                                    <label style="font-size:0.7rem; color:var(--club-primary); font-weight:800; display:block; margin-bottom:2px;">Partido Disputado</label>
+                                    <select id="select-finished-match" class="form-input" style="width:100%; padding:8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1.5px solid var(--club-primary); color:#fff; box-sizing:border-box; cursor:pointer;">
+                                        <option value="custom">➕ Partido Personalizado</option>
+                                        ${finishedMatchOptionsHtml}
                                     </select>
                                 </div>
 
@@ -490,92 +513,72 @@ export const LineupView = {
                                         <input type="number" id="input-result-score-visitor" class="form-input" min="0" max="99" style="width:100%; padding:8px; font-size:1.1rem; font-weight:900; text-align:center; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; border-radius:4px; box-sizing:border-box;" value="${this.resultScoreVisitor}">
                                     </div>
                                 </div>
-
-                                <div style="margin-top:4px;">
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:2px;">Fecha, Hora y Campo</label>
-                                    <input type="text" id="input-result-datetime" class="form-input" style="width:100%; padding:6px 8px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${this.matchDateTime}">
-                                </div>
                             </div>
                         </div>
 
-                        <!-- Panel Goleadores del Partido -->
+                        <!-- Panel Goleadores y Asistencias del Partido -->
                         <div class="glass-card" style="padding:12px; border:1px solid var(--border-color);">
                             <div style="font-size:0.78rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
-                                Goleadores del Partido
+                                Goles y Asistencias
                             </div>
                             <div style="display:flex; flex-direction:column; gap:4px; max-height:280px; overflow-y:auto; padding-right:2px;">
-                                ${scorersControlHtml}
+                                ${statsControlHtml}
                             </div>
                         </div>
                     </div>
 
-                    <!-- COLUMNA DERECHA: CARTEL OFICIAL DE RESULTADO -->
+                    <!-- COLUMNA DERECHA: CARTEL OFICIAL DE RESULTADO ESTILO IMAGEN DE REFERENCIA -->
                     <div style="display:flex; justify-content:center; width:100%;">
-                        <div id="social-result-card" style="width:100%; max-width:540px; background:linear-gradient(135deg, #0d0e15 0%, #161824 100%); border:2px solid var(--club-primary); border-radius:12px; padding:22px; position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box; min-height:480px; display:flex; flex-direction:column; justify-space-between;">
-                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.05; user-select:none; pointer-events:none; z-index:0;">
-                                ${ClubLogo.render(380)}
+                        <div id="social-result-card" style="width:100%; max-width:540px; background:#0a0b14; border:2px solid var(--club-primary); border-radius:12px; padding:24px 20px; position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box; min-height:480px; display:flex; flex-direction:column; justify-content:space-between; text-align:center;">
+                            
+                            <!-- LÍNEA DE ACENTO ROSA DIAGONAL SUPERIOR -->
+                            <div style="position:absolute; top:12px; left:-30px; right:-30px; height:8px; background:var(--club-primary); transform:rotate(-2.5deg); z-index:1;"></div>
+
+                            <div style="position:relative; z-index:2; padding-top:20px; flex:1; display:flex; flex-direction:column; justify-content:center;">
+                                
+                                <!-- TÍTULO PRINCIPAL GIGANTE -->
+                                <div style="font-size:2.2rem; font-weight:900; color:#ffffff; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:28px; text-shadow:0 3px 10px rgba(0,0,0,0.8); line-height:1.1;">
+                                    FINAL DEL PARTIDO
+                                </div>
+
+                                <!-- MARCADOR CON ESCUDOS -->
+                                <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:28px;">
+                                    <!-- ESCUDO POLÍGONO GIANTS -->
+                                    <div style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        ${ClubLogo.render(100)}
+                                    </div>
+
+                                    <!-- MARCADOR GIGANTE -->
+                                    <div style="font-size:4rem; font-weight:900; font-family:var(--font-heading); color:#ffffff; line-height:1; letter-spacing:0.02em; text-shadow:0 4px 12px rgba(0,0,0,0.9); flex-shrink:0;">
+                                        ${this.resultScoreLocal}-${this.resultScoreVisitor}
+                                    </div>
+
+                                    <!-- ESCUDO RIVAL -->
+                                    <div style="width:96px; height:96px; border-radius:50%; background:rgba(255,255,255,0.08); border:3px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; padding:6px; box-sizing:border-box;">
+                                        <div style="font-size:0.9rem; font-weight:900; color:#ffffff; text-transform:uppercase; text-align:center; line-height:1.1; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">
+                                            ${opponentName}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FILA DE GOLEADORES CON SLASH ( / ) -->
+                                ${scorersSlashText ? `
+                                    <div style="display:flex; align-items:center; justify-content:center; gap:8px; font-size:1.1rem; font-weight:900; color:#ffffff; margin-top:6px; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.9); flex-wrap:wrap;">
+                                        <span style="font-size:1.25rem;">⚽</span>
+                                        <span>${scorersSlashText}</span>
+                                    </div>
+                                ` : ''}
                             </div>
 
-                            <!-- CABECERA -->
-                            <div style="position:relative; z-index:2; border-bottom:2px solid rgba(255,42,133,0.3); padding-bottom:12px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                                <div style="display:flex; align-items:center; gap:8px; flex:1;">
-                                    ${ClubLogo.render(42)}
-                                    <div style="text-align:left;">
-                                        <div style="font-size:1.05rem; font-weight:900; color:var(--club-primary); letter-spacing:0.03em; line-height:1.1;">POLÍGONO GIANTS F7</div>
-                                        <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; text-transform:uppercase; margin-top:2px;">${jornadaText}</div>
-                                    </div>
+                            <!-- SECCIÓN INFERIOR CON LÍNEA DIAGONAL Y JORNADA -->
+                            <div style="position:relative; z-index:2; margin-top:24px;">
+                                <div style="height:8px; background:var(--club-primary); transform:rotate(-2.5deg); margin-bottom:14px; width:calc(100% + 40px); margin-left:-20px;"></div>
+
+                                <div style="font-size:1.25rem; font-weight:900; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px; text-shadow:0 2px 4px rgba(0,0,0,0.9);">
+                                    ${(jornadaText || 'JORNADA').toUpperCase()} – LIGA F7 GIJÓN
                                 </div>
 
-                                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
-                                    <div style="font-size:0.82rem; font-weight:900; color:#fff; text-transform:uppercase; background:var(--club-primary); padding:2px 8px; border-radius:4px; display:inline-block; letter-spacing:0.05em;">RESULTADO</div>
-                                    <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em; display:flex; align-items:center; gap:6px;">
-                                        <span style="background:rgba(255,42,133,0.2); border:1.5px solid var(--club-primary); color:var(--club-primary); font-weight:900; font-size:0.75rem; font-style:italic; padding:1px 6px; border-radius:12px; display:inline-block; flex-shrink:0;">VS</span>
-                                        <span>${opponentName}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MARCADOR PRINCIPAL GIGANTE -->
-                            <div style="position:relative; z-index:2; background:rgba(0,0,0,0.5); border:1.5px solid var(--border-color); border-radius:10px; padding:24px 16px; margin-bottom:18px; text-align:center;">
-                                <div style="display:inline-block; padding:3px 12px; border-radius:12px; background:rgba(255,255,255,0.06); font-size:0.75rem; font-weight:900; color:${resultStatus.color}; letter-spacing:0.06em; margin-bottom:12px; border:1px solid ${resultStatus.color};">
-                                    ${resultStatus.label}
-                                </div>
-
-                                <div style="display:flex; align-items:center; justify-content:center; gap:16px;">
-                                    <div style="flex:1; text-align:right;">
-                                        <div style="font-size:0.95rem; font-weight:900; color:var(--club-primary); text-transform:uppercase;">POLÍGONO GIANTS</div>
-                                    </div>
-                                    <div style="font-size:3.2rem; font-weight:900; font-family:var(--font-mono); color:#ffffff; line-height:1; display:flex; align-items:center; gap:10px; background:rgba(255,42,133,0.15); padding:6px 20px; border-radius:8px; border:1px solid var(--club-primary);">
-                                        <span>${this.resultScoreLocal}</span>
-                                        <span style="color:var(--club-primary); font-size:2.4rem;">:</span>
-                                        <span>${this.resultScoreVisitor}</span>
-                                    </div>
-                                    <div style="flex:1; text-align:left;">
-                                        <div style="font-size:0.95rem; font-weight:900; color:#ffffff; text-transform:uppercase;">${opponentName}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- SECCIÓN DE GOLEADORES DEL PARTIDO -->
-                            <div style="position:relative; z-index:2; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px; margin-bottom:16px; flex-grow:1;">
-                                <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:4px;">
-                                    ⚽ GOLEADORES DE POLÍGONO GIANTS F7
-                                </div>
-                                <div style="display:flex; flex-direction:column; gap:6px;">
-                                    ${scorersListForCard.length > 0 
-                                        ? scorersListForCard.join('')
-                                        : `<div style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">Sin goles registrados para este encuentro.</div>`
-                                    }
-                                </div>
-                            </div>
-
-                            <!-- PIE DE PÁGINA Y PATROCINADORES -->
-                            <div style="position:relative; z-index:2; border-top:1px solid rgba(255,42,133,0.25); padding-top:8px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.65rem; color:var(--text-muted);">
-                                    <span style="font-weight:700; color:var(--text-main);">${this.matchDateTime}</span>
-                                    <span style="font-weight:900; color:var(--club-primary); letter-spacing:0.04em;">#PoligonoGiants</span>
-                                </div>
-
+                                <!-- PATROCINADORES EN FILA -->
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 2px; gap:8px; flex-wrap:nowrap; overflow:hidden;">
                                     ${SponsorJaviFrey.render(22)}
                                     ${SponsorMambaShaved.render(22)}
@@ -604,10 +607,10 @@ export const LineupView = {
                 <!-- SELECTOR DE SUB-PESTAÑAS: CONVOCATORIA vs RESULTADO -->
                 <div class="squad-filters" style="margin-bottom:24px; display:flex; justify-content:center; gap:12px;">
                     <button class="filter-btn ${this.activeIgTab === 'convocatoria' ? 'active' : ''}" id="ig-subtab-convocatoria" style="font-size:0.9rem; padding:8px 20px; font-weight:800;">
-                        📋 CONVOCATORIA
+                        CONVOCATORIA
                     </button>
                     <button class="filter-btn ${this.activeIgTab === 'resultado' ? 'active' : ''}" id="ig-subtab-resultado" style="font-size:0.9rem; padding:8px 20px; font-weight:800;">
-                        ⚽ RESULTADO
+                        RESULTADO
                     </button>
                 </div>
 
@@ -619,7 +622,6 @@ export const LineupView = {
     bindEvents() {
         if (!AuthService.isAdmin()) return;
 
-        // Eventos de Pestañas Superiores (CONVOCATORIA / RESULTADO)
         const btnTabConvocatoria = document.getElementById('ig-subtab-convocatoria');
         const btnTabResultado = document.getElementById('ig-subtab-resultado');
 
@@ -699,7 +701,6 @@ export const LineupView = {
                 });
             });
 
-            // Sustitución por Clic (Click-to-Swap) y Drag & Drop
             let draggedSourceSlotId = null;
 
             document.querySelectorAll('.pitch-slot, .bench-slot').forEach(slot => {
@@ -762,20 +763,39 @@ export const LineupView = {
 
         // --- EVENTOS PESTAÑA RESULTADO ---
         if (this.activeIgTab === 'resultado') {
-            const selectResOpponent = document.getElementById('select-result-opponent');
-            if (selectResOpponent) {
-                selectResOpponent.onchange = (e) => {
-                    this.selectedOpponent = e.target.value;
-                    this.matchTitle = "vs. " + e.target.value;
-                    state.notify();
-                };
-            }
+            const selectFinMatch = document.getElementById('select-finished-match');
+            if (selectFinMatch) {
+                selectFinMatch.onchange = (e) => {
+                    const val = e.target.value;
+                    if (val === 'custom') {
+                        this.selectedMatchId = null;
+                    } else {
+                        const mId = parseInt(val);
+                        const match = (teamData.matches || []).find(m => m.id === mId);
+                        if (match) {
+                            this.selectedMatchId = mId;
+                            this.resultScoreLocal = match.goalsGiants ?? 3;
+                            this.resultScoreVisitor = match.goalsOpponent ?? 1;
+                            this.selectedOpponent = match.opponent;
+                            this.matchTitle = "vs. " + match.opponent;
+                            this.selectedJornada = match.competition.replace(/^Liga\s*F7\s*Gijón\s*-\s*/i, '').trim();
 
-            const selectResJornada = document.getElementById('select-result-jornada');
-            if (selectResJornada) {
-                selectResJornada.onchange = (e) => {
-                    this.selectedJornada = e.target.value;
-                    this.competitionTitle = "Liga F7 Gijón - " + e.target.value;
+                            // Cargar goleadores y asistencias del partido seleccionado
+                            this.resultScorers = {};
+                            if (Array.isArray(match.scorers)) {
+                                match.scorers.forEach(s => {
+                                    this.resultScorers[s.playerId] = s.goals;
+                                });
+                            }
+
+                            this.resultAssists = {};
+                            if (Array.isArray(match.assists)) {
+                                match.assists.forEach(a => {
+                                    this.resultAssists[a.playerId] = a.assists;
+                                });
+                            }
+                        }
+                    }
                     state.notify();
                 };
             }
@@ -792,14 +812,6 @@ export const LineupView = {
             if (inputResVisitor) {
                 inputResVisitor.oninput = (e) => {
                     this.resultScoreVisitor = Math.max(0, parseInt(e.target.value) || 0);
-                    state.notify();
-                };
-            }
-
-            const inputResDateTime = document.getElementById('input-result-datetime');
-            if (inputResDateTime) {
-                inputResDateTime.oninput = (e) => {
-                    this.matchDateTime = e.target.value;
                     state.notify();
                 };
             }
@@ -823,9 +835,29 @@ export const LineupView = {
                     }
                 };
             });
+
+            // Asistencias (+ / -)
+            document.querySelectorAll('.btn-assist-plus').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = parseInt(btn.getAttribute('data-player-id'));
+                    this.resultAssists[pid] = (this.resultAssists[pid] || 0) + 1;
+                    state.notify();
+                };
+            });
+
+            document.querySelectorAll('.btn-assist-minus').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = parseInt(btn.getAttribute('data-player-id'));
+                    if (this.resultAssists[pid] > 0) {
+                        this.resultAssists[pid]--;
+                        if (this.resultAssists[pid] === 0) delete this.resultAssists[pid];
+                        state.notify();
+                    }
+                };
+            });
         }
 
-        // --- BOTÓN COMÚN DESCARGAR IMAGEN HD ---
+        // BOTÓN COMÚN DESCARGAR IMAGEN HD
         const btnDownload = document.getElementById('btn-download-social-card');
         if (btnDownload) {
             btnDownload.onclick = () => {
@@ -842,20 +874,56 @@ export const LineupView = {
                 btnDownload.innerText = `Generando ${actionLabel}...`;
                 btnDownload.disabled = true;
 
-                window.html2canvas(cardEl, {
+                // Medir dimensiones exactas en pantalla
+                const actualWidth = cardEl.offsetWidth || 540;
+                const actualHeight = cardEl.offsetHeight;
+
+                // Crear contenedor aislado fuera de la pantalla en document.body con alto y ancho proporcionales exactos
+                const offscreenContainer = document.createElement('div');
+                offscreenContainer.style.position = 'fixed';
+                offscreenContainer.style.left = '-9999px';
+                offscreenContainer.style.top = '0';
+                offscreenContainer.style.width = actualWidth + 'px';
+                offscreenContainer.style.height = actualHeight + 'px';
+                offscreenContainer.style.zIndex = '-99999';
+                offscreenContainer.style.background = '#0d0e15';
+                offscreenContainer.style.overflow = 'hidden';
+
+                const cloneCard = cardEl.cloneNode(true);
+                cloneCard.style.width = actualWidth + 'px';
+                cloneCard.style.height = actualHeight + 'px';
+                cloneCard.style.maxWidth = 'none';
+                cloneCard.style.margin = '0';
+                cloneCard.style.transform = 'none';
+                cloneCard.style.boxSizing = 'border-box';
+
+                offscreenContainer.appendChild(cloneCard);
+                document.body.appendChild(offscreenContainer);
+
+                window.html2canvas(cloneCard, {
                     scale: 2.5,
                     useCORS: true,
-                    backgroundColor: null,
+                    allowTaint: true,
+                    backgroundColor: '#0d0e15',
+                    width: actualWidth,
+                    height: actualHeight,
                     logging: false
                 }).then(canvas => {
+                    if (document.body.contains(offscreenContainer)) {
+                        document.body.removeChild(offscreenContainer);
+                    }
+
                     const link = document.createElement('a');
                     link.download = `${actionLabel}_Poligono_Giants_${Date.now()}.png`;
-                    link.href = canvas.toDataURL('image/png');
+                    link.href = canvas.toDataURL('image/png', 1.0);
                     link.click();
 
                     btnDownload.innerText = `Generar ${actionLabel}`;
                     btnDownload.disabled = false;
                 }).catch(err => {
+                    if (document.body.contains(offscreenContainer)) {
+                        document.body.removeChild(offscreenContainer);
+                    }
                     console.error("Error al exportar imagen:", err);
                     alert("No se pudo generar la imagen. Intenta de nuevo.");
                     btnDownload.innerText = `Generar ${actionLabel}`;

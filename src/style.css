@@ -1459,6 +1459,12 @@ body.modal-open .tv-screen,
     box-sizing: border-box;
 }
 
+.social-lineup-layout .glass-card,
+.social-lineup-layout .glass-card:hover {
+    border-color: var(--border-color) !important;
+    box-shadow: 4px 4px 0px #030408, 0 0 15px rgba(0,0,0,0.5) !important;
+}
+
 @media (max-width: 900px) {
     .social-lineup-layout {
         grid-template-columns: 1fr !important;
