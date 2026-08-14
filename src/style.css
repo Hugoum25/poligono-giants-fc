@@ -991,6 +991,12 @@ body.retro-mode-active .glass-card {
     display: grid; grid-template-columns: 1.35fr 0.65fr; gap:20px;
 }
 .matches-list { display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; }
+
+@media (max-width: 850px) {
+    .matches-list {
+        grid-template-columns: 1fr !important;
+    }
+}
 .static-match-card {
     border-radius: 4px !important;
     padding: 8px 12px !important;
@@ -1002,7 +1008,25 @@ body.retro-mode-active .glass-card {
 .static-match-card:hover {
     transform: none !important;
     box-shadow: none !important;
-    border-color: var(--border-color) !important;
+}
+
+/* Partidos finalizados: Bordes según resultado (sin sombras) */
+.static-match-card.match-win,
+.static-match-card.match-win:hover {
+    border: 1.5px solid #00e676 !important;
+    box-shadow: none !important;
+}
+
+.static-match-card.match-draw,
+.static-match-card.match-draw:hover {
+    border: 1.5px solid #ffb300 !important;
+    box-shadow: none !important;
+}
+
+.static-match-card.match-loss,
+.static-match-card.match-loss:hover {
+    border: 1.5px solid #ff4444 !important;
+    box-shadow: none !important;
 }
 .match-schedule-card {
     padding:8px 12px;
@@ -1035,7 +1059,24 @@ body.retro-mode-active .glass-card {
 .outcome-loss { background:rgba(239,68,68,0.15);  color:#ef4444; }
 .outcome-draw { background:rgba(107,114,128,0.15); color:#9ca3af; }
 
-.standings-table-wrapper { padding:14px; }
+.standings-table-wrapper,
+.standings-table-wrapper:hover {
+    padding: 14px;
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.standings-table-wrapper tr,
+.standings-table-wrapper tr:hover,
+.standings-table-wrapper td,
+.standings-table-wrapper td:hover {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: var(--border-color) !important;
+}
 .standings-table {
     width:100%; border-collapse:collapse; font-size:0.78rem;
 }
@@ -1439,6 +1480,7 @@ body.modal-open .tv-screen,
     .modal-overlay { padding: 10px !important; align-items: center !important; }
     .modal-overlay .glass-card { padding: 20px !important; max-height: 88vh !important; margin: auto !important; }
     .squad-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .matches-list { grid-template-columns: 1fr !important; gap: 10px !important; }
     .sponsors-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
     .sponsor-detail-card { padding: 14px 10px !important; min-height: auto !important; }
     .sponsor-detail-card h3 { font-size: 0.95rem !important; margin-bottom: 4px !important; }

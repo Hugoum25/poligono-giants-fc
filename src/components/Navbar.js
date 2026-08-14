@@ -16,11 +16,11 @@ export const Navbar = {
             { id: 'news',       label: 'Noticias' },
             { id: 'squad',      label: 'Plantilla' },
             ...(isAdmin ? [{ id: 'lineup', label: 'IG' }] : []),
-            { id: 'matches',    label: 'Partidos' },
+            { id: 'matches',    label: 'Temporada' },
             { id: 'sponsors',   label: 'Patrocinadores' },
             { id: 'multimedia', label: 'Media' },
             ...(isAdmin ? [{ id: 'games',      label: 'Juegos' }] : []),
-            { id: 'palmares',   label: 'Historia del Club' }
+            ...(isAdmin ? [{ id: 'palmares',   label: 'Historia del Club' }] : [])
         ];
 
         const navLinksHtml = navItems.map(item => {

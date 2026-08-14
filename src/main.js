@@ -17,6 +17,8 @@ import { PalmaresView } from './components/PalmaresView.js';
 import { GamesView } from './components/GamesView.js';
 import { Obj3DViewer } from './components/Obj3DViewer.js';
 
+import { AuthService } from './services/authService.js';
+
 // Catálogo de vistas internas
 const routes = {
     home: HomeView,
@@ -76,7 +78,13 @@ function renderApp() {
     ledIndicator.classList.remove('led-off');
     ledIndicator.classList.add('led-on');
 
-    // 3. Resolver la vista activa en el canal seleccionado
+    // 3. Resolver la vista activa en el canal seleccionado (Restricción solo administradores)
+    const isAdmin = AuthService.isAdmin();
+    const adminOnlyPages = ['lineup', 'alineacion', 'games', 'juegos', 'palmares', 'fanzone'];
+    if (adminOnlyPages.includes(state.activePage) && !isAdmin) {
+        state.activePage = 'home';
+    }
+
     const viewComponent = routes[state.activePage] || HomeView;
 
     // Destruir recursos de la vista saliente si cambia

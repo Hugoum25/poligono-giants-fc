@@ -37,11 +37,11 @@ export function formatMatchDateAndCountdown(dateStr) {
         const minsLeft = totalMinutes % 60;
 
         if (days > 0) {
-            countdownStr = `Faltan ${days}d ${hoursLeft}h`;
+            countdownStr = `${days}d ${hoursLeft}h`;
         } else if (hoursLeft > 0) {
-            countdownStr = `Faltan ${hoursLeft}h ${minsLeft}m`;
+            countdownStr = `${hoursLeft}h ${minsLeft}m`;
         } else {
-            countdownStr = `Faltan ${minsLeft}m`;
+            countdownStr = `${minsLeft}m`;
         }
     } else {
         countdownStr = 'Finalizado';
@@ -74,20 +74,13 @@ export const MatchesView = {
         };
 
         // Obtener posición en la tabla de un equipo
-        const isAdmin = AuthService.isAdmin();
         const getTeamRankStr = (teamName) => {
             const found = teamData.standings.find(s => s.name === teamName);
             return found ? `${found.rank}º` : '-';
         };
 
-        // Crear listado de partidos
+        // Crear listado de partidos (Muestra solo el enfrentamiento directo; abre modal emergente al hacer clic)
         const matchesListHtml = teamData.matches.map(match => {
-            const ourRank = getTeamRankStr(teamData.clubName);
-            const oppRank = getTeamRankStr(match.opponent);
-            
-            const { formattedDate, countdownStr } = formatMatchDateAndCountdown(match.date);
-            const stadiumName = match.stadium || "Campo Municipal La Camocha (Gijón)";
-
             let matchOutcomeClass = '';
             if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
                 const outcome = match.outcome || (match.ourScore > match.opponentScore ? 'win' : match.ourScore < match.opponentScore ? 'loss' : 'draw');
@@ -95,55 +88,25 @@ export const MatchesView = {
             }
 
             return `
-                <div class="glass-card static-match-card ${matchOutcomeClass}" style="padding:8px 12px; border-radius:4px; box-sizing:border-box; display:flex; flex-direction:column; gap:6px; position:relative;">
-                    ${isAdmin ? `<button class="btn-edit-match" data-id="${match.id}" data-opponent="${match.opponent}" title="Editar partido" style="position:absolute; top:4px; right:4px; padding:1px 4px; font-size:0.62rem; border-radius:3px; background:rgba(255,42,133,0.15); border:1px solid var(--club-primary); color:var(--club-primary); cursor:pointer; line-height:1; z-index:10;">✏️</button>` : ''}
+                <div class="glass-card static-match-card match-toggle-card ${matchOutcomeClass}" data-match-id="${match.id}" title="Haz clic para ver detalles del partido" style="padding:12px 16px; border-radius:8px; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; position:relative; cursor:pointer; user-select:none; transition:transform 0.15s ease, border-color 0.15s ease;">
                     
-                    <!-- Día, Campo y Contador Sysdate -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:4px; font-size:0.75rem; padding-right:18px;">
-                        <span style="font-family:var(--font-mono); font-weight:700; color:var(--club-primary);">
-                            📅 ${formattedDate}
-                        </span>
-                        <span style="color:var(--text-muted); font-size:0.75rem; font-weight:600;">
-                            📍 Campo: ${stadiumName}
-                        </span>
+                    <!-- Local (Polígono Giants) -->
+                    <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                        ${ClubLogo.render(30)}
+                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
                     </div>
 
-                    <!-- Enfrentamiento y Posición Actual de cada Equipo -->
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        
-                        <!-- Polígono Giants (Posición Actual) -->
-                        <div style="display:flex; align-items:center; gap:8px; flex:1;">
-                            ${ClubLogo.render(28)}
-                            <div>
-                                <div style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">
-                                    ${teamData.clubName}
-                                </div>
-                                <div style="font-size:0.72rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:700;">
-                                    Posición: ${ourRank}
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Resultado o Estado -->
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        ${getMatchStatusHtml(match)}
+                    </div>
 
-                        <!-- Resultado o Estado -->
-                        <div style="text-align:center; padding:0 10px;">
-                            ${getMatchStatusHtml(match)}
+                    <!-- Rival -->
+                    <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:flex-end; text-align:right;">
+                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
+                        <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
+                            ${match.opponentEmoji || '🛡️'}
                         </div>
-
-                        <!-- Rival (Posición Actual) -->
-                        <div style="display:flex; align-items:center; gap:8px; flex:1; justify-content:flex-end; text-align:right;">
-                            <div>
-                                <div style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">
-                                    ${match.opponent}
-                                </div>
-                                <div style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">
-                                    Posición: ${oppRank}
-                                </div>
-                            </div>
-                            <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">
-                                🛡️
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             `;
@@ -152,19 +115,10 @@ export const MatchesView = {
         // Crear tabla de posiciones (Solo números y datos, sin íconos)
         const standingsRowsHtml = teamData.standings.map(row => {
             const isCurrentTeam = row.name === teamData.clubName;
-            const isAscenso = row.rank <= 3;
-            const isDescenso = row.rank >= 13;
-            
             let rowStyle = '';
 
-            if (isAscenso) {
-                rowStyle = 'border-left: 3px solid #00e676; background: rgba(0, 230, 118, 0.05);';
-            } else if (isDescenso) {
-                rowStyle = 'border-left: 3px solid #ff4444; background: rgba(255, 68, 68, 0.05);';
-            }
-
             if (isCurrentTeam) {
-                rowStyle += ' color:var(--club-primary); font-weight:800; background:rgba(255,42,133,0.1) !important;';
+                rowStyle = 'color:var(--club-primary); font-weight:800; background:rgba(255,42,133,0.1);';
             }
 
             return `
@@ -189,39 +143,34 @@ export const MatchesView = {
         const nextMatchInfo = formatMatchDateAndCountdown(nextMatch.date);
 
         return `
-            <div class="container" style="padding-top:40px; padding-bottom:80px;">
-                <h2 class="section-title">
-                    Partidos y Clasificación
-                </h2>
-                
-                <!-- HERO CARD: PRÓXIMO PARTIDO -->
-                <div class="glass-card" style="padding:20px 24px; margin-bottom:28px; box-sizing:border-box; border:1.5px solid var(--club-primary); background:linear-gradient(135deg, rgba(255,42,133,0.08) 0%, rgba(13,16,30,0.6) 100%); border-radius:8px;">
+            <div class="container" style="padding-top:20px; padding-bottom:80px;">
+                <!-- HERO CARD: PRÓXIMO PARTIDO (SENCILLO Y SIN ICONOS) -->
+                <div class="glass-card" style="padding:18px 20px; margin-bottom:24px; box-sizing:border-box; border:1.5px solid var(--club-primary); background:var(--bg-dark); border-radius:6px; box-shadow:none !important;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
                         <div style="flex:1; min-width:260px;">
-                            <span style="font-size:0.82rem; font-weight:800; color:var(--club-primary); letter-spacing:0.06em; text-transform:uppercase; display:flex; align-items:center; gap:6px; margin-bottom:8px;">
-                                ⚽ Próximo Encuentro Oficial
-                            </span>
+                            <div style="font-size:0.78rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:8px;">
+                                Próximo Partido
+                            </div>
                             
-                            <div style="display:flex; align-items:center; gap:20px; margin:12px 0;">
+                            <div style="display:flex; align-items:center; gap:16px; margin:10px 0;">
                                 <div style="display:flex; align-items:center; gap:8px;">
-                                    ${ClubLogo.render(38)}
-                                    <span style="font-size:1.1rem; font-weight:800; color:var(--text-main);">Giants</span>
+                                    ${ClubLogo.render(32)}
+                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${teamData.clubName}</span>
                                 </div>
-                                <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:1rem;">VS</span>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="font-size:1.6rem;">${nextMatch.opponentEmoji || '🛡️'}</span>
-                                    <span style="font-size:1.1rem; font-weight:800; color:var(--text-main);">${nextMatch.opponent}</span>
+                                <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.95rem;">VS</span>
+                                <div>
+                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${nextMatch.opponent}</span>
                                 </div>
                             </div>
 
                             <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">
-                                📍 ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • 📅 ${nextMatchInfo.formattedDate}
+                                ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • ${nextMatchInfo.formattedDate}
                             </div>
                         </div>
 
-                        <div style="border-left:1px solid var(--border-color); padding-left:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:180px;">
-                            <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:800; letter-spacing:0.05em; margin-bottom:6px;">Cuenta Atrás</span>
-                            <div style="font-family:var(--font-mono); font-weight:800; font-size:1.5rem; color:var(--club-primary); text-shadow:0 0 10px rgba(var(--club-primary-rgb),0.4);">
+                        <div style="border-left:1px solid var(--border-color); padding-left:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:160px;">
+                            <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:800; margin-bottom:4px;">Cuenta Atrás</span>
+                            <div style="font-family:var(--font-mono); font-weight:800; font-size:1.4rem; color:var(--club-primary);">
                                 ${nextMatchInfo.countdownStr || 'Por disputar'}
                             </div>
                         </div>
@@ -229,22 +178,28 @@ export const MatchesView = {
                 </div>
 
                 <div class="matches-view-grid">
-                    <!-- Columna Izquierda: Calendario -->
+                    <!-- Columna Izquierda: Calendario (Comprimido por defecto) -->
                     <div>
-                        <h3 style="font-size:1.3rem; margin-bottom:16px; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em;">
-                            Calendario
-                        </h3>
-                        <div class="matches-list">
+                        <div id="toggle-calendar-btn" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px; transition:background 0.2s ease;">
+                            <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
+                                Calendario
+                            </h3>
+                            <span id="calendar-toggle-icon" style="font-size:0.8rem; color:var(--club-primary); font-weight:800; transition:transform 0.2s ease;">▼ Mostrar</span>
+                        </div>
+                        <div id="calendar-content-wrapper" class="matches-list" style="display:none;">
                             ${matchesListHtml}
                         </div>
                     </div>
 
-                    <!-- Columna Derecha: Clasificación -->
+                    <!-- Columna Derecha: Clasificación (Comprimida por defecto) -->
                     <div>
-                        <h3 style="font-size:1.3rem; margin-bottom:16px; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em;">
-                            Clasificación
-                        </h3>
-                        <div class="glass-card standings-table-wrapper">
+                        <div id="toggle-standings-btn" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px; transition:background 0.2s ease;">
+                            <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
+                                Clasificación
+                            </h3>
+                            <span id="standings-toggle-icon" style="font-size:0.8rem; color:var(--club-primary); font-weight:800; transition:transform 0.2s ease;">▼ Mostrar</span>
+                        </div>
+                        <div id="standings-content-wrapper" class="glass-card standings-table-wrapper" style="display:none; box-shadow:none !important; border-color:var(--border-color) !important;">
                             <table class="standings-table">
                                 <thead>
                                     <tr>
@@ -262,17 +217,6 @@ export const MatchesView = {
                                     ${standingsRowsHtml}
                                 </tbody>
                             </table>
-                            
-                            <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="display:inline-block; width:12px; height:12px; background:#00e676; border-radius:2px;"></span>
-                                    <span><strong>Posiciones 1º a 3º:</strong> Zona de Ascenso Directo ⬆️</span>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="display:inline-block; width:12px; height:12px; background:#ff4444; border-radius:2px;"></span>
-                                    <span><strong>Posiciones 13º y 14º:</strong> Zona de Descenso ⬇️</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -281,76 +225,250 @@ export const MatchesView = {
     },
 
     bindEvents() {
-        // Evento editar partido (solo admin)
-        document.querySelectorAll('.btn-edit-match').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const matchId = btn.getAttribute('data-id');
-                const match = teamData.matches.find(m => m.id == matchId);
-                if (!match) return;
+        // Evento clic en la tarjeta del partido para abrir vista emergente (modal)
+        document.querySelectorAll('.match-toggle-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-edit-match') || e.target.closest('.modal-overlay')) return;
+                const matchId = parseInt(card.getAttribute('data-match-id'));
+                const match = teamData.matches.find(m => m.id === matchId);
+                if (match) {
+                    this.openMatchDetailsModal(match);
+                }
+            });
+        });
 
-                const modalWrapper = document.createElement('div');
-                modalWrapper.className = 'modal-overlay active';
-                modalWrapper.id = 'edit-match-modal-overlay';
-                modalWrapper.innerHTML = `
-                    <div class="glass-card" style="max-width:500px; width:100%; padding:28px; position:relative; animation:slideUp 0.3s ease; box-sizing:border-box;">
-                        <button class="modal-close" id="close-edit-match-modal" style="position:absolute; top:14px; right:14px; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">✕</button>
-                        
-                        <h3 style="font-size:1.3rem; margin-bottom:6px; display:flex; align-items:center; gap:8px; font-family:var(--font-heading);">
-                            ✏️ Editar Partido
-                        </h3>
-                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">
-                            Modifica los datos del encuentro contra <strong>${match.opponent}</strong>
-                        </p>
+        // Plegar / Desplegar Calendario
+        const calBtn = document.getElementById('toggle-calendar-btn');
+        const calWrapper = document.getElementById('calendar-content-wrapper');
+        const calIcon = document.getElementById('calendar-toggle-icon');
 
-                        <form id="edit-match-form">
-                            <div style="display:flex; flex-direction:column; gap:14px;">
+        if (calBtn && calWrapper) {
+            calBtn.addEventListener('click', () => {
+                const isHidden = calWrapper.style.display === 'none';
+                calWrapper.style.display = isHidden ? 'grid' : 'none';
+                if (calIcon) calIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
+            });
+        }
+
+        // Plegar / Desplegar Clasificación
+        const stdBtn = document.getElementById('toggle-standings-btn');
+        const stdWrapper = document.getElementById('standings-content-wrapper');
+        const stdIcon = document.getElementById('standings-toggle-icon');
+
+        if (stdBtn && stdWrapper) {
+            stdBtn.addEventListener('click', () => {
+                const isHidden = stdWrapper.style.display === 'none';
+                stdWrapper.style.display = isHidden ? 'block' : 'none';
+                if (stdIcon) stdIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
+            });
+        }
+    },
+
+    // Vista Emergente (Modal Popup) con los Detalles del Partido
+    openMatchDetailsModal(match) {
+        const getTeamRankStr = (teamName) => {
+            const found = teamData.standings.find(s => s.name === teamName);
+            return found ? `${found.rank}º` : '-';
+        };
+
+        const ourRank = getTeamRankStr(teamData.clubName);
+        const oppRank = getTeamRankStr(match.opponent);
+        const { formattedDate, countdownStr } = formatMatchDateAndCountdown(match.date);
+        const stadiumName = match.stadium || "Campo Municipal La Camocha (Gijón)";
+        const isAdmin = AuthService.isAdmin();
+
+        // Extraer únicamente la Jornada para el título
+        let jornadaTitle = 'Jornada';
+        if (match.competition && match.competition.includes('Jornada')) {
+            jornadaTitle = match.competition.split('-').pop().trim();
+        } else if (match.jornada) {
+            jornadaTitle = `Jornada ${match.jornada}`;
+        }
+
+        const existingModal = document.getElementById('match-details-modal-overlay');
+        if (existingModal) existingModal.remove();
+
+        const modalWrapper = document.createElement('div');
+        modalWrapper.className = 'modal-overlay active';
+        modalWrapper.id = 'match-details-modal-overlay';
+        modalWrapper.innerHTML = `
+            <div class="glass-card" style="max-width:440px; width:100%; padding:20px; position:relative; animation:slideUp 0.2s ease; box-sizing:border-box; border:1.5px solid var(--club-primary); box-shadow:none !important; background:var(--bg-dark);">
+                <button class="modal-close" id="close-match-details-modal" style="position:absolute; top:12px; right:14px; background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; line-height:1;">✕</button>
+
+                <!-- CABECERA COMPACTA SIN ICONOS -->
+                <div style="font-size:0.8rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; padding-right:30px;">
+                    <span>${jornadaTitle}</span>
+                    <span style="color:var(--text-muted); font-family:var(--font-mono); font-size:0.75rem;">${formattedDate}</span>
+                </div>
+
+                <!-- ENFRENTAMIENTO SENCILLO -->
+                <div style="border:1px solid var(--border-color); border-radius:4px; padding:12px 10px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; text-align:center; background:rgba(255,255,255,0.02);">
+                    <!-- Local (Polígono Giants) -->
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                        ${ClubLogo.render(32)}
+                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.85rem; color:#fff; line-height:1.1;">${teamData.clubName}</span>
+                        <span style="font-size:0.68rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:700;">${ourRank} en tabla</span>
+                    </div>
+
+                    <!-- Marcador o VS -->
+                    <div style="padding:0 10px;">
+                        ${(match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) ? `
+                            <div style="font-size:1.8rem; font-weight:900; font-family:var(--font-mono); color:#fff; line-height:1;">
+                                ${match.ourScore} - ${match.opponentScore}
+                            </div>
+                            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); margin-top:3px; text-transform:uppercase;">
+                                ${match.outcome === 'win' ? 'Victoria' : match.outcome === 'loss' ? 'Derrota' : 'Empate'}
+                            </div>
+                        ` : `
+                            <div style="font-size:1.2rem; font-weight:800; color:var(--club-primary); font-family:var(--font-heading);">VS</div>
+                            ${countdownStr ? `<div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; margin-top:2px;">${countdownStr}</div>` : ''}
+                        `}
+                    </div>
+
+                    <!-- Rival -->
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.85rem; color:#fff; line-height:1.1;">${match.opponent}</span>
+                        <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">${oppRank} en tabla</span>
+                    </div>
+                </div>
+
+                <!-- GOLEADORES SI EXISTEN -->
+                ${(match.scorers && match.scorers.length > 0) ? `
+                    <div style="border:1px solid var(--border-color); padding:8px 10px; border-radius:4px; margin-bottom:10px; font-size:0.78rem;">
+                        <span style="color:var(--club-primary); font-weight:800;">Goleadores: </span>
+                        <span style="font-weight:700; color:#fff;">${
+                            match.scorers.map(s => {
+                                const p = teamData.players.find(pl => pl.id === s.playerId);
+                                return p ? `${p.name} (${s.goals})` : null;
+                            }).filter(Boolean).join(', ')
+                        }</span>
+                    </div>
+                ` : ''}
+
+                <!-- COMENTARIO DEL PRESIDENTE -->
+                <div style="border:1px solid var(--border-color); border-radius:4px; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.01);">
+                    <div style="font-size:0.72rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; margin-bottom:4px;">
+                        Comentario del Presidente
+                    </div>
+                    <div style="font-size:0.78rem; font-style:italic; color:#d0d0d0; line-height:1.35;">
+                        "${match.presidentComment || 'Confiamos plenamente en el trabajo del equipo para seguir luchando por cada punto.'}"
+                    </div>
+                </div>
+
+                <!-- ESTADIO ABAJO SIN LA PALABRA 'CAMPO' -->
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; border-top:1px solid var(--border-color); padding-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#fff; font-weight:800;">${stadiumName}</span>
+                    ${isAdmin ? `
+                        <button class="btn btn-secondary" id="btn-edit-from-modal" style="font-size:0.72rem; font-weight:700; padding:3px 8px;">
+                            Editar Partido
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modalWrapper);
+
+        const closeModal = () => modalWrapper.remove();
+        modalWrapper.querySelector('#close-match-details-modal').onclick = closeModal;
+        modalWrapper.onclick = (e) => { if (e.target === modalWrapper) closeModal(); };
+
+        if (isAdmin) {
+            const btnEdit = modalWrapper.querySelector('#btn-edit-from-modal');
+            if (btnEdit) {
+                btnEdit.onclick = () => {
+                    closeModal();
+                    this.openEditMatchModal(match);
+                };
+            }
+        }
+    },
+
+    openEditMatchModal(match) {
+        if (!match) return;
+
+        // Lista de equipos de la liga desde la clasificación y los partidos
+        const allOpponents = Array.from(new Set([
+            ...teamData.standings.filter(s => s.name !== teamData.clubName).map(s => s.name),
+            ...teamData.matches.map(m => m.opponent)
+        ])).sort();
+
+        const opponentOptionsHtml = allOpponents.map(name => `
+            <option value="${name}" ${name === match.opponent ? 'selected' : ''}>
+                ${name}
+            </option>
+        `).join('');
+
+        const stadiumOptionsHtml = (teamData.stadiums || [
+            { id: 1, name: "La Camocha" },
+            { id: 2, name: "La Braña" },
+            { id: 3, name: "La Inmaculada" }
+        ]).map(st => `
+            <option value="${st.name}" ${(!match.stadium && st.name === 'La Camocha') || (match.stadium && match.stadium.includes(st.name)) ? 'selected' : ''}>
+                ${st.name}
+            </option>
+        `).join('');
+
+        const modalWrapper = document.createElement('div');
+        modalWrapper.className = 'modal-overlay active';
+        modalWrapper.id = 'edit-match-modal-overlay';
+        modalWrapper.innerHTML = `
+            <div class="glass-card" style="max-width:500px; width:100%; padding:28px; position:relative; animation:slideUp 0.3s ease; box-sizing:border-box;">
+                <button class="modal-close" id="close-edit-match-modal" style="position:absolute; top:14px; right:14px; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">✕</button>
+                
+                <h3 style="font-size:1.3rem; margin-bottom:16px; font-family:var(--font-heading); color:#fff;">
+                    Editar Partido
+                </h3>
+
+                <form id="edit-match-form">
+                    <div style="display:flex; flex-direction:column; gap:14px;">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Rival</label>
+                            <select id="edit-opponent" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;" required>
+                                ${opponentOptionsHtml}
+                            </select>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Fecha y hora</label>
+                                <input type="datetime-local" id="edit-date" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.date && match.date.includes('T') ? match.date : '2026-05-28T20:30'}" required>
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Campo</label>
+                                <select id="edit-stadium" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;" required>
+                                    ${stadiumOptionsHtml}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:4px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Goles</span>
+                                <div id="auto-outcome-badge" style="font-size:0.75rem;"></div>
+                            </div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                                 <div>
-                                    <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Equipo Rival</label>
-                                    <input type="text" id="edit-opponent" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.opponent}" required>
+                                    <label style="font-size:0.75rem; color:var(--club-primary); font-weight:700; display:block; margin-bottom:4px;">Giants</label>
+                                    <input type="number" id="edit-our-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.ourScore !== undefined && match.ourScore !== null ? match.ourScore : ''}">
                                 </div>
-
-                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                                    <div>
-                                        <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Fecha y Hora (Calendario)</label>
-                                        <input type="datetime-local" id="edit-date" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.date && match.date.includes('T') ? match.date : '2026-05-28T20:30'}" required>
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Estado del Partido</label>
-                                        <select id="edit-type" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
-                                            <option value="next" ${match.type === 'next' ? 'selected' : ''}>🔥 Siguiente Partido</option>
-                                            <option value="past" ${match.type === 'past' ? 'selected' : ''}>✅ Jugado / Finalizado</option>
-                                            <option value="future" ${match.type === 'future' ? 'selected' : ''}>📅 Futuro / Programado</option>
-                                        </select>
-                                    </div>
-                                </div>
-
                                 <div>
-                                    <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Campo / Estadio</label>
-                                    <input type="text" id="edit-stadium" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.stadium || 'Campo Municipal La Camocha (Gijón)'}">
+                                    <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Rival</label>
+                                    <input type="number" id="edit-opp-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.opponentScore !== undefined && match.opponentScore !== null ? match.opponentScore : ''}">
                                 </div>
+                            </div>
+                        </div>
 
-                                <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:4px;">
-                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                        <span style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Resultado del Partido</span>
-                                        <div id="auto-outcome-badge" style="font-size:0.75rem;"></div>
-                                    </div>
-                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                                        <div>
-                                            <label style="font-size:0.75rem; color:var(--club-primary); font-weight:700; display:block; margin-bottom:4px;">Polígono Giants</label>
-                                            <input type="number" id="edit-our-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.ourScore !== undefined && match.ourScore !== null ? match.ourScore : 0}">
-                                        </div>
-                                        <div>
-                                            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Rival</label>
-                                            <input type="number" id="edit-opp-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.opponentScore !== undefined && match.opponentScore !== null ? match.opponentScore : 0}">
-                                        </div>
-                                    </div>
-                                </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Comentario del presidente</label>
+                            <textarea id="edit-president-comment" class="form-input" rows="2" style="width:100%; padding:8px 10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; font-family:var(--font-main); font-size:0.8rem;" placeholder="Escribe la opinión o comentario del presidente sobre el encuentro...">${match.presidentComment || ''}</textarea>
+                        </div>
 
-                                <!-- Acta del Partido: Estadísticas por Jugador -->
-                                <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:12px; border-radius:4px;">
-                                    <div style="font-size:0.82rem; font-weight:700; color:var(--text-main); margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">
-                                        Acta de Jugadores (Goles, Asistencias y Tarjetas)
-                                    </div>
+                        <!-- Goles, asistencias y tarjetas -->
+                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:12px; border-radius:4px;">
+                            <div style="font-size:0.82rem; font-weight:700; color:var(--text-main); margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">
+                                Goles, asistencias y tarjetas
+                            </div>
                                     <div style="max-height:220px; overflow-y:auto; padding-right:4px;">
                                         <table style="width:100%; font-size:0.72rem; border-collapse:collapse;">
                                             <thead>
@@ -455,28 +573,51 @@ export const MatchesView = {
 
                     const newOpponent = document.getElementById('edit-opponent').value.trim();
                     const newDate = document.getElementById('edit-date').value.trim();
-                    const newType = document.getElementById('edit-type').value;
                     const newStadium = document.getElementById('edit-stadium').value.trim();
-                    const ourScore = parseInt(document.getElementById('edit-our-score').value) || 0;
-                    const oppScore = parseInt(document.getElementById('edit-opp-score').value) || 0;
+                    const newPresidentComment = document.getElementById('edit-president-comment').value.trim();
+                    
+                    const ourScoreRaw = document.getElementById('edit-our-score').value.trim();
+                    const oppScoreRaw = document.getElementById('edit-opp-score').value.trim();
+                    const hasScore = ourScoreRaw !== '' || oppScoreRaw !== '';
 
                     match.opponent = newOpponent || match.opponent;
                     match.date = newDate || match.date;
-                    match.type = newType;
                     match.stadium = newStadium;
+                    match.presidentComment = newPresidentComment;
 
-                    // Detección automática del resultado según los goles
-                    match.ourScore = ourScore;
-                    match.opponentScore = oppScore;
-                    if (ourScore > oppScore) {
-                        match.outcome = 'win';
-                    } else if (ourScore < oppScore) {
-                        match.outcome = 'loss';
+                    // Detección automática del estado del partido según si tiene resultado
+                    if (hasScore) {
+                        const ourScore = parseInt(ourScoreRaw) || 0;
+                        const oppScore = parseInt(oppScoreRaw) || 0;
+                        match.type = 'past';
+                        match.ourScore = ourScore;
+                        match.opponentScore = oppScore;
+                        match.goalsGiants = ourScore;
+                        match.goalsOpponent = oppScore;
+                        if (ourScore > oppScore) {
+                            match.outcome = 'win';
+                            match.isWin = true;
+                        } else if (ourScore < oppScore) {
+                            match.outcome = 'loss';
+                            match.isWin = false;
+                        } else {
+                            match.outcome = 'draw';
+                            match.isWin = false;
+                        }
                     } else {
-                        match.outcome = 'draw';
+                        match.type = 'future';
+                        match.ourScore = undefined;
+                        match.opponentScore = undefined;
+                        match.goalsGiants = undefined;
+                        match.goalsOpponent = undefined;
+                        match.outcome = undefined;
+                        match.isWin = false;
                     }
 
-                    // Acumular estadísticas individuales a los jugadores
+                    // Acumular estadísticas individuales a los jugadores y actualizar el acta del partido
+                    const newScorers = [];
+                    const newAssists = [];
+
                     teamData.players.forEach(p => {
                         const playedCb = modalWrapper.querySelector(`.match-p-played[data-player-id="${p.id}"]`);
                         const goalsIn = modalWrapper.querySelector(`.match-p-goals[data-player-id="${p.id}"]`);
@@ -492,6 +633,9 @@ export const MatchesView = {
                         const redsVal = redsIn ? parseInt(redsIn.value) || 0 : 0;
                         const bluesVal = bluesIn ? parseInt(bluesIn.value) || 0 : 0;
 
+                        if (goalsVal > 0) newScorers.push({ playerId: p.id, goals: goalsVal });
+                        if (assistsVal > 0) newAssists.push({ playerId: p.id, assists: assistsVal });
+
                         if (isPlayed || goalsVal > 0 || assistsVal > 0 || yellowsVal > 0 || redsVal > 0 || bluesVal > 0) {
                             p.stats = p.stats || { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 };
                             p.stats.matches = (p.stats.matches || 0) + 1;
@@ -506,6 +650,9 @@ export const MatchesView = {
                             else if (match.outcome === 'loss') p.stats.losses = (p.stats.losses || 0) + 1;
                         }
                     });
+
+                    match.scorers = newScorers;
+                    match.assists = newAssists;
 
                     // Actualizar clasificación de la liga
                     const ourTeamInStandings = teamData.standings.find(s => s.name === teamData.clubName);
@@ -528,8 +675,6 @@ export const MatchesView = {
                     closeModal();
                     state.notify();
                 });
-            });
-        });
     }
 };
 

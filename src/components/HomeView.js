@@ -181,7 +181,7 @@ export const HomeView = {
         const channels = [
             { id: "news",       title: "Noticias",       emoji: "📰" },
             { id: "squad",      title: "Plantilla",      emoji: "🏃" },
-            { id: "matches",    title: "Partidos",       emoji: "⚽" },
+            { id: "matches",    title: "Temporada",      emoji: "⚽" },
             { id: "sponsors",   title: "Patrocinadores", emoji: "🤝" },
             { id: "multimedia", title: "Media",          emoji: "📸" },
             ...(isAdmin ? [{ id: "games", title: "Juegos", emoji: "🎮" }] : [])

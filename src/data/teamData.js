@@ -190,70 +190,159 @@ export const teamData = {
         }
     ],
 
-    // Historial y Próximos Partidos (Inicio de Temporada en Octubre 2026)
+    // Historial y Próximos Partidos (13 Jornadas oficiales)
     matches: [
         {
             id: 101,
-            type: "next",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 1",
             opponent: "Gijón United",
             opponentEmoji: "🔴",
-            date: "2026-10-01T20:30",
+            date: "2026-09-05T18:00",
             stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true
+            isHome: true,
+            ourScore: 4,
+            opponentScore: 2,
+            goalsGiants: 4,
+            goalsOpponent: 2,
+            outcome: "win",
+            isWin: true,
+            scorers: [
+                { playerId: 12, goals: 2 },
+                { playerId: 6, goals: 2 }
+            ],
+            assists: [
+                { playerId: 5, assists: 2 },
+                { playerId: 11, assists: 1 }
+            ]
         },
         {
             id: 102,
-            type: "future",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 2",
             opponent: "Desatascos Pelayo",
             opponentEmoji: "🛠️",
-            date: "2026-10-08T20:30",
-            isHome: true
+            date: "2026-09-12T19:30",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: true,
+            ourScore: 3,
+            opponentScore: 1,
+            goalsGiants: 3,
+            goalsOpponent: 1,
+            outcome: "win",
+            isWin: true,
+            scorers: [
+                { playerId: 10, goals: 1 },
+                { playerId: 9, goals: 1 },
+                { playerId: 12, goals: 1 }
+            ],
+            assists: [
+                { playerId: 6, assists: 1 },
+                { playerId: 7, assists: 1 }
+            ]
         },
         {
             id: 103,
-            type: "future",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 3",
             opponent: "Aston Birra",
             opponentEmoji: "🍺",
-            date: "2026-10-15T20:30",
-            isHome: false
+            date: "2026-09-19T17:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: false,
+            ourScore: 2,
+            opponentScore: 2,
+            goalsGiants: 2,
+            goalsOpponent: 2,
+            outcome: "draw",
+            isWin: false,
+            scorers: [
+                { playerId: 7, goals: 1 },
+                { playerId: 8, goals: 1 }
+            ],
+            assists: [
+                { playerId: 3, assists: 1 }
+            ]
         },
         {
             id: 104,
-            type: "future",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 4",
             opponent: "Mesón el Refugio",
             opponentEmoji: "🍷",
-            date: "2026-10-22T20:30",
-            isHome: true
+            date: "2026-09-26T18:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: true,
+            ourScore: 5,
+            opponentScore: 1,
+            goalsGiants: 5,
+            goalsOpponent: 1,
+            outcome: "win",
+            isWin: true,
+            scorers: [
+                { playerId: 17, goals: 3 },
+                { playerId: 16, goals: 2 }
+            ],
+            assists: [
+                { playerId: 11, assists: 2 },
+                { playerId: 12, assists: 2 }
+            ]
         },
         {
             id: 105,
-            type: "future",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 5",
             opponent: "Casa Toni",
             opponentEmoji: "🏠",
-            date: "2026-10-29T20:30",
-            isHome: false
+            date: "2026-10-03T19:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: false,
+            ourScore: 1,
+            opponentScore: 2,
+            goalsGiants: 1,
+            goalsOpponent: 2,
+            outcome: "loss",
+            isWin: false,
+            scorers: [
+                { playerId: 11, goals: 1 }
+            ],
+            assists: [
+                { playerId: 5, assists: 1 }
+            ]
         },
         {
             id: 106,
-            type: "future",
+            type: "past",
             competition: "Liga F7 Gijón - Jornada 6",
             opponent: "Samara FC",
             opponentEmoji: "⚡",
-            date: "2026-11-05T20:30",
-            isHome: true
+            date: "2026-10-10T20:30",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: true,
+            ourScore: 4,
+            opponentScore: 0,
+            goalsGiants: 4,
+            goalsOpponent: 0,
+            outcome: "win",
+            isWin: true,
+            scorers: [
+                { playerId: 17, goals: 2 },
+                { playerId: 12, goals: 1 },
+                { playerId: 18, goals: 1 }
+            ],
+            assists: [
+                { playerId: 16, assists: 2 },
+                { playerId: 6, assists: 1 }
+            ]
         },
         {
             id: 107,
-            type: "future",
+            type: "next",
             competition: "Liga F7 Gijón - Jornada 7",
             opponent: "Puntolab",
             opponentEmoji: "🔬",
-            date: "2026-11-12T20:30",
+            date: "2026-10-18T19:30",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: false
         },
         {
@@ -262,7 +351,8 @@ export const teamData = {
             competition: "Liga F7 Gijón - Jornada 8",
             opponent: "Leyendas Retiradas",
             opponentEmoji: "👑",
-            date: "2026-11-19T20:30",
+            date: "2026-10-25T18:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: true
         },
         {
@@ -271,7 +361,8 @@ export const teamData = {
             competition: "Liga F7 Gijón - Jornada 9",
             opponent: "El Equipo A",
             opponentEmoji: "🚐",
-            date: "2026-11-26T20:30",
+            date: "2026-11-01T17:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: false
         },
         {
@@ -280,7 +371,8 @@ export const teamData = {
             competition: "Liga F7 Gijón - Jornada 10",
             opponent: "Monos del Norte",
             opponentEmoji: "🐒",
-            date: "2026-12-03T20:30",
+            date: "2026-11-08T19:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: true
         },
         {
@@ -289,7 +381,8 @@ export const teamData = {
             competition: "Liga F7 Gijón - Jornada 11",
             opponent: "Monsters United",
             opponentEmoji: "👾",
-            date: "2026-12-10T20:30",
+            date: "2026-11-15T18:30",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: false
         },
         {
@@ -298,8 +391,19 @@ export const teamData = {
             competition: "Liga F7 Gijón - Jornada 12",
             opponent: "Chatarrería Cebrián",
             opponentEmoji: "⚙️",
-            date: "2026-12-17T20:30",
+            date: "2026-11-22T20:00",
+            stadium: "Campo Municipal La Camocha (Gijón)",
             isHome: true
+        },
+        {
+            id: 113,
+            type: "future",
+            competition: "Liga F7 Gijón - Jornada 13",
+            opponent: "Rayo La Arena",
+            opponentEmoji: "⚡",
+            date: "2026-11-29T17:30",
+            stadium: "Campo Municipal La Camocha (Gijón)",
+            isHome: false
         }
     ],
 
@@ -356,6 +460,13 @@ export const teamData = {
         { id: 309, name: "TRM Sports", logo: "👕", isTrmSports: true, desc: "Equipaciones deportivas personalizadas para clubes que quieren diferenciarse." },
         { id: 310, name: "Soho Bar", logo: "🍸", isSohoBar: true, desc: "Bar musical desde 1992, especialidad pop español de los 80 y actual." },
         { id: 311, name: "Pastur", logo: "🏠", isPastur: true, desc: "Especialistas en Construcción, Reforma y Aislamiento de Tejados y Cubiertas Tradicionales." }
+    ],
+
+    // Terrenos de juego oficiales (Base de datos de Campos)
+    stadiums: [
+        { id: 1, name: "La Camocha" },
+        { id: 2, name: "La Braña" },
+        { id: 3, name: "La Inmaculada" }
     ],
 
     // Multimedia (Fotos y Videos)
@@ -444,6 +555,12 @@ fetch('./src/data/sponsors.json?t=' + Date.now()).then(r => r.json()).then(data 
     if (Array.isArray(data) && data.length > 0) {
         teamData.sponsors = data;
         localStorage.setItem(SPONSORS_STORAGE_KEY, JSON.stringify(teamData.sponsors));
+    }
+}).catch(() => {});
+
+fetch('./src/data/stadiums.json?t=' + Date.now()).then(r => r.json()).then(data => {
+    if (Array.isArray(data) && data.length > 0) {
+        teamData.stadiums = data;
     }
 }).catch(() => {});
 
