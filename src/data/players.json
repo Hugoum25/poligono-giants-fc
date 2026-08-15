@@ -6,15 +6,15 @@
     "position": "Portero",
     "category": "porteros",
     "stats": {
-      "matches": 9,
+      "matches": 0,
       "goals": 0,
       "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 7,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 24
@@ -27,15 +27,15 @@
     "position": "Defensa",
     "category": "defensas",
     "stats": {
-      "matches": 9,
-      "goals": 1,
-      "assists": 3,
-      "yellowCards": 2,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 7,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 25
@@ -57,15 +57,15 @@
     "position": "Defensa",
     "category": "defensas",
     "stats": {
-      "matches": 6,
+      "matches": 0,
       "goals": 0,
-      "assists": 1,
-      "yellowCards": 1,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 23
@@ -78,15 +78,15 @@
     "position": "Defensa",
     "category": "defensas",
     "stats": {
-      "matches": 5,
+      "matches": 0,
       "goals": 0,
       "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
-      "blueCards": 1,
-      "wins": 4,
+      "blueCards": 0,
+      "wins": 0,
       "draws": 0,
-      "losses": 1
+      "losses": 0
     },
     "info": {
       "age": 24
@@ -108,15 +108,15 @@
     "position": "Carrilero",
     "category": "carrileros",
     "stats": {
-      "matches": 10,
-      "goals": 1,
-      "assists": 3,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 7,
-      "draws": 2,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 23
@@ -138,15 +138,15 @@
     "position": "Carrilero",
     "category": "carrileros",
     "stats": {
-      "matches": 9,
-      "goals": 2,
-      "assists": 4,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 6,
-      "draws": 2,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 25
@@ -159,15 +159,15 @@
     "position": "Carrilero",
     "category": "carrileros",
     "stats": {
-      "matches": 7,
-      "goals": 1,
-      "assists": 2,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 5,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 23
@@ -189,15 +189,15 @@
     "position": "Carrilero - Defensa",
     "category": "carrileros",
     "stats": {
-      "matches": 6,
+      "matches": 0,
       "goals": 0,
-      "assists": 1,
-      "yellowCards": 1,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 24
@@ -210,15 +210,15 @@
     "position": "Medio",
     "category": "medios",
     "stats": {
-      "matches": 8,
-      "goals": 2,
-      "assists": 2,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 6,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 26
@@ -231,15 +231,15 @@
     "position": "Medio - Delantero",
     "category": "medios",
     "stats": {
-      "matches": 10,
-      "goals": 4,
-      "assists": 3,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
-      "blueCards": 1,
-      "wins": 7,
-      "draws": 2,
-      "losses": 1
+      "blueCards": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 24
@@ -261,15 +261,15 @@
     "position": "Medio",
     "category": "medios",
     "stats": {
-      "matches": 10,
-      "goals": 3,
-      "assists": 6,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 7,
-      "draws": 2,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 25
@@ -282,15 +282,15 @@
     "position": "Medio - Delantero / Capitán",
     "category": "medios",
     "stats": {
-      "matches": 10,
-      "goals": 8,
-      "assists": 9,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
-      "blueCards": 1,
-      "wins": 7,
-      "draws": 2,
-      "losses": 1
+      "blueCards": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 27
@@ -303,15 +303,15 @@
     "position": "Medio",
     "category": "medios",
     "stats": {
-      "matches": 6,
-      "goals": 1,
-      "assists": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 22
@@ -324,15 +324,15 @@
     "position": "Medio",
     "category": "medios",
     "stats": {
-      "matches": 5,
+      "matches": 0,
       "goals": 0,
-      "assists": 2,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
+      "wins": 0,
       "draws": 0,
-      "losses": 1
+      "losses": 0
     },
     "info": {
       "age": 23
@@ -345,15 +345,15 @@
     "position": "Medio",
     "category": "medios",
     "stats": {
-      "matches": 6,
-      "goals": 1,
-      "assists": 1,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 25
@@ -366,15 +366,15 @@
     "position": "Delantero",
     "category": "delanteros",
     "stats": {
-      "matches": 9,
-      "goals": 6,
-      "assists": 4,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 6,
-      "draws": 2,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 24
@@ -387,15 +387,15 @@
     "position": "Delantero",
     "category": "delanteros",
     "stats": {
-      "matches": 10,
-      "goals": 12,
-      "assists": 5,
-      "yellowCards": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
+      "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 7,
-      "draws": 2,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 26
@@ -408,15 +408,15 @@
     "position": "Delantero",
     "category": "delanteros",
     "stats": {
-      "matches": 6,
-      "goals": 3,
-      "assists": 1,
+      "matches": 0,
+      "goals": 0,
+      "assists": 0,
       "yellowCards": 0,
       "redCards": 0,
       "blueCards": 0,
-      "wins": 4,
-      "draws": 1,
-      "losses": 1
+      "wins": 0,
+      "draws": 0,
+      "losses": 0
     },
     "info": {
       "age": 21

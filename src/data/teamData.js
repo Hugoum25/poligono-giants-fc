@@ -17,7 +17,7 @@ export const teamData = {
             position: "Portero",
             category: "porteros",
             emoji: "🧤",
-            stats: { matches: 9, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 7, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
         {
@@ -27,7 +27,7 @@ export const teamData = {
             position: "Defensa",
             category: "defensas",
             emoji: "🛡️",
-            stats: { matches: 8, goals: 1, assists: 1, yellowCards: 2, redCards: 0, blueCards: 0, wins: 6, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 25 }
         },
         {
@@ -37,7 +37,7 @@ export const teamData = {
             position: "Defensa",
             category: "defensas",
             emoji: "🛡️",
-            stats: { matches: 6, goals: 0, assists: 1, yellowCards: 1, redCards: 0, blueCards: 0, wins: 4, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 23 }
         },
         {
@@ -47,7 +47,7 @@ export const teamData = {
             position: "Defensa",
             category: "defensas",
             emoji: "🛡️",
-            stats: { matches: 5, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 1, wins: 4, draws: 0, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
         {
@@ -57,7 +57,7 @@ export const teamData = {
             position: "Carrilero",
             category: "carrileros",
             emoji: "⚡",
-            stats: { matches: 10, goals: 1, assists: 3, yellowCards: 1, redCards: 0, blueCards: 0, wins: 7, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 23 }
         },
         {
@@ -67,7 +67,7 @@ export const teamData = {
             position: "Carrilero",
             category: "carrileros",
             emoji: "🏃",
-            stats: { matches: 9, goals: 2, assists: 4, yellowCards: 0, redCards: 0, blueCards: 0, wins: 6, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 25 }
         },
         {
@@ -77,7 +77,7 @@ export const teamData = {
             position: "Carrilero",
             category: "carrileros",
             emoji: "⚡",
-            stats: { matches: 7, goals: 1, assists: 2, yellowCards: 0, redCards: 0, blueCards: 0, wins: 5, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 23 }
         },
         {
@@ -87,7 +87,7 @@ export const teamData = {
             position: "Carrilero - Defensa",
             category: "carrileros",
             emoji: "🎯",
-            stats: { matches: 6, goals: 0, assists: 1, yellowCards: 1, redCards: 0, blueCards: 0, wins: 4, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
         {
@@ -97,7 +97,7 @@ export const teamData = {
             position: "Medio",
             category: "medios",
             emoji: "🧠",
-            stats: { matches: 8, goals: 2, assists: 2, yellowCards: 1, redCards: 0, blueCards: 0, wins: 6, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 26 }
         },
         {
@@ -107,7 +107,7 @@ export const teamData = {
             position: "Medio - Delantero",
             category: "medios",
             emoji: "🔥",
-            stats: { matches: 10, goals: 4, assists: 3, yellowCards: 1, redCards: 0, blueCards: 1, wins: 7, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
         {
@@ -117,7 +117,7 @@ export const teamData = {
             position: "Medio",
             category: "medios",
             emoji: "🪄",
-            stats: { matches: 10, goals: 3, assists: 6, yellowCards: 0, redCards: 0, blueCards: 0, wins: 7, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 25 }
         },
         {
@@ -127,7 +127,7 @@ export const teamData = {
             position: "Medio - Delantero / Capitán",
             category: "medios",
             emoji: "🪄",
-            stats: { matches: 10, goals: 8, assists: 9, yellowCards: 1, redCards: 0, blueCards: 1, wins: 7, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 27 }
         },
         {
@@ -137,7 +137,7 @@ export const teamData = {
             position: "Medio",
             category: "medios",
             emoji: "⚽",
-            stats: { matches: 6, goals: 1, assists: 1, yellowCards: 0, redCards: 0, blueCards: 0, wins: 4, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 22 }
         },
         {
@@ -147,7 +147,7 @@ export const teamData = {
             position: "Medio",
             category: "medios",
             emoji: "🎯",
-            stats: { matches: 5, goals: 0, assists: 2, yellowCards: 0, redCards: 0, blueCards: 0, wins: 4, draws: 0, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 23 }
         },
         {
@@ -157,7 +157,7 @@ export const teamData = {
             position: "Medio",
             category: "medios",
             emoji: "⚽",
-            stats: { matches: 6, goals: 1, assists: 1, yellowCards: 1, redCards: 0, blueCards: 0, wins: 4, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 25 }
         },
         {
@@ -167,7 +167,7 @@ export const teamData = {
             position: "Delantero",
             category: "delanteros",
             emoji: "⚡",
-            stats: { matches: 9, goals: 6, assists: 4, yellowCards: 1, redCards: 0, blueCards: 0, wins: 6, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
         {
@@ -177,7 +177,7 @@ export const teamData = {
             position: "Delantero",
             category: "delanteros",
             emoji: "🔥",
-            stats: { matches: 10, goals: 12, assists: 5, yellowCards: 1, redCards: 0, blueCards: 0, wins: 7, draws: 2, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 26 }
         },
         {
@@ -187,7 +187,7 @@ export const teamData = {
             position: "Delantero",
             category: "delanteros",
             emoji: "🚀",
-            stats: { matches: 6, goals: 3, assists: 1, yellowCards: 0, redCards: 0, blueCards: 0, wins: 4, draws: 1, losses: 1 },
+            stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 21 }
         }
     ],
@@ -195,227 +195,144 @@ export const teamData = {
     // Historial y Próximos Partidos (13 Jornadas oficiales)
     matches: [
         {
-            id: 101,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 1",
-            opponent: "Gijón United",
-            opponentEmoji: "🔴",
-            date: "2026-09-05T18:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true,
-            ourScore: 4,
-            opponentScore: 2,
-            goalsGiants: 4,
-            goalsOpponent: 2,
-            outcome: "win",
-            isWin: true,
-            scorers: [
-                { playerId: 12, goals: 2 },
-                { playerId: 6, goals: 2 }
-            ],
-            assists: [
-                { playerId: 5, assists: 2 },
-                { playerId: 11, assists: 1 }
-            ]
+                "id": 101,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 1",
+                "opponent": "Gijón United",
+                "opponentEmoji": "🔴",
+                "date": "2026-09-05T18:00",
+                "stadium": "La Camocha",
+                "isHome": true
         },
         {
-            id: 102,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 2",
-            opponent: "Desatascos Pelayo",
-            opponentEmoji: "🛠️",
-            date: "2026-09-12T19:30",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true,
-            ourScore: 3,
-            opponentScore: 1,
-            goalsGiants: 3,
-            goalsOpponent: 1,
-            outcome: "win",
-            isWin: true,
-            scorers: [
-                { playerId: 10, goals: 1 },
-                { playerId: 9, goals: 1 },
-                { playerId: 12, goals: 1 }
-            ],
-            assists: [
-                { playerId: 6, assists: 1 },
-                { playerId: 7, assists: 1 }
-            ]
+                "id": 102,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 2",
+                "opponent": "Desatascos Pelayo",
+                "opponentEmoji": "🛠️",
+                "date": "2026-09-12T19:30",
+                "stadium": "La Camocha",
+                "isHome": true
         },
         {
-            id: 103,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 3",
-            opponent: "Aston Birra",
-            opponentEmoji: "🍺",
-            date: "2026-09-19T17:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false,
-            ourScore: 2,
-            opponentScore: 2,
-            goalsGiants: 2,
-            goalsOpponent: 2,
-            outcome: "draw",
-            isWin: false,
-            scorers: [
-                { playerId: 7, goals: 1 },
-                { playerId: 8, goals: 1 }
-            ],
-            assists: [
-                { playerId: 3, assists: 1 }
-            ]
+                "id": 103,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 3",
+                "opponent": "Aston Birra",
+                "opponentEmoji": "🍺",
+                "date": "2026-09-19T17:30",
+                "stadium": "La Braña",
+                "isHome": false
         },
         {
-            id: 104,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 4",
-            opponent: "Mesón el Refugio",
-            opponentEmoji: "🍷",
-            date: "2026-09-26T18:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true,
-            ourScore: 5,
-            opponentScore: 1,
-            goalsGiants: 5,
-            goalsOpponent: 1,
-            outcome: "win",
-            isWin: true,
-            scorers: [
-                { playerId: 17, goals: 3 },
-                { playerId: 16, goals: 2 }
-            ],
-            assists: [
-                { playerId: 11, assists: 2 },
-                { playerId: 12, assists: 2 }
-            ]
+                "id": 104,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 4",
+                "opponent": "Mesón el Refugio",
+                "opponentEmoji": "🍖",
+                "date": "2026-09-26T20:00",
+                "stadium": "La Inmaculada",
+                "isHome": true
         },
         {
-            id: 105,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 5",
-            opponent: "Casa Toni",
-            opponentEmoji: "🏠",
-            date: "2026-10-03T19:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false,
-            ourScore: 1,
-            opponentScore: 2,
-            goalsGiants: 1,
-            goalsOpponent: 2,
-            outcome: "loss",
-            isWin: false,
-            scorers: [
-                { playerId: 11, goals: 1 }
-            ],
-            assists: [
-                { playerId: 5, assists: 1 }
-            ]
+                "id": 105,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 5",
+                "opponent": "Casa Toni",
+                "opponentEmoji": "🍕",
+                "date": "2026-10-03T18:30",
+                "stadium": "La Camocha",
+                "isHome": false
         },
         {
-            id: 106,
-            type: "past",
-            competition: "Liga F7 Gijón - Jornada 6",
-            opponent: "Samara FC",
-            opponentEmoji: "⚡",
-            date: "2026-10-10T20:30",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true,
-            ourScore: 4,
-            opponentScore: 0,
-            goalsGiants: 4,
-            goalsOpponent: 0,
-            outcome: "win",
-            isWin: true,
-            scorers: [
-                { playerId: 17, goals: 2 },
-                { playerId: 12, goals: 1 },
-                { playerId: 18, goals: 1 }
-            ],
-            assists: [
-                { playerId: 16, assists: 2 },
-                { playerId: 6, assists: 1 }
-            ]
+                "id": 106,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 6",
+                "opponent": "Samara FC",
+                "opponentEmoji": "⚽",
+                "date": "2026-10-10T19:00",
+                "stadium": "La Braña",
+                "isHome": true
         },
         {
-            id: 107,
-            type: "next",
-            competition: "Liga F7 Gijón - Jornada 7",
-            opponent: "Puntolab",
-            opponentEmoji: "🔬",
-            date: "2026-10-18T19:30",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false
+                "id": 107,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 7",
+                "opponent": "Puntolab",
+                "opponentEmoji": "🔬",
+                "date": "2026-10-17T18:00",
+                "stadium": "La Camocha",
+                "isHome": true
         },
         {
-            id: 108,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 8",
-            opponent: "Leyendas Retiradas",
-            opponentEmoji: "👑",
-            date: "2026-10-25T18:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true
+                "id": 108,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 8",
+                "opponent": "Leyendas Retiradas",
+                "opponentEmoji": "👑",
+                "date": "2026-10-24T20:00",
+                "stadium": "La Inmaculada",
+                "isHome": true
         },
         {
-            id: 109,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 9",
-            opponent: "El Equipo A",
-            opponentEmoji: "🚐",
-            date: "2026-11-01T17:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false
+                "id": 109,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 9",
+                "opponent": "El Equipo A",
+                "opponentEmoji": "🚐",
+                "date": "2026-11-01T17:00",
+                "stadium": "La Camocha",
+                "isHome": false
         },
         {
-            id: 110,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 10",
-            opponent: "Monos del Norte",
-            opponentEmoji: "🐒",
-            date: "2026-11-08T19:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true
+                "id": 110,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 10",
+                "opponent": "Monos del Norte",
+                "opponentEmoji": "🐒",
+                "date": "2026-11-08T19:00",
+                "stadium": "La Braña",
+                "isHome": true
         },
         {
-            id: 111,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 11",
-            opponent: "Monsters United",
-            opponentEmoji: "👾",
-            date: "2026-11-15T18:30",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false
+                "id": 111,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 11",
+                "opponent": "Monsters United",
+                "opponentEmoji": "👾",
+                "date": "2026-11-15T18:30",
+                "stadium": "La Camocha",
+                "isHome": false
         },
         {
-            id: 112,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 12",
-            opponent: "Chatarrería Cebrián",
-            opponentEmoji: "⚙️",
-            date: "2026-11-22T20:00",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: true
+                "id": 112,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 12",
+                "opponent": "Chatarrería Cebrián",
+                "opponentEmoji": "⚙️",
+                "date": "2026-11-22T20:00",
+                "stadium": "La Inmaculada",
+                "isHome": true
         },
         {
-            id: 113,
-            type: "future",
-            competition: "Liga F7 Gijón - Jornada 13",
-            opponent: "Rayo La Arena",
-            opponentEmoji: "⚡",
-            date: "2026-11-29T17:30",
-            stadium: "Campo Municipal La Camocha (Gijón)",
-            isHome: false
+                "id": 113,
+                "type": "future",
+                "competition": "Liga F7 Gijón - Jornada 13",
+                "opponent": "Rayo La Arena",
+                "opponentEmoji": "⚡",
+                "date": "2026-11-29T17:30",
+                "stadium": "La Camocha",
+                "isHome": false
         }
-    ],
+],
 
     // Clasificación de la Liga F7 Gijón (Tras 10 Jornadas)
     standings: [
-        { rank: 1,  name: "Polígono Giants",     played: 10, wins: 7, draws: 2, losses: 1, goalsDiff: 21, points: 23, isCurrent: true },
-        { rank: 2,  name: "Gijón United",         played: 10, wins: 7, draws: 0, losses: 3, goalsDiff: 14, points: 21, isCurrent: false },
-        { rank: 3,  name: "Desatascos Pelayo",    played: 10, wins: 6, draws: 2, losses: 2, goalsDiff: 10, points: 20, isCurrent: false },
-        { rank: 4,  name: "Aston Birra",          played: 10, wins: 5, draws: 3, losses: 2, goalsDiff: 7,  points: 18, isCurrent: false },
-        { rank: 5,  name: "Mesón el Refugio",     played: 10, wins: 5, draws: 1, losses: 4, goalsDiff: 4,  points: 16, isCurrent: false },
+        { rank: 1,  name: "Polígono Giants",     played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: true },
+        { rank: 2,  name: "Gijón United",         played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 3,  name: "Desatascos Pelayo",    played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 4,  name: "Aston Birra",          played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0,  points: 0, isCurrent: false },
+        { rank: 5,  name: "Mesón el Refugio",     played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0,  points: 0, isCurrent: false },
         { rank: 6,  name: "Casa Toni",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 7,  name: "Samara FC",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 8,  name: "Puntolab",             played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
@@ -489,8 +406,8 @@ export const teamData = {
 // PERSISTENCIA PERMANENTE EN DISCO Y LOCALSTORAGE
 // ----------------------------------------------------
 
-const MATCHES_STORAGE_KEY = 'fc_hub_matches_v1';
-const PLAYERS_STORAGE_KEY = 'fc_hub_players_v2';
+const MATCHES_STORAGE_KEY = 'fc_hub_matches_v2';
+const PLAYERS_STORAGE_KEY = 'fc_hub_players_v3';
 const NEWS_STORAGE_KEY = 'fc_hub_news_v1';
 const MEDIA_STORAGE_KEY = 'fc_hub_media_v1';
 const SPONSORS_STORAGE_KEY = 'fc_hub_sponsors_v1';
