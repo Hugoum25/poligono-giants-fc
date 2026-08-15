@@ -4,9 +4,10 @@
 
 import { state } from '../state.js';
 import { AuthService } from '../services/authService.js';
+import { GitHubSyncService } from '../services/githubSyncService.js';
 
 export const UserManagementModal = {
-    activeTab: 'logs', // 'logs', 'users', 'create'
+    activeTab: 'logs', // 'logs', 'users', 'create', 'github'
     isOpen: false,
 
     open() {
@@ -25,6 +26,7 @@ export const UserManagementModal = {
 
         const logs = AuthService.getLoginLogs();
         const users = AuthService.getUsers();
+        const hasGithubToken = GitHubSyncService.hasToken();
 
         const logsRowsHtml = logs.length > 0 ? logs.map(l => {
             const isSuccess = l.status === 'Éxito';
@@ -72,22 +74,25 @@ export const UserManagementModal = {
                     <button class="modal-close" id="close-user-mgmt-btn">✕</button>
                     
                     <h3 style="font-size:1.5rem; margin-bottom:4px; display:flex; align-items:center; gap:10px; font-family:var(--font-heading);">
-                        📜 Control de Usuarios & Registro de Logins
+                        📜 Control de Usuarios & Sincronización
                     </h3>
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">
-                        Supervisión de seguridad y gestión de cuentas registradas del club.
+                        Supervisión de seguridad, cuentas registradas y sincronización automática con GitHub/Vercel.
                     </p>
 
                     <!-- Pestañas del Panel -->
-                    <div class="squad-filters" style="margin-bottom:20px;">
+                    <div class="squad-filters" style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:8px;">
                         <button class="filter-btn ${this.activeTab === 'logs' ? 'active' : ''}" id="um-tab-logs">
-                            📜 Historial de Logins (${logs.length})
+                            📜 Historial (${logs.length})
                         </button>
                         <button class="filter-btn ${this.activeTab === 'users' ? 'active' : ''}" id="um-tab-users">
-                            👥 Usuarios Registrados (${users.length})
+                            👥 Usuarios (${users.length})
                         </button>
                         <button class="filter-btn ${this.activeTab === 'create' ? 'active' : ''}" id="um-tab-create">
                             ➕ Crear Usuario
+                        </button>
+                        <button class="filter-btn ${this.activeTab === 'github' ? 'active' : ''}" id="um-tab-github">
+                            🐙 GitHub Sync ${hasGithubToken ? '✅' : '⚙️'}
                         </button>
                     </div>
 
@@ -167,6 +172,36 @@ export const UserManagementModal = {
                             </button>
                         </form>
                     ` : ''}
+
+                    <!-- PESTAÑA 4: CONFIGURACIÓN DE GITHUB API SYNC -->
+                    ${this.activeTab === 'github' ? `
+                        <div style="background:var(--bg-dark); padding:20px; border-radius:4px; border:1px solid var(--border-color);">
+                            <h4 style="font-size:1.1rem; color:var(--club-primary); margin-bottom:8px; font-family:var(--font-heading);">
+                                🐙 Sincronización Automática vía GitHub API
+                            </h4>
+                            <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5; margin-bottom:16px;">
+                                Al guardar un Token Personal de GitHub, cualquier edición que realice un Admin desde su móvil (goles, resultados o plantilla) hará un <strong>commit automático a GitHub</strong> y Vercel actualizará la web global (<code>www.poligonogiants.com</code>) en 10 segundos.
+                            </p>
+
+                            <form id="form-github-token-admin">
+                                <div class="form-group" style="margin-bottom:14px;">
+                                    <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">GitHub Personal Access Token (PAT)</label>
+                                    <input type="password" id="um-github-token-input" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:#0b0d18; border:1px solid var(--border-color); color:#fff;" value="${GitHubSyncService.getToken()}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                                </div>
+
+                                <div style="display:flex; gap:10px;">
+                                    <button type="submit" class="btn btn-primary" style="flex:1; padding:10px; font-weight:700;">
+                                        💾 Guardar Token en este Dispositivo
+                                    </button>
+                                    ${hasGithubToken ? `
+                                        <button type="button" id="btn-remove-github-token" class="btn btn-secondary" style="padding:10px 14px; background:rgba(255,68,68,0.2); border-color:#ff4444; color:#ff4444;">
+                                            🗑️ Quitar
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </form>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -190,22 +225,32 @@ export const UserManagementModal = {
         const tabLogs = document.getElementById('um-tab-logs');
         const tabUsers = document.getElementById('um-tab-users');
         const tabCreate = document.getElementById('um-tab-create');
+        const tabGithub = document.getElementById('um-tab-github');
 
-        if (tabLogs) {
-            tabLogs.addEventListener('click', () => {
-                this.activeTab = 'logs';
-                state.notify();
+        if (tabLogs) tabLogs.addEventListener('click', () => { this.activeTab = 'logs'; state.notify(); });
+        if (tabUsers) tabUsers.addEventListener('click', () => { this.activeTab = 'users'; state.notify(); });
+        if (tabCreate) tabCreate.addEventListener('click', () => { this.activeTab = 'create'; state.notify(); });
+        if (tabGithub) tabGithub.addEventListener('click', () => { this.activeTab = 'github'; state.notify(); });
+
+        // Guardar Token de GitHub
+        const githubForm = document.getElementById('form-github-token-admin');
+        if (githubForm) {
+            githubForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const tokenInput = document.getElementById('um-github-token-input');
+                if (tokenInput) {
+                    GitHubSyncService.setToken(tokenInput.value);
+                    alert('✅ Token de GitHub guardado con éxito. Ahora todas las ediciones que hagas en la web actualizarán GitHub y Vercel automáticamente.');
+                    state.notify();
+                }
             });
         }
-        if (tabUsers) {
-            tabUsers.addEventListener('click', () => {
-                this.activeTab = 'users';
-                state.notify();
-            });
-        }
-        if (tabCreate) {
-            tabCreate.addEventListener('click', () => {
-                this.activeTab = 'create';
+
+        const btnRemoveToken = document.getElementById('btn-remove-github-token');
+        if (btnRemoveToken) {
+            btnRemoveToken.addEventListener('click', () => {
+                GitHubSyncService.setToken('');
+                alert('Token de GitHub eliminado.');
                 state.notify();
             });
         }

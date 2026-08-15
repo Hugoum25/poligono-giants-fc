@@ -2,6 +2,8 @@
    POLÍGONO GIANTS F7 - BASE DE DATOS Y ESTADÍSTICAS
    ========================================== */
 
+import { GitHubSyncService } from '../services/githubSyncService.js';
+
 export const teamData = {
     clubName: "Polígono Giants",
     clubNickname: "Los Rosinegros",
@@ -564,7 +566,7 @@ fetch('./src/data/stadiums.json?t=' + Date.now()).then(r => r.json()).then(data 
     }
 }).catch(() => {});
 
-// Funciones de guardado en localStorage + Disco permanente
+// Funciones de guardado en localStorage + Disco permanente + Sincronización GitHub
 export function saveMatchesToStorage() {
     try { localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(teamData.matches)); } catch (e) {}
     fetch('/api/save-matches', {
@@ -572,6 +574,7 @@ export function saveMatchesToStorage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.matches)
     }).catch(() => {});
+    GitHubSyncService.syncJsonFile('src/data/matches.json', teamData.matches, 'Actualización de partidos desde la web Admin');
 }
 
 export function savePlayersToStorage() {
@@ -581,6 +584,7 @@ export function savePlayersToStorage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.players)
     }).catch(() => {});
+    GitHubSyncService.syncJsonFile('src/data/players.json', teamData.players, 'Actualización de plantilla desde la web Admin');
 }
 
 export function saveNewsToStorage() {
@@ -590,6 +594,7 @@ export function saveNewsToStorage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.news)
     }).catch(() => {});
+    GitHubSyncService.syncJsonFile('src/data/news.json', teamData.news, 'Actualización de noticias desde la web Admin');
 }
 
 export function saveMediaToStorage() {
@@ -599,6 +604,7 @@ export function saveMediaToStorage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.media)
     }).catch(() => {});
+    GitHubSyncService.syncJsonFile('src/data/media.json', teamData.media, 'Actualización de media desde la web Admin');
 }
 
 export function saveSponsorsToStorage() {
@@ -608,5 +614,6 @@ export function saveSponsorsToStorage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teamData.sponsors)
     }).catch(() => {});
+    GitHubSyncService.syncJsonFile('src/data/sponsors.json', teamData.sponsors, 'Actualización de patrocinadores desde la web Admin');
 }
 
