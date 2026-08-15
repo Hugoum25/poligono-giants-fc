@@ -996,6 +996,15 @@ body.retro-mode-active .glass-card {
     .matches-list {
         grid-template-columns: 1fr !important;
     }
+    .tv-screen {
+        -webkit-overflow-scrolling: touch;
+    }
+    body.retro-mode-active .tv-screen::before {
+        display: none !important;
+    }
+    .awge-3d-wrapper, .glass-card, .tv-channel-card {
+        transform: translateZ(0);
+    }
 }
 .static-match-card {
     border-radius: 4px !important;

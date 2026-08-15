@@ -91,12 +91,15 @@ export const Obj3DViewer = {
         // Cancelar animación previa en este contenedor si existía
         this.destroy(containerEl);
 
+        const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+        const dpr = isMobile ? 1 : 1.5;
+
         const width = options.width || containerEl.clientWidth || 72;
         const height = options.height || containerEl.clientHeight || 72;
 
         const canvas = document.createElement('canvas');
-        canvas.width = width * 2; // Retina resolution
-        canvas.height = height * 2;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
         canvas.style.display = 'block';
@@ -110,6 +113,18 @@ export const Obj3DViewer = {
         let rotX = 0;
         let rotZ = 0;
         let animId = null;
+        let isVisible = true;
+
+        // IntersectionObserver para pausar renderizado cuando el ícono 3D sale de pantalla en móviles
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isVisible = entry.isIntersecting;
+                });
+            }, { threshold: 0.1 });
+            observer.observe(containerEl);
+            containerEl._observer = observer;
+        }
 
         // Si no está en caché, hacer fetch y guardar en caché para futuros re-renders instantáneos
         if (!modelData) {
@@ -130,6 +145,9 @@ export const Obj3DViewer = {
         // Bucle de renderizado Canvas 3D
         const renderFrame = () => {
             animId = requestAnimationFrame(renderFrame);
+
+            // Si está fuera de pantalla en móvil, no gastar batería ni CPU
+            if (!isVisible) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
