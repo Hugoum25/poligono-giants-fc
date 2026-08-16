@@ -434,9 +434,6 @@ try {
         const parsed = JSON.parse(savedPlayers);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.players = parsed;
     }
-}
-
-    const savedNews = localStorage.getItem(NEWS_STORAGE_KEY);
     if (savedNews) teamData.news = JSON.parse(savedNews);
 
     const savedMedia = localStorage.getItem(MEDIA_STORAGE_KEY);
