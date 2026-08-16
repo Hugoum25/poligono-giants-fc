@@ -78,7 +78,7 @@ export const SquadView = {
                 <div class="glass-card player-card-compact" data-player-id="${p.id}" style="padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; border-radius:6px; background:rgba(0,0,0,0.35); border:1px solid var(--border-color); position:relative; transition:all 0.2s ease;">
                     ${p.photo 
                         ? `<div style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:visible;">
-                             <img src="${p.photo}" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5));" />
+                             <img src="${p.photo}" class="player-png-feathered" />
                            </div>` 
                         : `<div style="width:38px; height:38px; border-radius:50%; background:rgba(255,42,133,0.15); border:1.5px solid var(--club-primary); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
                              ${p.position.includes('Portero') ? '🧤' : '👤'}
@@ -325,7 +325,7 @@ export const SquadView = {
                                 <div class="modal-player-header" style="text-align:center; padding:24px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                                     ${player.photo 
                                         ? `<div style="width:130px; height:130px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; overflow:visible;">
-                                             <img src="${player.photo}" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 4px 15px rgba(0,0,0,0.6));" />
+                                             <img src="${player.photo}" class="player-png-feathered" />
                                            </div>` 
                                         : `<div style="width:105px; height:105px; margin:0 auto 12px auto; border-radius:50%; background:rgba(255,42,133,0.15); border:3px solid var(--club-primary); display:flex; align-items:center; justify-content:center;">
                                              <span style="font-size:3.2rem;">${player.position.includes('Portero') ? '🧤' : '👤'}</span>
