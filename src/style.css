@@ -952,6 +952,29 @@ body.retro-mode-active .glass-card {
     grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
     gap: 10px;
 }
+
+/* En móvil: mantener nombres truncados para no romper el layout compacto */
+@media (max-width: 767px) {
+    .player-card-name, .player-card-nickname {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+}
+
+/* En ordenador / pantalla ancha: mostrar el nombre entero sin cortar nada */
+@media (min-width: 768px) {
+    .squad-grid {
+        grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+        gap: 14px;
+    }
+    .player-card-name, .player-card-nickname {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        word-break: break-word;
+    }
+}
 .player-card-compact:hover {
     border-color: var(--club-primary) !important;
     box-shadow: 4px 4px 0px #000 !important;

@@ -80,11 +80,11 @@ export const SquadView = {
                         ${p.photo ? `<img src="${p.photo}" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />` : (p.position.includes('Portero') ? '🧤' : '👤')}
                     </div>
 
-                    <div style="flex:1; min-width:0; overflow:hidden; display:flex; flex-direction:column; justify-content:center;">
-                        <div style="font-size:0.88rem; font-weight:800; color:var(--text-main); line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center;">
+                        <div class="player-card-name" style="font-size:0.88rem; font-weight:800; color:var(--text-main); line-height:1.2;">
                             ${p.name}
                         </div>
-                        ${p.nickname ? `<div style="font-size:0.7rem; color:var(--club-primary); font-weight:700; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">"${p.nickname}"</div>` : ''}
+                        ${p.nickname ? `<div class="player-card-nickname" style="font-size:0.7rem; color:var(--club-primary); font-weight:700; font-style:italic;">"${p.nickname}"</div>` : ''}
                     </div>
 
                     <div style="font-size:1.8rem; font-family:'VT323', var(--font-mono); font-weight:800; color:var(--club-primary); flex-shrink:0; line-height:1; letter-spacing:0.04em;">
