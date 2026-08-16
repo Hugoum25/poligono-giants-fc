@@ -76,9 +76,14 @@ export const SquadView = {
             const st = p.stats || { matches: 0, goals: 0, assists: 0 };
             return `
                 <div class="glass-card player-card-compact" data-player-id="${p.id}" style="padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; border-radius:6px; background:rgba(0,0,0,0.35); border:1px solid var(--border-color); position:relative; transition:all 0.2s ease;">
-                    <div style="width:38px; height:38px; border-radius:50%; background:#ffffff; border:1.5px solid var(--club-primary); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; overflow:hidden;">
-                        ${p.photo ? `<img src="${p.photo}" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />` : (p.position.includes('Portero') ? '🧤' : '👤')}
-                    </div>
+                    ${p.photo 
+                        ? `<div style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:visible;">
+                             <img src="${p.photo}" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5));" />
+                           </div>` 
+                        : `<div style="width:38px; height:38px; border-radius:50%; background:rgba(255,42,133,0.15); border:1.5px solid var(--club-primary); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+                             ${p.position.includes('Portero') ? '🧤' : '👤'}
+                           </div>`
+                    }
 
                     <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center;">
                         <div class="player-card-name" style="font-size:0.88rem; font-weight:800; color:var(--text-main); line-height:1.2;">
@@ -318,12 +323,14 @@ export const SquadView = {
                                 
                                 <!-- CABECERA: FOTO, NOMBRE, APODO Y POSICIÓN EN GRANDE -->
                                 <div class="modal-player-header" style="text-align:center; padding:24px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                                    <div style="width:115px; height:115px; margin:0 auto 12px auto; border-radius:50%; background:#ffffff; border:3px solid var(--club-primary); display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 0 25px rgba(var(--club-primary-rgb),0.4);">
-                                        ${player.photo 
-                                            ? `<img src="${player.photo}" style="width:100%; height:100%; object-fit:contain; background:#ffffff;" />` 
-                                            : `<span style="font-size:3.2rem;">${player.position.includes('Portero') ? '🧤' : '👤'}</span>`
-                                        }
-                                    </div>
+                                    ${player.photo 
+                                        ? `<div style="width:130px; height:130px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; overflow:visible;">
+                                             <img src="${player.photo}" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 4px 15px rgba(0,0,0,0.6));" />
+                                           </div>` 
+                                        : `<div style="width:105px; height:105px; margin:0 auto 12px auto; border-radius:50%; background:rgba(255,42,133,0.15); border:3px solid var(--club-primary); display:flex; align-items:center; justify-content:center;">
+                                             <span style="font-size:3.2rem;">${player.position.includes('Portero') ? '🧤' : '👤'}</span>
+                                           </div>`
+                                    }
 
                                     <h2 style="font-size:2rem; margin-top:4px; font-weight:800; color:var(--text-main); font-family:var(--font-heading);">${player.name}</h2>
                                     ${player.nickname ? `<div style="font-size:1.05rem; color:var(--club-primary); font-weight:800; font-style:italic; margin-top:2px;">"${player.nickname}"</div>` : ''}
