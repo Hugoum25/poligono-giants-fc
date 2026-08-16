@@ -410,7 +410,7 @@ export const teamData = {
 // ----------------------------------------------------
 
 const MATCHES_STORAGE_KEY = 'fc_hub_matches_v2';
-const PLAYERS_STORAGE_KEY = 'fc_hub_players_v7';
+const PLAYERS_STORAGE_KEY = 'fc_hub_players_v8';
 const NEWS_STORAGE_KEY = 'fc_hub_news_v1';
 const MEDIA_STORAGE_KEY = 'fc_hub_media_v1';
 const SPONSORS_STORAGE_KEY = 'fc_hub_sponsors_v1';
