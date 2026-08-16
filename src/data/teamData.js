@@ -104,7 +104,7 @@ export const teamData = {
         },
         {
             id: 10,
-            name: "Cristian Muñiz",
+            name: "Cristian Muñoz",
             number: 6,
             position: "Medio - Delantero",
             category: "medios",
@@ -366,7 +366,7 @@ export const teamData = {
         {
             id: 203,
             title: "Polígono Giants se clasifica a la gran Final Continental",
-            excerpt: "Con paradas decisivas de Miguel #13 y goles de Adrián #7 y Cristian Muñiz #6, el equipo se mete en la final.",
+            excerpt: "Con paradas decisivas de Miguel #13 y goles de Adrián #7 y Cristian Muñoz #6, el equipo se mete en la final.",
             emoji: "🏆",
             date: "Hace 3 días"
         }
@@ -410,7 +410,7 @@ export const teamData = {
 // ----------------------------------------------------
 
 const MATCHES_STORAGE_KEY = 'fc_hub_matches_v2';
-const PLAYERS_STORAGE_KEY = 'fc_hub_players_v8';
+const PLAYERS_STORAGE_KEY = 'fc_hub_players_v9';
 const NEWS_STORAGE_KEY = 'fc_hub_news_v1';
 const MEDIA_STORAGE_KEY = 'fc_hub_media_v1';
 const SPONSORS_STORAGE_KEY = 'fc_hub_sponsors_v1';
