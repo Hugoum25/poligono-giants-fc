@@ -109,6 +109,7 @@ export const teamData = {
             position: "Medio - Delantero",
             category: "medios",
             emoji: "🔥",
+            photo: "./src/assets/cristian.png",
             stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 24 }
         },
@@ -409,7 +410,7 @@ export const teamData = {
 // ----------------------------------------------------
 
 const MATCHES_STORAGE_KEY = 'fc_hub_matches_v2';
-const PLAYERS_STORAGE_KEY = 'fc_hub_players_v5';
+const PLAYERS_STORAGE_KEY = 'fc_hub_players_v7';
 const NEWS_STORAGE_KEY = 'fc_hub_news_v1';
 const MEDIA_STORAGE_KEY = 'fc_hub_media_v1';
 const SPONSORS_STORAGE_KEY = 'fc_hub_sponsors_v1';
