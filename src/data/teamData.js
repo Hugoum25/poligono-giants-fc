@@ -57,7 +57,7 @@ export const teamData = {
             position: "Carrilero",
             category: "carrileros",
             emoji: "⚡",
-            photo: "./src/assets/HUGO.png",
+            photo: "./src/assets/hugo.png",
             stats: { matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, blueCards: 0, wins: 0, draws: 0, losses: 0 },
             info: { age: 23 }
         },
