@@ -975,19 +975,20 @@ body.retro-mode-active .glass-card {
         word-break: break-word;
     }
 }
-/* Difuminado suave alrededor y desvanecido gradual por abajo para fotos PNG de jugadores */
+/* Fotos PNG de jugadores: Sin fondo ni brillo rosa, desvanecido limpio por abajo */
 .player-png-feathered {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 10px rgba(255, 42, 133, 0.25));
+    background: transparent !important;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
     -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0) 96%);
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0) 96%);
     transition: all 0.3s ease;
 }
 
 .player-card-compact:hover .player-png-feathered {
-    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(255, 42, 133, 0.5));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
 }
 
 .player-card-compact:hover {
