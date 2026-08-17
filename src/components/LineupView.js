@@ -367,22 +367,30 @@ export const LineupView = {
                     <div style="display:flex; justify-content:center; width:100%;">
                         <div id="social-lineup-card" style="width:100%; max-width:540px; background:linear-gradient(135deg, #0d0e15 0%, #161824 100%); border:2px solid var(--club-primary); border-radius:12px; padding:18px; box-shadow:none; position:relative; overflow:hidden; font-family:var(--font-heading); box-sizing:border-box;">
 
-                            <div style="position:relative; z-index:2; border-bottom:2px solid rgba(255,42,133,0.3); padding-bottom:12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                                <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:900; font-style:italic; color:rgba(255,255,255,0.22); font-family:var(--font-heading); user-select:none; pointer-events:none; z-index:1; letter-spacing:0.05em;">
-                                    VS
-                                </div>
+                            <!-- ENCABEZADO: VS, EQUIPOS Y BANNER DE HORA, DÍA Y CAMPO ARRIBA -->
+                            <div style="position:relative; z-index:2; border-bottom:2px solid rgba(255,42,133,0.3); padding-bottom:12px; margin-bottom:14px; display:flex; flex-direction:column; gap:10px;">
+                                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; position:relative;">
+                                    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:900; font-style:italic; color:rgba(255,255,255,0.22); font-family:var(--font-heading); user-select:none; pointer-events:none; z-index:1; letter-spacing:0.05em;">
+                                        VS
+                                    </div>
 
-                                <div style="display:flex; align-items:center; gap:8px; flex:1; position:relative; z-index:2;">
-                                    ${ClubLogo.render(42)}
-                                    <div style="text-align:left;">
-                                        <div style="font-size:1.05rem; font-weight:900; color:var(--club-primary); letter-spacing:0.03em; line-height:1.1;">POLÍGONO GIANTS F7</div>
-                                        <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; text-transform:uppercase; margin-top:2px;">${jornadaText}</div>
+                                    <div style="display:flex; align-items:center; gap:8px; flex:1; position:relative; z-index:2;">
+                                        ${ClubLogo.render(42)}
+                                        <div style="text-align:left;">
+                                            <div style="font-size:1.05rem; font-weight:900; color:var(--club-primary); letter-spacing:0.03em; line-height:1.1;">POLÍGONO GIANTS F7</div>
+                                            <div style="font-size:0.7rem; color:var(--text-muted); font-weight:800; text-transform:uppercase; margin-top:2px;">${jornadaText}</div>
+                                        </div>
+                                    </div>
+
+                                    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; flex:1; position:relative; z-index:2;">
+                                        <div style="font-size:0.82rem; font-weight:900; color:#fff; text-transform:uppercase; background:var(--club-primary); padding:2px 8px; border-radius:4px; display:inline-block; letter-spacing:0.05em;">CONVOCATORIA</div>
+                                        <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em;">${opponentName}</div>
                                     </div>
                                 </div>
 
-                                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; flex:1; position:relative; z-index:2;">
-                                    <div style="font-size:0.82rem; font-weight:900; color:#fff; text-transform:uppercase; background:var(--club-primary); padding:2px 8px; border-radius:4px; display:inline-block; letter-spacing:0.05em;">CONVOCATORIA</div>
-                                    <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em;">${opponentName}</div>
+                                <!-- HORA, DÍA Y CAMPO ARRIBA EN EL ENCABEZADO -->
+                                <div style="background:rgba(255,42,133,0.14); border:1px solid rgba(255,42,133,0.4); border-radius:6px; padding:6px 12px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:0.78rem; font-weight:900; color:#ffffff; letter-spacing:0.04em; text-transform:uppercase; text-shadow:0 1px 3px rgba(0,0,0,0.8);">
+                                    <span>🗓️ ${this.matchDateTime || 'SÁBADO 19:00 - CAMPO LOCAL'}</span>
                                 </div>
                             </div>
 
@@ -403,12 +411,8 @@ export const LineupView = {
 
                             ${benchSectionHtml}
 
-                            <div style="position:relative; z-index:2; margin-top:10px; border-top:1px solid rgba(255,42,133,0.25); padding-top:8px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.65rem; color:var(--text-muted);">
-                                    <span style="font-weight:700; color:var(--text-main);">${this.matchDateTime}</span>
-                                    <span style="font-weight:900; color:var(--club-primary); letter-spacing:0.04em;">#PoligonoGiants</span>
-                                </div>
-
+                            <!-- PIE DE CARTEL: SOLO PATROCINADORES Y #AguantePolígono -->
+                            <div style="position:relative; z-index:2; margin-top:12px; border-top:1px solid rgba(255,42,133,0.25); padding-top:10px; display:flex; flex-direction:column; gap:8px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 2px; gap:8px; flex-wrap:nowrap; overflow:hidden;">
                                     ${SponsorJaviFrey.render(22)}
                                     ${SponsorMambaShaved.render(22)}
@@ -417,6 +421,10 @@ export const LineupView = {
                                     ${SponsorTrmSports.render(22)}
                                     ${SponsorSohoBar.render(22)}
                                     ${SponsorPastur.render(22)}
+                                </div>
+
+                                <div style="text-align:center; font-size:0.82rem; font-weight:900; color:var(--club-primary); letter-spacing:0.08em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
+                                    #AguantePolígono
                                 </div>
                             </div>
                         </div>
