@@ -388,9 +388,9 @@ export const LineupView = {
                                     </div>
                                 </div>
 
-                                <!-- HORA, DÍA Y CAMPO ARRIBA EN EL ENCABEZADO -->
-                                <div style="background:rgba(255,42,133,0.14); border:1px solid rgba(255,42,133,0.4); border-radius:6px; padding:6px 12px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:0.78rem; font-weight:900; color:#ffffff; letter-spacing:0.04em; text-transform:uppercase; text-shadow:0 1px 3px rgba(0,0,0,0.8);">
-                                    <span>🗓️ ${this.matchDateTime || 'SÁBADO 19:00 - CAMPO LOCAL'}</span>
+                                <!-- HORA, DÍA Y CAMPO ARRIBA (TEXTO PURO SIN EMOJI NI RECUADRO ROSA) -->
+                                <div style="text-align:center; font-size:0.85rem; font-weight:800; color:#ffffff; letter-spacing:0.04em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.9); margin-top:2px;">
+                                    ${this.matchDateTime || 'SÁBADO 19:00 - CAMPO LOCAL'}
                                 </div>
                             </div>
 
@@ -423,8 +423,8 @@ export const LineupView = {
                                     ${SponsorPastur.render(22)}
                                 </div>
 
-                                <div style="text-align:center; font-size:0.82rem; font-weight:900; color:var(--club-primary); letter-spacing:0.08em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
-                                    #AguantePolígono
+                                <div style="text-align:center; font-size:0.85rem; font-weight:900; color:var(--club-primary); letter-spacing:0.08em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
+                                    #AguantePoligono
                                 </div>
                             </div>
                         </div>
