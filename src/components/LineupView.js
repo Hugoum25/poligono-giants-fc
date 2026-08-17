@@ -389,7 +389,7 @@ export const LineupView = {
                                 </div>
 
                                 <!-- HORA, DÍA Y CAMPO ARRIBA (TEXTO PURO SIN EMOJI NI RECUADRO ROSA) -->
-                                <div style="text-align:center; font-size:0.85rem; font-weight:800; color:#ffffff; letter-spacing:0.04em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.9); margin-top:2px;">
+                                <div id="ig-card-datetime-display" style="text-align:center; font-size:0.85rem; font-weight:800; color:#ffffff; letter-spacing:0.04em; text-transform:uppercase; text-shadow:0 2px 4px rgba(0,0,0,0.9); margin-top:2px;">
                                     ${this.matchDateTime || 'SÁBADO 19:00 - CAMPO LOCAL'}
                                 </div>
                             </div>
@@ -670,7 +670,10 @@ export const LineupView = {
             if (inputDateTime) {
                 inputDateTime.oninput = (e) => {
                     this.matchDateTime = e.target.value;
-                    state.notify();
+                    const displayEl = document.getElementById('ig-card-datetime-display');
+                    if (displayEl) {
+                        displayEl.textContent = e.target.value.trim() !== '' ? e.target.value : 'SÁBADO 19:00 - CAMPO LOCAL';
+                    }
                 };
             }
 
