@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Diego Mon",
+    "number": 1,
+    "role": "Muro del Club",
+    "stats": "Leyenda Inamovible • Guardameta Emblemático",
+    "desc": "Muro infranqueable bajo los palos del Polígono Giants FC y baluarte indiscutible en los momentos más exigentes del equipo.",
+    "photo": ""
+  },
+  {
+    "id": 2,
+    "name": "Víctor Álvarez",
+    "number": 8,
+    "role": "Capitán Histórico",
+    "stats": "Leyenda Inamovible • Liderazgo & Entrega",
+    "desc": "Líder emblemático en el terreno de juego, ejemplo constante de entrega, visión táctica y compromiso absoluto con el escudo.",
+    "photo": ""
+  },
+  {
+    "id": 3,
+    "name": "Hamza",
+    "number": 10,
+    "role": "Genio Táctico",
+    "stats": "Leyenda Inamovible • Magia en la Medular",
+    "desc": "Talento puro y visión de juego estelar. Autor de jugadas memorables en el centro del campo que marcaron la historia del club.",
+    "photo": ""
+  }
+]

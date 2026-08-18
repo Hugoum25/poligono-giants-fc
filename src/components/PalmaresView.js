@@ -5,9 +5,12 @@
 
 import { state } from '../state.js';
 import { ClubLogo } from './ClubLogo.js';
+import { teamData, saveLegendsToStorage } from '../data/teamData.js';
+import { AuthService } from '../services/authService.js';
 
 export const PalmaresView = {
     activeTab: 'palmares', // 'palmares' | 'leyendas' | 'camisetas'
+    editingLegend: null,
 
     seasons: [
         {
@@ -55,45 +58,7 @@ export const PalmaresView = {
         { title: "Campeón de Copa F7 Gijón", year: "2024", desc: "Primer título oficial conquistado tras una tanda de penaltis en la gran final." },
         { title: "Subcampeón de Liga Regular", year: "2025", desc: "Temporada récord de puntos luchando hasta la última jornada del torneo." },
         { title: "Trofeo Fair Play & Juego Limpio", year: "2024", desc: "Reconocimiento otorgado al comportamiento y deportividad del equipo." },
-        { title: "Bota de Oro de la Liga (Rodrigo Cuesta #9)", year: "2024", desc: "Máximo goleador absoluto del campeonato con 22 dianas anotadas." }
-    ],
-
-    legends: [
-        {
-            name: "Rubén Montes",
-            number: 10,
-            role: "Capitán Histórico",
-            stats: "48 Partidos • 18 Goles • 24 Asistencias",
-            desc: "Conductor del medio campo y referente moral. El primer gran líder que levantó el trofeo de Copa para el Polígono Giants FC."
-        },
-        {
-            name: "Rodrigo Cuesta",
-            number: 9,
-            role: "Máximo Goleador Histórico",
-            stats: "36 Partidos • 42 Goles • 8 Asistencias",
-            desc: "El ariete más letal que ha visto la liga. Promedio goleador demoledor y autor del hat-trick más rápido del club."
-        },
-        {
-            name: "Miguel",
-            number: 13,
-            role: "El Muro Rosinegro",
-            stats: "44 Partidos • 16 Puertas a Cero",
-            desc: "Héroe inolvidable en la tanda de penaltis de la final de Copa 2024. Paradas decisivas y liderazgo bajo los tres palos."
-        },
-        {
-            name: "Hugo Uría",
-            number: 2,
-            role: "El Rayo de la Banda",
-            stats: "46 Partidos • 12 Goles • 31 Asistencias",
-            desc: "Incombustible en el carril diestro. Despliegue físico, centros medidos y entrega total."
-        },
-        {
-            name: "Dario Álvarez",
-            number: 8,
-            role: "El Arquitecto del Juego",
-            stats: "38 Partidos • 14 Goles • 20 Asistencias",
-            desc: "Elegancia en la medular. Dominio del ritmo de juego y autor del gol decisivo en el derbi histórico 2025."
-        }
+        { title: "Bota de Oro de la Liga", year: "2024", desc: "Máximo goleador absoluto del campeonato con dianas anotadas." }
     ],
 
     renderPalmaresContent() {
@@ -141,9 +106,18 @@ export const PalmaresView = {
     },
 
     renderLeyendasContent() {
-        const legendsHtml = this.legends.map(l => `
-            <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between;">
+        const legendsList = teamData.legends || [];
+        const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
+
+        const legendsHtml = legendsList.map(l => `
+            <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between; position:relative;">
                 <div>
+                    ${l.photo ? `
+                        <div style="width:70px; height:70px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
+                            <img src="${l.photo}" class="player-png-feathered" draggable="false" style="max-height:100%; max-width:100%; object-fit:contain;" />
+                        </div>
+                    ` : ''}
+
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <h3 style="font-size:1.25rem; font-family:var(--font-heading); margin:0; color:var(--text-main); font-weight:800;">
                             ${l.name}
@@ -165,11 +139,28 @@ export const PalmaresView = {
                         ${l.desc}
                     </p>
                 </div>
+
+                ${isAdmin ? `
+                    <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; text-align:right;">
+                        <button class="btn btn-secondary btn-edit-legend" data-legend-id="${l.id}" style="font-size:0.75rem; padding:5px 12px; font-weight:800; color:var(--club-primary);">
+                            ✏️ Editar Leyenda
+                        </button>
+                    </div>
+                ` : ''}
             </div>
         `).join('');
 
         return `
             <div style="animation:fadeIn 0.3s ease;">
+                ${isAdmin ? `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; background:rgba(255,42,133,0.1); border:1px solid var(--club-primary); padding:10px 16px; border-radius:6px;">
+                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">👑 Panel de Administración de Leyendas del Club</span>
+                        <button class="btn btn-primary btn-add-legend" style="font-size:0.75rem; padding:6px 14px; font-weight:800;">
+                            ➕ Añadir Leyenda
+                        </button>
+                    </div>
+                ` : ''}
+
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
                     ${legendsHtml}
                 </div>
@@ -224,6 +215,76 @@ export const PalmaresView = {
         `;
     },
 
+    renderEditModal() {
+        if (!this.editingLegend) return '';
+        const l = this.editingLegend;
+
+        return `
+            <div class="modal-overlay active" id="legend-edit-modal-overlay">
+                <div class="glass-card" style="max-width:520px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
+                    <button class="modal-close" id="close-legend-modal-btn">✕</button>
+
+                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
+                        ⭐ ${l.id ? 'Editar Leyenda del Club' : 'Añadir Nueva Leyenda'}
+                    </h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">
+                        Modifica los datos que se mostrarán públicamente en la sección de Historia & Leyendas.
+                    </p>
+
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Nombre del Jugador</label>
+                                <input type="text" id="edit-legend-name" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.name || ''}" placeholder="Ej. Diego Mon">
+                            </div>
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Dorsal #</label>
+                                <input type="number" id="edit-legend-number" class="form-input" min="1" max="99" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.number || 1}">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Rol / Distinción</label>
+                            <input type="text" id="edit-legend-role" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.role || ''}" placeholder="Ej. Muro del Club / Capitán Histórico">
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Resumen / Estadísticas Destacadas</label>
+                            <input type="text" id="edit-legend-stats" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.stats || ''}" placeholder="Ej. 3 Temporadas • Portero Emblemático">
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Biografía / Descripción</label>
+                            <textarea id="edit-legend-desc" class="form-input" style="width:100%; height:80px; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; resize:vertical;">${l.desc || ''}</textarea>
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Foto PNG (Subir archivo)</label>
+                            <input type="file" id="edit-legend-file" accept="image/*" class="form-input" style="width:100%; padding:6px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:12px;">
+                            ${l.id ? `
+                                <button class="btn btn-secondary" id="btn-delete-legend" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; font-size:0.8rem; padding:8px 14px;">
+                                    🗑️ Eliminar
+                                </button>
+                            ` : '<div></div>'}
+                            
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-secondary" id="btn-cancel-legend" style="font-size:0.8rem; padding:8px 14px;">
+                                    Cancelar
+                                </button>
+                                <button class="btn btn-primary" id="btn-save-legend" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
+                                    💾 Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
     render() {
         let contentHtml = '';
         if (this.activeTab === 'leyendas') {
@@ -255,16 +316,16 @@ export const PalmaresView = {
                     Historia del Club
                 </h2>
 
-                <!-- Filtros sencillos estilo Plantilla (sin emoticonos) -->
                 <div class="squad-filters" style="margin-bottom:24px;">
                     ${tabsHtml}
                 </div>
 
-                <!-- Contenido Dinámico -->
                 <div>
                     ${contentHtml}
                 </div>
             </div>
+
+            ${this.renderEditModal()}
         `;
     },
 
@@ -278,5 +339,110 @@ export const PalmaresView = {
                 }
             };
         });
+
+        // Botón Editar Leyenda
+        document.querySelectorAll('.btn-edit-legend').forEach(btn => {
+            btn.onclick = () => {
+                const lId = parseInt(btn.getAttribute('data-legend-id'));
+                const legend = (teamData.legends || []).find(l => l.id === lId);
+                if (legend) {
+                    this.editingLegend = { ...legend };
+                    state.notify();
+                }
+            };
+        });
+
+        // Botón Añadir Leyenda
+        const btnAdd = document.querySelector('.btn-add-legend');
+        if (btnAdd) {
+            btnAdd.onclick = () => {
+                this.editingLegend = {
+                    id: 0,
+                    name: '',
+                    number: 1,
+                    role: '',
+                    stats: '',
+                    desc: '',
+                    photo: ''
+                };
+                state.notify();
+            };
+        }
+
+        // Modal de edición de leyenda
+        const closeBtn = document.getElementById('close-legend-modal-btn');
+        const cancelBtn = document.getElementById('btn-cancel-legend');
+        if (closeBtn) closeBtn.onclick = () => { this.editingLegend = null; state.notify(); };
+        if (cancelBtn) cancelBtn.onclick = () => { this.editingLegend = null; state.notify(); };
+
+        const saveBtn = document.getElementById('btn-save-legend');
+        if (saveBtn) {
+            saveBtn.onclick = () => {
+                const name = (document.getElementById('edit-legend-name')?.value || '').trim();
+                const number = parseInt(document.getElementById('edit-legend-number')?.value) || 1;
+                const role = (document.getElementById('edit-legend-role')?.value || '').trim();
+                const stats = (document.getElementById('edit-legend-stats')?.value || '').trim();
+                const desc = (document.getElementById('edit-legend-desc')?.value || '').trim();
+                const fileInput = document.getElementById('edit-legend-file');
+
+                if (!name) {
+                    alert("Por favor, introduce el nombre de la leyenda.");
+                    return;
+                }
+
+                const processSave = (photoVal) => {
+                    if (!teamData.legends) teamData.legends = [];
+
+                    if (this.editingLegend.id === 0) {
+                        const newId = teamData.legends.length > 0 ? Math.max(...teamData.legends.map(l => l.id)) + 1 : 1;
+                        teamData.legends.push({
+                            id: newId,
+                            name,
+                            number,
+                            role,
+                            stats,
+                            desc,
+                            photo: photoVal
+                        });
+                    } else {
+                        const target = teamData.legends.find(l => l.id === this.editingLegend.id);
+                        if (target) {
+                            target.name = name;
+                            target.number = number;
+                            target.role = role;
+                            target.stats = stats;
+                            target.desc = desc;
+                            if (photoVal) target.photo = photoVal;
+                        }
+                    }
+
+                    saveLegendsToStorage();
+                    this.editingLegend = null;
+                    state.notify();
+                };
+
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        processSave(e.target.result);
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    processSave(this.editingLegend.photo || '');
+                }
+            };
+        }
+
+        const deleteBtn = document.getElementById('btn-delete-legend');
+        if (deleteBtn) {
+            deleteBtn.onclick = () => {
+                if (confirm("¿Estás seguro de eliminar esta leyenda del club?")) {
+                    teamData.legends = (teamData.legends || []).filter(l => l.id !== this.editingLegend.id);
+                    saveLegendsToStorage();
+                    this.editingLegend = null;
+                    state.notify();
+                }
+            };
+        }
     }
 };

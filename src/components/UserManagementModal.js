@@ -5,9 +5,11 @@
 import { state } from '../state.js';
 import { AuthService } from '../services/authService.js';
 import { GitHubSyncService } from '../services/githubSyncService.js';
+import { teamData } from '../data/teamData.js';
+import { PalmaresView } from './PalmaresView.js';
 
 export const UserManagementModal = {
-    activeTab: 'logs', // 'logs', 'users', 'create', 'github'
+    activeTab: 'logs', // 'logs', 'users', 'create', 'github', 'legends'
     isOpen: false,
 
     open() {
@@ -77,13 +79,16 @@ export const UserManagementModal = {
                         📜 Control de Usuarios & Sincronización
                     </h3>
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">
-                        Supervisión de seguridad, cuentas registradas y sincronización automática con GitHub/Vercel.
+                        Supervisión de seguridad, cuentas registradas, leyendas del club y sincronización con GitHub/Vercel.
                     </p>
 
                     <!-- Pestañas del Panel -->
                     <div class="squad-filters" style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:8px;">
                         <button class="filter-btn ${this.activeTab === 'logs' ? 'active' : ''}" id="um-tab-logs">
                             📜 Historial (${logs.length})
+                        </button>
+                        <button class="filter-btn ${this.activeTab === 'legends' ? 'active' : ''}" id="um-tab-legends">
+                            ⭐ Leyendas (${(teamData.legends || []).length})
                         </button>
                         <button class="filter-btn ${this.activeTab === 'users' ? 'active' : ''}" id="um-tab-users">
                             👥 Usuarios (${users.length})
@@ -118,6 +123,30 @@ export const UserManagementModal = {
                                     ${logsRowsHtml}
                                 </tbody>
                             </table>
+                        </div>
+                    ` : ''}
+
+                    <!-- PESTAÑA LEYENDAS DEL CLUB -->
+                    ${this.activeTab === 'legends' ? `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Gestión de Leyendas del Club (Diego Mon, Víctor Álvarez, Hamza)</span>
+                            <button id="btn-admin-add-legend" class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem; font-weight:800;">
+                                ➕ Añadir Leyenda
+                            </button>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px; max-height:340px; overflow-y:auto;">
+                            ${(teamData.legends || []).map(l => `
+                                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:6px;">
+                                    <div>
+                                        <div style="font-weight:800; color:#fff; font-size:0.95rem;">${l.name} <span style="color:var(--club-primary);">#${l.number}</span></div>
+                                        <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">${l.role}</div>
+                                        <div style="font-size:0.72rem; color:var(--text-main); font-family:var(--font-mono); margin-top:2px;">${l.stats}</div>
+                                    </div>
+                                    <button class="btn-admin-edit-legend btn btn-secondary" data-legend-id="${l.id}" style="padding:6px 14px; font-size:0.75rem; font-weight:800; color:var(--club-primary);">
+                                        ✏️ Editar
+                                    </button>
+                                </div>
+                            `).join('')}
                         </div>
                     ` : ''}
 
@@ -223,14 +252,47 @@ export const UserManagementModal = {
 
         // Pestañas
         const tabLogs = document.getElementById('um-tab-logs');
+        const tabLegends = document.getElementById('um-tab-legends');
         const tabUsers = document.getElementById('um-tab-users');
         const tabCreate = document.getElementById('um-tab-create');
         const tabGithub = document.getElementById('um-tab-github');
 
         if (tabLogs) tabLogs.addEventListener('click', () => { this.activeTab = 'logs'; state.notify(); });
+        if (tabLegends) tabLegends.addEventListener('click', () => { this.activeTab = 'legends'; state.notify(); });
         if (tabUsers) tabUsers.addEventListener('click', () => { this.activeTab = 'users'; state.notify(); });
         if (tabCreate) tabCreate.addEventListener('click', () => { this.activeTab = 'create'; state.notify(); });
         if (tabGithub) tabGithub.addEventListener('click', () => { this.activeTab = 'github'; state.notify(); });
+
+        document.querySelectorAll('.btn-admin-edit-legend').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lId = parseInt(btn.getAttribute('data-legend-id'));
+                const legend = (teamData.legends || []).find(l => l.id === lId);
+                if (legend) {
+                    this.close();
+                    PalmaresView.activeTab = 'leyendas';
+                    PalmaresView.editingLegend = { ...legend };
+                    state.notify();
+                }
+            });
+        });
+
+        const btnAdminAddLegend = document.getElementById('btn-admin-add-legend');
+        if (btnAdminAddLegend) {
+            btnAdminAddLegend.addEventListener('click', () => {
+                this.close();
+                PalmaresView.activeTab = 'leyendas';
+                PalmaresView.editingLegend = {
+                    id: 0,
+                    name: '',
+                    number: 1,
+                    role: '',
+                    stats: '',
+                    desc: '',
+                    photo: ''
+                };
+                state.notify();
+            });
+        }
 
         // Guardar Token de GitHub
         const githubForm = document.getElementById('form-github-token-admin');

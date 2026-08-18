@@ -430,6 +430,8 @@ try {
     });
 } catch (e) {}
 
+const LEGENDS_STORAGE_KEY = 'fc_hub_legends_v1';
+
 // Cargar estado inicial desde localStorage
 try {
     const savedMatches = localStorage.getItem(MATCHES_STORAGE_KEY);
@@ -440,6 +442,8 @@ try {
         const parsed = JSON.parse(savedPlayers);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.players = parsed;
     }
+
+    const savedNews = localStorage.getItem(NEWS_STORAGE_KEY);
     if (savedNews) teamData.news = JSON.parse(savedNews);
 
     const savedMedia = localStorage.getItem(MEDIA_STORAGE_KEY);
@@ -453,8 +457,30 @@ try {
         const parsed = JSON.parse(savedSponsors);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.sponsors = parsed;
     }
+
+    const savedLegends = localStorage.getItem(LEGENDS_STORAGE_KEY);
+    if (savedLegends) {
+        const parsed = JSON.parse(savedLegends);
+        if (Array.isArray(parsed) && parsed.length > 0) teamData.legends = parsed;
+    }
 } catch (e) {
     console.error('[teamData] Error cargando inicial de localStorage:', e);
+}
+
+// Cargar leyendas desde archivo JSON en disco si existe
+fetch('./src/data/legends.json?t=' + Date.now()).then(r => r.json()).then(data => {
+    if (Array.isArray(data) && data.length > 0) {
+        teamData.legends = data;
+        localStorage.setItem(LEGENDS_STORAGE_KEY, JSON.stringify(teamData.legends));
+    }
+}).catch(() => {});
+
+export function saveLegendsToStorage() {
+    try {
+        localStorage.setItem(LEGENDS_STORAGE_KEY, JSON.stringify(teamData.legends));
+    } catch (e) {
+        console.error('[teamData] Error guardando leyendas:', e);
+    }
 }
 
 // Cargar versiones actualizadas desde archivos JSON en disco (prioridad disco)
