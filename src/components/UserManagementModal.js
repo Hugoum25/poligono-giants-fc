@@ -129,7 +129,7 @@ export const UserManagementModal = {
                     <!-- PESTAÑA LEYENDAS DEL CLUB -->
                     ${this.activeTab === 'legends' ? `
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Gestión de Leyendas del Club (Diego Mon, Víctor Álvarez, Hamza)</span>
+                            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Gestión de Leyendas del Club (Diego Mon, Víctor Álvarez, Hamza Marouane)</span>
                             <button id="btn-admin-add-legend" class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem; font-weight:800;">
                                 Añadir Leyenda
                             </button>

@@ -430,7 +430,7 @@ try {
     });
 } catch (e) {}
 
-const LEGENDS_STORAGE_KEY = 'fc_hub_legends_v6';
+const LEGENDS_STORAGE_KEY = 'fc_hub_legends_v7';
 
 // Cargar estado inicial desde localStorage
 try {
