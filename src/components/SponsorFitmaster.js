@@ -9,7 +9,7 @@ export const SponsorFitmaster = {
      */
     render(height = 56) {
         return `
-            <img src="./src/assets/fitmaster-logo.png" 
+            <img src="./src/assets/sponsors/fitmaster-logo.png" 
                  alt="Logo Patrocinador FITMASTER by PABLOALV" 
                  class="sponsor-fitmaster-logo" 
                  style="height:${height}px; width:auto; object-fit:contain; border-radius:4px; vertical-align:middle; display:inline-block;" />

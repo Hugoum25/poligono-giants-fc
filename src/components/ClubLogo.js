@@ -10,7 +10,7 @@ export const ClubLogo = {
      */
     render(size = 48, extraClass = '') {
         return `
-            <img src="./src/assets/club-logo.png" 
+            <img src="./src/assets/club/club-logo.png" 
                  alt="Escudo Oficial Polígono Giants F7" 
                  class="club-official-logo ${extraClass}" 
                  style="width:${size}px; height:${size}px; object-fit:contain; border-radius:50%; vertical-align:middle; display:inline-block;" />

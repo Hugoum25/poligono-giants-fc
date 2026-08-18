@@ -24,13 +24,13 @@ export const Icon3D = {
         const isHome = state.activePage === 'home';
         const speedVal = extraOptions.speed !== undefined ? extraOptions.speed : (isHome ? 0.02 : 0);
 
-        let objPath = './src/assets/media-icon.obj';
-        if (isMultimedia) objPath = './src/assets/media-icon.obj';
-        else if (isSquad) objPath = './src/assets/noticias-icon.obj';
-        else if (isNews) objPath = './src/assets/plantilla-icon.obj';
-        else if (isMatches) objPath = './src/assets/partidos-icon.obj';
-        else if (isSponsors) objPath = './src/assets/patrocinadores-icon.obj';
-        else if (isGames) objPath = './src/assets/juegos-icon.obj';
+        let objPath = './src/assets/icons/media-icon.obj';
+        if (isMultimedia) objPath = './src/assets/icons/media-icon.obj';
+        else if (isSquad) objPath = './src/assets/icons/noticias-icon.obj';
+        else if (isNews) objPath = './src/assets/icons/plantilla-icon.obj';
+        else if (isMatches) objPath = './src/assets/icons/partidos-icon.obj';
+        else if (isSponsors) objPath = './src/assets/icons/patrocinadores-icon.obj';
+        else if (isGames) objPath = './src/assets/icons/juegos-icon.obj';
 
         return `
             <div class="obj-3d-canvas-container" 

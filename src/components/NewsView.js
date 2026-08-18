@@ -138,7 +138,7 @@ export const NewsView = {
 
                             <div class="form-group" style="margin-bottom:14px;">
                                 <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">URL o Ruta de la Foto (Opcional)</label>
-                                <input type="text" id="new-news-image" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff;" placeholder="Ej: ./src/assets/match-photo-1.jpg o https://...">
+                                <input type="text" id="new-news-image" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff;" placeholder="Ej: ./src/assets/multimedia/match-photo-1.jpg o https://...">
                             </div>
 
                             <!-- 4. DESCRIPCIÓN Y CONTENIDO -->
@@ -198,7 +198,7 @@ export const NewsView = {
 
                                 <div class="form-group" style="margin-bottom:14px;">
                                     <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">URL o Ruta de la Foto</label>
-                                    <input type="text" id="edit-news-image" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff;" value="${editingNews.image || ''}" placeholder="Ej: ./src/assets/match-photo-1.jpg">
+                                    <input type="text" id="edit-news-image" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff;" value="${editingNews.image || ''}" placeholder="Ej: ./src/assets/multimedia/match-photo-1.jpg">
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:20px;">

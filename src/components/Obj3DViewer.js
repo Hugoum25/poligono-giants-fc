@@ -12,7 +12,7 @@ export const Obj3DViewer = {
     initAll() {
         requestAnimationFrame(() => {
             document.querySelectorAll('.obj-3d-canvas-container').forEach(el => {
-                const path = el.getAttribute('data-obj-path') || './src/assets/media-icon.obj';
+                const path = el.getAttribute('data-obj-path') || './src/assets/icons/media-icon.obj';
                 const width = parseInt(el.getAttribute('data-width')) || el.clientWidth || 72;
                 const height = parseInt(el.getAttribute('data-height')) || el.clientHeight || 72;
                 const speedAttr = el.getAttribute('data-rotate-speed');
@@ -85,7 +85,7 @@ export const Obj3DViewer = {
     /**
      * Inicializa un renderizador Canvas 3D de alta compatibilidad para cargar y rotar cualquier .obj
      */
-    init(containerEl, objPath = './src/assets/media-icon.obj', options = {}) {
+    init(containerEl, objPath = './src/assets/icons/media-icon.obj', options = {}) {
         if (!containerEl) return;
 
         // Cancelar animación previa en este contenedor si existía

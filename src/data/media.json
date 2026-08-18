@@ -13,7 +13,7 @@
     "title": "NUEVO FICHAJE: J. Epstein, dicen q es buen ojeador de filiales.",
     "category": "fichajes",
     "views": 0,
-    "image": "./src/assets/fichaje_1.jpg"
+    "image": "./src/assets/multimedia/fichaje_1.jpg"
   },
   {
     "id": 409,
@@ -21,7 +21,7 @@
     "title": "NUEVO FICHAJE: RHLM",
     "category": "fichajes",
     "views": 0,
-    "image": "./src/assets/fichaje_2.jpg"
+    "image": "./src/assets/multimedia/fichaje_2.jpg"
   },
   {
     "id": 401,
@@ -29,7 +29,7 @@
     "title": "Javi poniéndose guantes, no sé pa q. No es portero.",
     "category": "partidos",
     "views": 0,
-    "image": "./src/assets/match-photo-1.jpg"
+    "image": "./src/assets/multimedia/match-photo-1.jpg"
   },
   {
     "id": 402,
@@ -37,7 +37,7 @@
     "title": "Amañando el partido ofreciéndole 2.500.000 millones de Bolívares (2€).",
     "category": "partidos",
     "views": 0,
-    "image": "./src/assets/match-photo-2.jpg"
+    "image": "./src/assets/multimedia/match-photo-2.jpg"
   },
   {
     "id": 403,
@@ -45,7 +45,7 @@
     "title": "Rubo dándole a la bola. Fútbol vaya.",
     "category": "partidos",
     "views": 0,
-    "image": "./src/assets/match-photo-3.jpg"
+    "image": "./src/assets/multimedia/match-photo-3.jpg"
   },
   {
     "id": 404,
@@ -53,7 +53,7 @@
     "title": "No fue gol, tranquis.",
     "category": "partidos",
     "views": 0,
-    "image": "./src/assets/match-photo-4.jpg"
+    "image": "./src/assets/multimedia/match-photo-4.jpg"
   },
   {
     "id": 405,
@@ -61,7 +61,7 @@
     "title": "Gol venezolano.",
     "category": "partidos",
     "views": 0,
-    "videoUrl": "./src/assets/video_1.mp4"
+    "videoUrl": "./src/assets/multimedia/video_1.mp4"
   },
   {
     "id": 406,
@@ -69,7 +69,7 @@
     "title": "Asistencia de Javi, gol del larguero.",
     "category": "entrenos",
     "views": 0,
-    "videoUrl": "./src/assets/video_2.mp4"
+    "videoUrl": "./src/assets/multimedia/video_2.mp4"
   },
   {
     "id": 407,
@@ -77,6 +77,6 @@
     "title": "Un par de pases y gol; FÚTBOL.",
     "category": "entrevistas",
     "views": 0,
-    "videoUrl": "./src/assets/video_3.mp4"
+    "videoUrl": "./src/assets/multimedia/video_3.mp4"
   }
 ]

@@ -28,12 +28,12 @@ export const PalmaresView = {
             player: {
                 title: "Camiseta de Jugador",
                 isUpcoming: false,
-                img: "./src/assets/jersey_2025_2026.jpg"
+                img: "./src/assets/jerseys/jersey_2025_2026.jpg"
             },
             gk: {
                 title: "Camiseta de Portero",
                 isUpcoming: false,
-                img: "./src/assets/jersey_gk_2025_2026.jpg"
+                img: "./src/assets/jerseys/jersey_gk_2025_2026.jpg"
             }
         },
         {
@@ -41,12 +41,12 @@ export const PalmaresView = {
             player: {
                 title: "Camiseta de Jugador",
                 isUpcoming: false,
-                img: "./src/assets/jersey_2024_2025.jpg"
+                img: "./src/assets/jerseys/jersey_2024_2025.jpg"
             },
             gk: {
                 title: "Camiseta de Portero",
                 isUpcoming: false,
-                img: "./src/assets/jersey_gk_2024_2025.jpg"
+                img: "./src/assets/jerseys/jersey_gk_2024_2025.jpg"
             }
         }
     ],

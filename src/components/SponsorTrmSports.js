@@ -9,7 +9,7 @@ export const SponsorTrmSports = {
      */
     render(height = 32) {
         return `
-            <img src="./src/assets/trm-sports-logo.png" 
+            <img src="./src/assets/sponsors/trm-sports-logo.png" 
                  alt="Logo Patrocinador TRM Sports" 
                  class="sponsor-trm-logo" 
                  style="height:${height}px; width:auto; object-fit:contain; border-radius:4px; vertical-align:middle; display:inline-block; filter: invert(1) brightness(1.15);" />
