@@ -431,6 +431,7 @@ try {
 } catch (e) {}
 
 const LEGENDS_STORAGE_KEY = 'fc_hub_legends_v7';
+const TROPHIES_STORAGE_KEY = 'fc_hub_trophies_v1';
 
 // Cargar estado inicial desde localStorage
 try {
@@ -463,8 +464,30 @@ try {
         const parsed = JSON.parse(savedLegends);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.legends = parsed;
     }
+
+    const savedTrophies = localStorage.getItem(TROPHIES_STORAGE_KEY);
+    if (savedTrophies) {
+        const parsed = JSON.parse(savedTrophies);
+        if (Array.isArray(parsed) && parsed.length > 0) teamData.trophies = parsed;
+    }
 } catch (e) {
     console.error('[teamData] Error cargando inicial de localStorage:', e);
+}
+
+// Cargar premios/trofeos desde archivo JSON en disco si existe
+fetch('./src/data/trophies.json?t=' + Date.now()).then(r => r.json()).then(data => {
+    if (Array.isArray(data) && data.length > 0) {
+        teamData.trophies = data;
+        localStorage.setItem(TROPHIES_STORAGE_KEY, JSON.stringify(teamData.trophies));
+    }
+}).catch(() => {});
+
+export function saveTrophiesToStorage() {
+    try {
+        localStorage.setItem(TROPHIES_STORAGE_KEY, JSON.stringify(teamData.trophies));
+    } catch (e) {
+        console.error('[teamData] Error guardando premios:', e);
+    }
 }
 
 // Cargar leyendas desde archivo JSON en disco si existe

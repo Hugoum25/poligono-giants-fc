@@ -5,12 +5,13 @@
 
 import { state } from '../state.js';
 import { ClubLogo } from './ClubLogo.js';
-import { teamData, saveLegendsToStorage } from '../data/teamData.js';
+import { teamData, saveLegendsToStorage, saveTrophiesToStorage } from '../data/teamData.js';
 import { AuthService } from '../services/authService.js';
 
 export const PalmaresView = {
     activeTab: 'palmares', // 'palmares' | 'leyendas' | 'camisetas'
     editingLegend: null,
+    editingTrophy: null,
 
     seasons: [
         {
@@ -54,52 +55,104 @@ export const PalmaresView = {
         }
     ],
 
-    trophies: [
-        { title: "Campeón de Copa F7 Gijón", year: "2024", desc: "Primer título oficial conquistado tras una tanda de penaltis en la gran final." },
-        { title: "Subcampeón de Liga Regular", year: "2025", desc: "Temporada récord de puntos luchando hasta la última jornada del torneo." },
-        { title: "Trofeo Fair Play & Juego Limpio", year: "2024", desc: "Reconocimiento otorgado al comportamiento y deportividad del equipo." },
-        { title: "Bota de Oro de la Liga", year: "2024", desc: "Máximo goleador absoluto del campeonato." }
-    ],
-
     renderPalmaresContent() {
-        const trophiesHtml = this.trophies.map(t => `
-            <div class="glass-card" style="padding:16px 20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02);">
-                <div style="font-size:0.75rem; font-family:var(--font-mono); font-weight:700; color:var(--club-primary); text-transform:uppercase;">
-                    Temporada ${t.year}
+        const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
+
+        // 1. Estadísticas Generales del Equipo
+        const matchesList = teamData.matches || [];
+        const playedMatches = matchesList.filter(m => m.played || m.status === 'FINALIZADO' || (m.homeScore !== undefined && m.homeScore !== null));
+        
+        let totalMatches = playedMatches.length;
+        let wins = 0;
+        let draws = 0;
+        let losses = 0;
+
+        playedMatches.forEach(m => {
+            const isHome = (m.homeTeam || '').toLowerCase().includes('polígono') || (m.homeTeam || '').toLowerCase().includes('poligono');
+            const our = isHome ? (m.homeScore || 0) : (m.awayScore || 0);
+            const their = isHome ? (m.awayScore || 0) : (m.homeScore || 0);
+            if (our > their) wins++;
+            else if (our === their) draws++;
+            else losses++;
+        });
+
+        // 2. Premios por Temporada
+        const seasonKeys = ["2026 / 2027", "2025 / 2026", "2024 / 2025"];
+        const trophiesList = teamData.trophies || [];
+
+        const seasonsTrophiesHtml = seasonKeys.map(seasonName => {
+            const seasonTrophies = trophiesList.filter(t => t.season === seasonName);
+
+            const itemsHtml = seasonTrophies.length > 0 ? seasonTrophies.map(t => `
+                <div class="glass-card" style="padding:16px 20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <h4 style="font-size:1.05rem; font-family:var(--font-heading); margin:0 0 6px 0; color:var(--text-main); font-weight:800;">
+                            ${t.title}
+                        </h4>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin:0; line-height:1.4;">
+                            ${t.desc}
+                        </p>
+                    </div>
+
+                    ${isAdmin ? `
+                        <div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; text-align:right;">
+                            <button class="btn btn-secondary btn-edit-trophy" data-trophy-id="${t.id}" style="font-size:0.72rem; padding:4px 10px; font-weight:800; color:var(--club-primary);">
+                                Editar Premio
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
-                <h4 style="font-size:1.05rem; font-family:var(--font-heading); margin:4px 0 6px 0; color:var(--text-main); font-weight:800;">
-                    ${t.title}
-                </h4>
-                <p style="font-size:0.85rem; color:var(--text-muted); margin:0; line-height:1.4;">
-                    ${t.desc}
-                </p>
-            </div>
-        `).join('');
+            `).join('') : `
+                <div style="grid-column:1/-1; font-size:0.85rem; color:var(--text-muted); padding:12px; background:rgba(255,255,255,0.01); border-radius:4px;">
+                    No hay premios registrados en esta temporada.
+                </div>
+            `;
+
+            return `
+                <div style="margin-bottom:28px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+                        <h3 style="font-size:1.2rem; font-family:var(--font-heading); margin:0; color:var(--club-primary); font-weight:800; text-transform:uppercase;">
+                            Temporada ${seasonName}
+                        </h3>
+                        ${isAdmin ? `
+                            <button class="btn btn-secondary btn-add-trophy" data-season="${seasonName}" style="font-size:0.72rem; padding:4px 12px; font-weight:800;">
+                                Añadir Premio
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                        ${itemsHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
 
         return `
             <div style="animation:fadeIn 0.3s ease;">
-                <!-- Récords Globales -->
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:28px;">
-                    <div class="glass-card" style="padding:14px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Partidos Disputados</div>
-                        <div style="font-size:1.8rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">48</div>
+                <!-- Récords y Estadísticas Generales (Partidos Jugados, Victorias, Empates, Derrotas) -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:14px; margin-bottom:32px;">
+                    <div class="glass-card" style="padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Partidos Jugados</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">${totalMatches}</div>
                     </div>
-                    <div class="glass-card" style="padding:14px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Goles Anotados</div>
-                        <div style="font-size:1.8rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">142</div>
+                    <div class="glass-card" style="padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Victorias</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#00e676; font-weight:800; margin-top:4px;">${wins}</div>
                     </div>
-                    <div class="glass-card" style="padding:14px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Efectividad Victorias</div>
-                        <div style="font-size:1.8rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">68%</div>
+                    <div class="glass-card" style="padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Empates</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ffb300; font-weight:800; margin-top:4px;">${draws}</div>
                     </div>
-                    <div class="glass-card" style="padding:14px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Títulos y Reconocimientos</div>
-                        <div style="font-size:1.8rem; font-family:var(--font-heading); color:var(--club-primary); font-weight:800; margin-top:4px;">4</div>
+                    <div class="glass-card" style="padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Derrotas</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ff4444; font-weight:800; margin-top:4px;">${losses}</div>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:14px;">
-                    ${trophiesHtml}
+                <!-- Premios del Equipo Divididos por Temporadas -->
+                <div>
+                    ${seasonsTrophiesHtml}
                 </div>
             </div>
         `;
@@ -220,7 +273,7 @@ export const PalmaresView = {
         `;
     },
 
-    renderEditModal() {
+    renderEditLegendModal() {
         if (!this.editingLegend) return '';
         const l = this.editingLegend;
         const currentRole = l.role || 'Portero';
@@ -302,6 +355,61 @@ export const PalmaresView = {
         `;
     },
 
+    renderEditTrophyModal() {
+        if (!this.editingTrophy) return '';
+        const t = this.editingTrophy;
+
+        return `
+            <div class="modal-overlay active" id="trophy-edit-modal-overlay">
+                <div class="glass-card" style="max-width:480px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
+                    <button class="modal-close" id="close-trophy-modal-btn">✕</button>
+
+                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
+                        ${t.id ? 'Editar Premio' : 'Añadir Nuevo Premio'}
+                    </h3>
+
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:14px;">
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Temporada</label>
+                            <select id="edit-trophy-season" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
+                                <option value="2026 / 2027" ${t.season === '2026 / 2027' ? 'selected' : ''}>2026 / 2027</option>
+                                <option value="2025 / 2026" ${t.season === '2025 / 2026' ? 'selected' : ''}>2025 / 2026</option>
+                                <option value="2024 / 2025" ${t.season === '2024 / 2025' ? 'selected' : ''}>2024 / 2025</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Título del Premio</label>
+                            <input type="text" id="edit-trophy-title" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${t.title || ''}" placeholder="Ej. Campeón de Copa F7 Gijón">
+                        </div>
+
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Descripción / Detalle</label>
+                            <textarea id="edit-trophy-desc" class="form-input" style="width:100%; height:80px; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; resize:vertical;">${t.desc || ''}</textarea>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:12px;">
+                            ${t.id ? `
+                                <button class="btn btn-secondary" id="btn-delete-trophy" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; font-size:0.8rem; padding:8px 14px;">
+                                    Eliminar
+                                </button>
+                            ` : '<div></div>'}
+                            
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-secondary" id="btn-cancel-trophy" style="font-size:0.8rem; padding:8px 14px;">
+                                    Cancelar
+                                </button>
+                                <button class="btn btn-primary" id="btn-save-trophy" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
+                                    Guardar Premio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
     render() {
         let contentHtml = '';
         if (this.activeTab === 'leyendas') {
@@ -342,7 +450,8 @@ export const PalmaresView = {
                 </div>
             </div>
 
-            ${this.renderEditModal()}
+            ${this.renderEditLegendModal()}
+            ${this.renderEditTrophyModal()}
         `;
     },
 
@@ -357,7 +466,85 @@ export const PalmaresView = {
             };
         });
 
-        // Botón Editar Leyenda
+        // ------------------------------------
+        // EVENTOS GESTIÓN DE PREMIOS / TROFEOS
+        // ------------------------------------
+        document.querySelectorAll('.btn-edit-trophy').forEach(btn => {
+            btn.onclick = () => {
+                const tId = parseInt(btn.getAttribute('data-trophy-id'));
+                const trophy = (teamData.trophies || []).find(t => t.id === tId);
+                if (trophy) {
+                    this.editingTrophy = { ...trophy };
+                    state.notify();
+                }
+            };
+        });
+
+        document.querySelectorAll('.btn-add-trophy').forEach(btn => {
+            btn.onclick = () => {
+                const season = btn.getAttribute('data-season') || "2026 / 2027";
+                this.editingTrophy = {
+                    id: 0,
+                    season: season,
+                    title: '',
+                    desc: ''
+                };
+                state.notify();
+            };
+        });
+
+        const closeTrophyBtn = document.getElementById('close-trophy-modal-btn');
+        const cancelTrophyBtn = document.getElementById('btn-cancel-trophy');
+        if (closeTrophyBtn) closeTrophyBtn.onclick = () => { this.editingTrophy = null; state.notify(); };
+        if (cancelTrophyBtn) cancelTrophyBtn.onclick = () => { this.editingTrophy = null; state.notify(); };
+
+        const saveTrophyBtn = document.getElementById('btn-save-trophy');
+        if (saveTrophyBtn) {
+            saveTrophyBtn.onclick = () => {
+                const season = document.getElementById('edit-trophy-season')?.value || "2026 / 2027";
+                const title = (document.getElementById('edit-trophy-title')?.value || '').trim();
+                const desc = (document.getElementById('edit-trophy-desc')?.value || '').trim();
+
+                if (!title) {
+                    alert("Por favor, introduce el nombre del premio.");
+                    return;
+                }
+
+                if (!teamData.trophies) teamData.trophies = [];
+
+                if (this.editingTrophy.id === 0) {
+                    const newId = teamData.trophies.length > 0 ? Math.max(...teamData.trophies.map(t => t.id)) + 1 : 1;
+                    teamData.trophies.push({ id: newId, season, title, desc });
+                } else {
+                    const target = teamData.trophies.find(t => t.id === this.editingTrophy.id);
+                    if (target) {
+                        target.season = season;
+                        target.title = title;
+                        target.desc = desc;
+                    }
+                }
+
+                saveTrophiesToStorage();
+                this.editingTrophy = null;
+                state.notify();
+            };
+        }
+
+        const deleteTrophyBtn = document.getElementById('btn-delete-trophy');
+        if (deleteTrophyBtn) {
+            deleteTrophyBtn.onclick = () => {
+                if (confirm("¿Deseas eliminar este premio del palmarés?")) {
+                    teamData.trophies = (teamData.trophies || []).filter(t => t.id !== this.editingTrophy.id);
+                    saveTrophiesToStorage();
+                    this.editingTrophy = null;
+                    state.notify();
+                }
+            };
+        }
+
+        // ------------------------------------
+        // EVENTOS GESTIÓN DE LEYENDAS
+        // ------------------------------------
         document.querySelectorAll('.btn-edit-legend').forEach(btn => {
             btn.onclick = () => {
                 const lId = parseInt(btn.getAttribute('data-legend-id'));
@@ -369,10 +556,9 @@ export const PalmaresView = {
             };
         });
 
-        // Botón Añadir Leyenda
-        const btnAdd = document.querySelector('.btn-add-legend');
-        if (btnAdd) {
-            btnAdd.onclick = () => {
+        const btnAddLegend = document.querySelector('.btn-add-legend');
+        if (btnAddLegend) {
+            btnAddLegend.onclick = () => {
                 this.editingLegend = {
                     id: 0,
                     name: '',
@@ -387,15 +573,14 @@ export const PalmaresView = {
             };
         }
 
-        // Modal de edición de leyenda
-        const closeBtn = document.getElementById('close-legend-modal-btn');
-        const cancelBtn = document.getElementById('btn-cancel-legend');
-        if (closeBtn) closeBtn.onclick = () => { this.editingLegend = null; state.notify(); };
-        if (cancelBtn) cancelBtn.onclick = () => { this.editingLegend = null; state.notify(); };
+        const closeLegendBtn = document.getElementById('close-legend-modal-btn');
+        const cancelLegendBtn = document.getElementById('btn-cancel-legend');
+        if (closeLegendBtn) closeLegendBtn.onclick = () => { this.editingLegend = null; state.notify(); };
+        if (cancelLegendBtn) cancelLegendBtn.onclick = () => { this.editingLegend = null; state.notify(); };
 
-        const saveBtn = document.getElementById('btn-save-legend');
-        if (saveBtn) {
-            saveBtn.onclick = () => {
+        const saveLegendBtn = document.getElementById('btn-save-legend');
+        if (saveLegendBtn) {
+            saveLegendBtn.onclick = () => {
                 const name = (document.getElementById('edit-legend-name')?.value || '').trim();
                 const number = parseInt(document.getElementById('edit-legend-number')?.value) || 1;
                 const role = (document.getElementById('edit-legend-role')?.value || 'Portero');
@@ -454,9 +639,9 @@ export const PalmaresView = {
             };
         }
 
-        const deleteBtn = document.getElementById('btn-delete-legend');
-        if (deleteBtn) {
-            deleteBtn.onclick = () => {
+        const deleteLegendBtn = document.getElementById('btn-delete-legend');
+        if (deleteLegendBtn) {
+            deleteLegendBtn.onclick = () => {
                 if (confirm("¿Estás seguro de eliminar esta leyenda del club?")) {
                     teamData.legends = (teamData.legends || []).filter(l => l.id !== this.editingLegend.id);
                     saveLegendsToStorage();
