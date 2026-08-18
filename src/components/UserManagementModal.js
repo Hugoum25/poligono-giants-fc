@@ -137,7 +137,7 @@ export const UserManagementModal = {
                         <div style="display:flex; flex-direction:column; gap:8px; max-height:340px; overflow-y:auto;">
                             ${(teamData.legends || []).map(l => {
                                 const isPortero = (l.role || '').toLowerCase() === 'portero';
-                                const statsText = isPortero ? `${l.matches || 0} Partidos Totales` : `${l.matches || 0} Partidos Totales • ${l.goals || 0} Goles Totales`;
+                                const statsText = isPortero ? `${l.matches || 0} Partidos` : `${l.matches || 0} Partidos • ${l.goals || 0} Goles`;
                                 return `
                                     <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:6px;">
                                         <div>

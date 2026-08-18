@@ -111,7 +111,7 @@ export const PalmaresView = {
 
         const legendsHtml = legendsList.map(l => {
             const isPortero = (l.role || '').toLowerCase() === 'portero';
-            const statsText = isPortero ? `${l.matches || 0} Partidos Totales` : `${l.matches || 0} Partidos Totales • ${l.goals || 0} Goles Totales`;
+            const statsText = isPortero ? `${l.matches || 0} Partidos` : `${l.matches || 0} Partidos • ${l.goals || 0} Goles`;
 
             return `
                 <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between; position:relative;">
@@ -261,11 +261,11 @@ export const PalmaresView = {
 
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                             <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos Totales</label>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos</label>
                                 <input type="number" id="edit-legend-matches" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.matches || 0}">
                             </div>
                             <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles Totales (Si no es Portero)</label>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles (Si no es Portero)</label>
                                 <input type="number" id="edit-legend-goals" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.goals || 0}">
                             </div>
                         </div>
