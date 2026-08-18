@@ -131,22 +131,26 @@ export const UserManagementModal = {
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                             <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Gestión de Leyendas del Club (Diego Mon, Víctor Álvarez, Hamza)</span>
                             <button id="btn-admin-add-legend" class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem; font-weight:800;">
-                                ➕ Añadir Leyenda
+                                Añadir Leyenda
                             </button>
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px; max-height:340px; overflow-y:auto;">
-                            ${(teamData.legends || []).map(l => `
-                                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:6px;">
-                                    <div>
-                                        <div style="font-weight:800; color:#fff; font-size:0.95rem;">${l.name} <span style="color:var(--club-primary);">#${l.number}</span></div>
-                                        <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">${l.role}</div>
-                                        <div style="font-size:0.75rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:800; margin-top:2px;">⚽ ${l.goals || 0} Goles Totales</div>
+                            ${(teamData.legends || []).map(l => {
+                                const isPortero = (l.role || '').toLowerCase() === 'portero';
+                                const statsText = isPortero ? `${l.matches || 0} Partidos Totales` : `${l.matches || 0} Partidos Totales • ${l.goals || 0} Goles Totales`;
+                                return `
+                                    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:6px;">
+                                        <div>
+                                            <div style="font-weight:800; color:#fff; font-size:0.95rem;">${l.name} <span style="color:var(--club-primary);">#${l.number}</span></div>
+                                            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">${l.role}</div>
+                                            <div style="font-size:0.75rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:800; margin-top:2px;">${statsText}</div>
+                                        </div>
+                                        <button class="btn-admin-edit-legend btn btn-secondary" data-legend-id="${l.id}" style="padding:6px 14px; font-size:0.75rem; font-weight:800; color:var(--club-primary);">
+                                            Editar
+                                        </button>
                                     </div>
-                                    <button class="btn-admin-edit-legend btn btn-secondary" data-legend-id="${l.id}" style="padding:6px 14px; font-size:0.75rem; font-weight:800; color:var(--club-primary);">
-                                        ✏️ Editar
-                                    </button>
-                                </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     ` : ''}
 

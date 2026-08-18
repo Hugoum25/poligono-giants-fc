@@ -58,7 +58,7 @@ export const PalmaresView = {
         { title: "Campeón de Copa F7 Gijón", year: "2024", desc: "Primer título oficial conquistado tras una tanda de penaltis en la gran final." },
         { title: "Subcampeón de Liga Regular", year: "2025", desc: "Temporada récord de puntos luchando hasta la última jornada del torneo." },
         { title: "Trofeo Fair Play & Juego Limpio", year: "2024", desc: "Reconocimiento otorgado al comportamiento y deportividad del equipo." },
-        { title: "Bota de Oro de la Liga", year: "2024", desc: "Máximo goleador absoluto del campeonato con dianas anotadas." }
+        { title: "Bota de Oro de la Liga", year: "2024", desc: "Máximo goleador absoluto del campeonato." }
     ],
 
     renderPalmaresContent() {
@@ -109,54 +109,59 @@ export const PalmaresView = {
         const legendsList = teamData.legends || [];
         const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
 
-        const legendsHtml = legendsList.map(l => `
-            <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between; position:relative;">
-                <div>
-                    ${l.photo ? `
-                        <div style="width:70px; height:70px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
-                            <img src="${l.photo}" class="player-png-feathered" draggable="false" style="max-height:100%; max-width:100%; object-fit:contain;" />
+        const legendsHtml = legendsList.map(l => {
+            const isPortero = (l.role || '').toLowerCase() === 'portero';
+            const statsText = isPortero ? `${l.matches || 0} Partidos Totales` : `${l.matches || 0} Partidos Totales • ${l.goals || 0} Goles Totales`;
+
+            return `
+                <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+                    <div>
+                        ${l.photo ? `
+                            <div style="width:70px; height:70px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
+                                <img src="${l.photo}" class="player-png-feathered" draggable="false" style="max-height:100%; max-width:100%; object-fit:contain;" />
+                            </div>
+                        ` : ''}
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <h3 style="font-size:1.25rem; font-family:var(--font-heading); margin:0; color:var(--text-main); font-weight:800;">
+                                ${l.name}
+                            </h3>
+                            <span style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--club-primary);">
+                                #${l.number}
+                            </span>
+                        </div>
+
+                        <div style="font-size:0.85rem; font-family:var(--font-heading); color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:10px;">
+                            ${l.role}
+                        </div>
+
+                        <div style="font-size:0.85rem; font-family:var(--font-mono); color:var(--club-primary); font-weight:800; margin-bottom:10px;">
+                            ${statsText}
+                        </div>
+
+                        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin:0;">
+                            ${l.desc}
+                        </p>
+                    </div>
+
+                    ${isAdmin ? `
+                        <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; text-align:right;">
+                            <button class="btn btn-secondary btn-edit-legend" data-legend-id="${l.id}" style="font-size:0.75rem; padding:5px 12px; font-weight:800; color:var(--club-primary);">
+                                Editar Leyenda
+                            </button>
                         </div>
                     ` : ''}
-
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h3 style="font-size:1.25rem; font-family:var(--font-heading); margin:0; color:var(--text-main); font-weight:800;">
-                            ${l.name}
-                        </h3>
-                        <span style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--club-primary);">
-                            #${l.number}
-                        </span>
-                    </div>
-
-                    <div style="font-size:0.85rem; font-family:var(--font-heading); color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:10px;">
-                        ${l.role}
-                    </div>
-
-                    <div style="font-size:0.85rem; font-family:var(--font-mono); color:var(--club-primary); font-weight:800; margin-bottom:10px;">
-                        ⚽ ${l.goals || 0} Goles Totales
-                    </div>
-
-                    <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin:0;">
-                        ${l.desc}
-                    </p>
                 </div>
-
-                ${isAdmin ? `
-                    <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; text-align:right;">
-                        <button class="btn btn-secondary btn-edit-legend" data-legend-id="${l.id}" style="font-size:0.75rem; padding:5px 12px; font-weight:800; color:var(--club-primary);">
-                            ✏️ Editar Leyenda
-                        </button>
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         return `
             <div style="animation:fadeIn 0.3s ease;">
                 ${isAdmin ? `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; background:rgba(255,42,133,0.1); border:1px solid var(--club-primary); padding:10px 16px; border-radius:6px;">
-                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">👑 Panel de Administración de Leyendas del Club</span>
+                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">Panel de Administración de Leyendas del Club</span>
                         <button class="btn btn-primary btn-add-legend" style="font-size:0.75rem; padding:6px 14px; font-weight:800;">
-                            ➕ Añadir Leyenda
+                            Añadir Leyenda
                         </button>
                     </div>
                 ` : ''}
@@ -218,6 +223,7 @@ export const PalmaresView = {
     renderEditModal() {
         if (!this.editingLegend) return '';
         const l = this.editingLegend;
+        const currentRole = l.role || 'Portero';
 
         return `
             <div class="modal-overlay active" id="legend-edit-modal-overlay">
@@ -225,7 +231,7 @@ export const PalmaresView = {
                     <button class="modal-close" id="close-legend-modal-btn">✕</button>
 
                     <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
-                        ⭐ ${l.id ? 'Editar Leyenda del Club' : 'Añadir Nueva Leyenda'}
+                        ${l.id ? 'Editar Leyenda del Club' : 'Añadir Nueva Leyenda'}
                     </h3>
                     <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">
                         Modifica los datos que se mostrarán públicamente en la sección de Historia & Leyendas.
@@ -244,17 +250,28 @@ export const PalmaresView = {
                         </div>
 
                         <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Rol / Distinción</label>
-                            <input type="text" id="edit-legend-role" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.role || ''}" placeholder="Ej. Muro del Club / Capitán Histórico">
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Posición / Rol</label>
+                            <select id="edit-legend-role" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
+                                <option value="Portero" ${currentRole === 'Portero' ? 'selected' : ''}>Portero</option>
+                                <option value="Defensa" ${currentRole === 'Defensa' ? 'selected' : ''}>Defensa</option>
+                                <option value="Medio" ${currentRole === 'Medio' ? 'selected' : ''}>Medio</option>
+                                <option value="Delantero" ${currentRole === 'Delantero' ? 'selected' : ''}>Delantero</option>
+                            </select>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos Totales</label>
+                                <input type="number" id="edit-legend-matches" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.matches || 0}">
+                            </div>
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles Totales (Si no es Portero)</label>
+                                <input type="number" id="edit-legend-goals" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.goals || 0}">
+                            </div>
                         </div>
 
                         <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles Totales</label>
-                            <input type="number" id="edit-legend-goals" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.goals || 0}">
-                        </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Biografía / Descripción</label>
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Descripción</label>
                             <textarea id="edit-legend-desc" class="form-input" style="width:100%; height:80px; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; resize:vertical;">${l.desc || ''}</textarea>
                         </div>
 
@@ -266,7 +283,7 @@ export const PalmaresView = {
                         <div style="display:flex; justify-content:space-between; gap:10px; margin-top:12px;">
                             ${l.id ? `
                                 <button class="btn btn-secondary" id="btn-delete-legend" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; font-size:0.8rem; padding:8px 14px;">
-                                    🗑️ Eliminar
+                                    Eliminar
                                 </button>
                             ` : '<div></div>'}
                             
@@ -275,7 +292,7 @@ export const PalmaresView = {
                                     Cancelar
                                 </button>
                                 <button class="btn btn-primary" id="btn-save-legend" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
-                                    💾 Guardar Cambios
+                                    Guardar Cambios
                                 </button>
                             </div>
                         </div>
@@ -360,8 +377,9 @@ export const PalmaresView = {
                     id: 0,
                     name: '',
                     number: 1,
-                    role: '',
-                    stats: '',
+                    role: 'Portero',
+                    matches: 0,
+                    goals: 0,
                     desc: '',
                     photo: ''
                 };
@@ -380,7 +398,8 @@ export const PalmaresView = {
             saveBtn.onclick = () => {
                 const name = (document.getElementById('edit-legend-name')?.value || '').trim();
                 const number = parseInt(document.getElementById('edit-legend-number')?.value) || 1;
-                const role = (document.getElementById('edit-legend-role')?.value || '').trim();
+                const role = (document.getElementById('edit-legend-role')?.value || 'Portero');
+                const matches = parseInt(document.getElementById('edit-legend-matches')?.value) || 0;
                 const goals = parseInt(document.getElementById('edit-legend-goals')?.value) || 0;
                 const desc = (document.getElementById('edit-legend-desc')?.value || '').trim();
                 const fileInput = document.getElementById('edit-legend-file');
@@ -400,6 +419,7 @@ export const PalmaresView = {
                             name,
                             number,
                             role,
+                            matches,
                             goals,
                             desc,
                             photo: photoVal
@@ -410,6 +430,7 @@ export const PalmaresView = {
                             target.name = name;
                             target.number = number;
                             target.role = role;
+                            target.matches = matches;
                             target.goals = goals;
                             target.desc = desc;
                             if (photoVal) target.photo = photoVal;

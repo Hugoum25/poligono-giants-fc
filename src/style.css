@@ -466,7 +466,7 @@ body.retro-mode-active .glass-card {
     overflow: hidden;
     transition: var(--transition);
 }
-.glass-card:hover { border-color: var(--club-primary); box-shadow: 5px 5px 0px #000, 0 0 14px rgba(var(--club-primary-rgb),0.25); }
+.glass-card:hover { border-color: rgba(255,255,255,0.2); box-shadow: 4px 4px 0px #030408, 0 0 15px rgba(0,0,0,0.5); }
 .matches-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
