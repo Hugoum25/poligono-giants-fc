@@ -370,10 +370,6 @@ export const LineupView = {
                             <!-- ENCABEZADO: VS, EQUIPOS Y BANNER DE HORA, DÍA Y CAMPO ARRIBA -->
                             <div style="position:relative; z-index:2; border-bottom:2px solid rgba(255,42,133,0.3); padding-bottom:12px; margin-bottom:14px; display:flex; flex-direction:column; gap:10px;">
                                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; position:relative;">
-                                    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:900; font-style:italic; color:rgba(255,255,255,0.22); font-family:var(--font-heading); user-select:none; pointer-events:none; z-index:1; letter-spacing:0.05em;">
-                                        VS
-                                    </div>
-
                                     <div style="display:flex; align-items:center; gap:8px; flex:1; position:relative; z-index:2;">
                                         ${ClubLogo.render(42)}
                                         <div style="text-align:left;">
@@ -384,7 +380,10 @@ export const LineupView = {
 
                                     <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; flex:1; position:relative; z-index:2;">
                                         <div style="font-size:0.82rem; font-weight:900; color:#fff; text-transform:uppercase; background:var(--club-primary); padding:2px 8px; border-radius:4px; display:inline-block; letter-spacing:0.05em;">CONVOCATORIA</div>
-                                        <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em;">${opponentName}</div>
+                                        <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em; display:flex; align-items:center; gap:6px;">
+                                            <span style="color:var(--club-primary); font-size:1.15rem; font-weight:900; font-style:italic; text-shadow:0 0 8px rgba(255,42,133,0.5);">VS</span>
+                                            <span>${opponentName}</span>
+                                        </div>
                                     </div>
                                 </div>
 
