@@ -432,6 +432,14 @@ try {
 
 const LEGENDS_STORAGE_KEY = 'fc_hub_legends_v7';
 const TROPHIES_STORAGE_KEY = 'fc_hub_trophies_v1';
+const HISTORY_STATS_STORAGE_KEY = 'fc_hub_history_stats_v1';
+
+teamData.historyStats = {
+    matches: 48,
+    wins: 32,
+    draws: 8,
+    losses: 8
+};
 
 // Cargar estado inicial desde localStorage
 try {
@@ -470,8 +478,29 @@ try {
         const parsed = JSON.parse(savedTrophies);
         if (Array.isArray(parsed) && parsed.length > 0) teamData.trophies = parsed;
     }
+
+    const savedHistoryStats = localStorage.getItem(HISTORY_STATS_STORAGE_KEY);
+    if (savedHistoryStats) {
+        teamData.historyStats = JSON.parse(savedHistoryStats);
+    }
 } catch (e) {
     console.error('[teamData] Error cargando inicial de localStorage:', e);
+}
+
+// Cargar estadísticas históricas desde archivo JSON en disco si existe
+fetch('./src/data/history_stats.json?t=' + Date.now()).then(r => r.json()).then(data => {
+    if (data && typeof data === 'object') {
+        teamData.historyStats = data;
+        localStorage.setItem(HISTORY_STATS_STORAGE_KEY, JSON.stringify(teamData.historyStats));
+    }
+}).catch(() => {});
+
+export function saveHistoryStatsToStorage() {
+    try {
+        localStorage.setItem(HISTORY_STATS_STORAGE_KEY, JSON.stringify(teamData.historyStats));
+    } catch (e) {
+        console.error('[teamData] Error guardando estadísticas históricas:', e);
+    }
 }
 
 // Cargar premios/trofeos desde archivo JSON en disco si existe

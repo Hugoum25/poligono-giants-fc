@@ -5,13 +5,21 @@
 
 import { state } from '../state.js';
 import { ClubLogo } from './ClubLogo.js';
-import { teamData, saveLegendsToStorage, saveTrophiesToStorage } from '../data/teamData.js';
+import { teamData, saveLegendsToStorage, saveTrophiesToStorage, saveHistoryStatsToStorage } from '../data/teamData.js';
 import { AuthService } from '../services/authService.js';
 
 export const PalmaresView = {
     activeTab: 'palmares', // 'palmares' | 'leyendas' | 'camisetas'
     editingLegend: null,
     editingTrophy: null,
+    editingHistoryStats: false,
+
+    // Por defecto, las temporadas están contraídas (collapsed)
+    expandedSeasons: {
+        "2026 / 2027": false,
+        "2025 / 2026": false,
+        "2024 / 2025": false
+    },
 
     seasons: [
         {
@@ -58,29 +66,15 @@ export const PalmaresView = {
     renderPalmaresContent() {
         const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
 
-        // 1. Estadísticas Generales del Equipo
-        const matchesList = teamData.matches || [];
-        const playedMatches = matchesList.filter(m => m.played || m.status === 'FINALIZADO' || (m.homeScore !== undefined && m.homeScore !== null));
-        
-        let totalMatches = playedMatches.length;
-        let wins = 0;
-        let draws = 0;
-        let losses = 0;
+        // 1. Estadísticas Históricas del Equipo (Editables por Admin)
+        const stats = teamData.historyStats || { matches: 48, wins: 32, draws: 8, losses: 8 };
 
-        playedMatches.forEach(m => {
-            const isHome = (m.homeTeam || '').toLowerCase().includes('polígono') || (m.homeTeam || '').toLowerCase().includes('poligono');
-            const our = isHome ? (m.homeScore || 0) : (m.awayScore || 0);
-            const their = isHome ? (m.awayScore || 0) : (m.homeScore || 0);
-            if (our > their) wins++;
-            else if (our === their) draws++;
-            else losses++;
-        });
-
-        // 2. Premios por Temporada
+        // 2. Premios por Temporada (Contraídos por Defecto)
         const seasonKeys = ["2026 / 2027", "2025 / 2026", "2024 / 2025"];
         const trophiesList = teamData.trophies || [];
 
         const seasonsTrophiesHtml = seasonKeys.map(seasonName => {
+            const isExpanded = !!this.expandedSeasons[seasonName];
             const seasonTrophies = trophiesList.filter(t => t.season === seasonName);
 
             const itemsHtml = seasonTrophies.length > 0 ? seasonTrophies.map(t => `
@@ -109,48 +103,70 @@ export const PalmaresView = {
             `;
 
             return `
-                <div style="margin-bottom:28px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
-                        <h3 style="font-size:1.2rem; font-family:var(--font-heading); margin:0; color:var(--club-primary); font-weight:800; text-transform:uppercase;">
-                            Temporada ${seasonName}
-                        </h3>
-                        ${isAdmin ? `
-                            <button class="btn btn-secondary btn-add-trophy" data-season="${seasonName}" style="font-size:0.72rem; padding:4px 12px; font-weight:800;">
-                                Añadir Premio
-                            </button>
-                        ` : ''}
+                <div class="glass-card" style="margin-bottom:16px; border:1px solid var(--border-color); overflow:hidden;">
+                    <div class="season-trophies-header" data-season="${seasonName}" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; cursor:pointer; background:rgba(255,255,255,0.03); user-select:none;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--club-primary); text-transform:uppercase;">
+                                Temporada ${seasonName} (${seasonTrophies.length} Premios)
+                            </span>
+                        </div>
+                        
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            ${isAdmin ? `
+                                <button class="btn btn-secondary btn-add-trophy" data-season="${seasonName}" onclick="event.stopPropagation();" style="font-size:0.72rem; padding:4px 10px; font-weight:800;">
+                                    Añadir Premio
+                                </button>
+                            ` : ''}
+                            <span style="font-size:1rem; font-weight:900; color:var(--text-muted); transition:transform 0.3s ease; transform:rotate(${isExpanded ? '180deg' : '0deg'}); display:inline-block;">
+                                ▼
+                            </span>
+                        </div>
                     </div>
 
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
-                        ${itemsHtml}
-                    </div>
+                    ${isExpanded ? `
+                        <div style="padding:16px 20px 20px 20px; border-top:1px solid var(--border-color); animation:fadeIn 0.3s ease;">
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }).join('');
 
         return `
             <div style="animation:fadeIn 0.3s ease;">
+                <!-- Panel de Administración de Stats Históricas -->
+                ${isAdmin ? `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(255,42,133,0.1); border:1px solid var(--club-primary); padding:10px 16px; border-radius:6px;">
+                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">Estadísticas Totales del Club</span>
+                        <button class="btn btn-primary" id="btn-edit-history-stats" style="font-size:0.75rem; padding:6px 14px; font-weight:800;">
+                            Editar Partidos y Récords
+                        </button>
+                    </div>
+                ` : ''}
+
                 <!-- Récords y Estadísticas Generales (Partidos Jugados, Victorias, Empates, Derrotas) -->
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:14px; margin-bottom:32px;">
                     <div class="glass-card" style="padding:16px; text-align:center;">
                         <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Partidos Jugados</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">${totalMatches}</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">${stats.matches || 0}</div>
                     </div>
                     <div class="glass-card" style="padding:16px; text-align:center;">
                         <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Victorias</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#00e676; font-weight:800; margin-top:4px;">${wins}</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#00e676; font-weight:800; margin-top:4px;">${stats.wins || 0}</div>
                     </div>
                     <div class="glass-card" style="padding:16px; text-align:center;">
                         <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Empates</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ffb300; font-weight:800; margin-top:4px;">${draws}</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ffb300; font-weight:800; margin-top:4px;">${stats.draws || 0}</div>
                     </div>
                     <div class="glass-card" style="padding:16px; text-align:center;">
                         <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Derrotas</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ff4444; font-weight:800; margin-top:4px;">${losses}</div>
+                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ff4444; font-weight:800; margin-top:4px;">${stats.losses || 0}</div>
                     </div>
                 </div>
 
-                <!-- Premios del Equipo Divididos por Temporadas -->
+                <!-- Premios del Equipo Divididos por Temporadas (Contraídos por defecto) -->
                 <div>
                     ${seasonsTrophiesHtml}
                 </div>
@@ -269,6 +285,59 @@ export const PalmaresView = {
         return `
             <div style="animation:fadeIn 0.3s ease;">
                 ${seasonsHtml}
+            </div>
+        `;
+    },
+
+    renderEditHistoryStatsModal() {
+        if (!this.editingHistoryStats) return '';
+        const s = teamData.historyStats || { matches: 48, wins: 32, draws: 8, losses: 8 };
+
+        return `
+            <div class="modal-overlay active" id="history-stats-edit-modal-overlay">
+                <div class="glass-card" style="max-width:440px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
+                    <button class="modal-close" id="close-history-stats-modal-btn">✕</button>
+
+                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
+                        Editar Estadísticas Históricas
+                    </h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">
+                        Actualiza los totales globales del club visibles en la sección de Historia.
+                    </p>
+
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos Jugados</label>
+                                <input type="number" id="edit-hs-matches" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.matches || 0}">
+                            </div>
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Victorias</label>
+                                <input type="number" id="edit-hs-wins" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.wins || 0}">
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Empates</label>
+                                <input type="number" id="edit-hs-draws" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.draws || 0}">
+                            </div>
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Derrotas</label>
+                                <input type="number" id="edit-hs-losses" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.losses || 0}">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                            <button class="btn btn-secondary" id="btn-cancel-hs" style="font-size:0.8rem; padding:8px 14px;">
+                                Cancelar
+                            </button>
+                            <button class="btn btn-primary" id="btn-save-hs" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
+                                Guardar Estadísticas
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
     },
@@ -450,6 +519,7 @@ export const PalmaresView = {
                 </div>
             </div>
 
+            ${this.renderEditHistoryStatsModal()}
             ${this.renderEditLegendModal()}
             ${this.renderEditTrophyModal()}
         `;
@@ -465,6 +535,50 @@ export const PalmaresView = {
                 }
             };
         });
+
+        // ------------------------------------
+        // EVENTOS COLAPSO/EXPANSIÓN DE TEMPORADAS DE PREMIOS
+        // ------------------------------------
+        document.querySelectorAll('.season-trophies-header').forEach(header => {
+            header.onclick = () => {
+                const season = header.getAttribute('data-season');
+                if (season) {
+                    this.expandedSeasons[season] = !this.expandedSeasons[season];
+                    state.notify();
+                }
+            };
+        });
+
+        // ------------------------------------
+        // EVENTOS GESTIÓN DE STATS HISTÓRICAS DEL EQUIPO
+        // ------------------------------------
+        const btnEditHS = document.getElementById('btn-edit-history-stats');
+        if (btnEditHS) {
+            btnEditHS.onclick = () => {
+                this.editingHistoryStats = true;
+                state.notify();
+            };
+        }
+
+        const closeHSBtn = document.getElementById('close-history-stats-modal-btn');
+        const cancelHSBtn = document.getElementById('btn-cancel-hs');
+        if (closeHSBtn) closeHSBtn.onclick = () => { this.editingHistoryStats = false; state.notify(); };
+        if (cancelHSBtn) cancelHSBtn.onclick = () => { this.editingHistoryStats = false; state.notify(); };
+
+        const saveHSBtn = document.getElementById('btn-save-hs');
+        if (saveHSBtn) {
+            saveHSBtn.onclick = () => {
+                const matches = parseInt(document.getElementById('edit-hs-matches')?.value) || 0;
+                const wins = parseInt(document.getElementById('edit-hs-wins')?.value) || 0;
+                const draws = parseInt(document.getElementById('edit-hs-draws')?.value) || 0;
+                const losses = parseInt(document.getElementById('edit-hs-losses')?.value) || 0;
+
+                teamData.historyStats = { matches, wins, draws, losses };
+                saveHistoryStatsToStorage();
+                this.editingHistoryStats = false;
+                state.notify();
+            };
+        }
 
         // ------------------------------------
         // EVENTOS GESTIÓN DE PREMIOS / TROFEOS
