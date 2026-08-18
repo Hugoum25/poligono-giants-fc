@@ -393,9 +393,9 @@ export const LineupView = {
                                 </div>
                             </div>
 
-                            <div style="position:relative; z-index:2; width:100%; height:380px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.25); background:linear-gradient(180deg, rgba(9,46,23,0.45) 0%, rgba(5,26,13,0.55) 50%, rgba(9,46,23,0.45) 100%); backdrop-filter:blur(2px); box-shadow:inset 0 0 25px rgba(0,0,0,0.8);">
-                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.35; filter:blur(2.5px); user-select:none; pointer-events:none; z-index:1; display:flex; align-items:center; justify-content:center;">
-                                    ${ClubLogo.render(350)}
+                            <div style="position:relative; z-index:2; width:100%; height:380px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.3); background:linear-gradient(180deg, #125e2e 0%, #083419 50%, #125e2e 100%); box-shadow:inset 0 0 25px rgba(0,0,0,0.7);">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity:0.28; filter:blur(4px); user-select:none; pointer-events:none; z-index:1; display:flex; align-items:center; justify-content:center;">
+                                    ${ClubLogo.render(320)}
                                 </div>
 
                                 <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.25); z-index:2;"></div>
