@@ -4,8 +4,8 @@
     "name": "Diego Mon",
     "number": 1,
     "role": "Portero",
-    "matches": 0,
-    "goals": 0,
+    "matches": 3,
+    "goals": 6,
     "desc": "Muro infranqueable bajo los palos del Polígono Giants FC y baluarte indiscutible en los momentos más exigentes del equipo.",
     "photo": ""
   },
@@ -14,7 +14,7 @@
     "name": "Víctor Álvarez",
     "number": 8,
     "role": "Defensa",
-    "matches": 0,
+    "matches": 29,
     "goals": 0,
     "desc": "Líder emblemático en el terreno de juego, ejemplo constante de entrega, visión táctica y compromiso absoluto con el escudo.",
     "photo": ""
@@ -24,8 +24,8 @@
     "name": "Hamza",
     "number": 10,
     "role": "Medio",
-    "matches": 0,
-    "goals": 0,
+    "matches": 9,
+    "goals": 1,
     "desc": "Talento puro y visión de juego estelar. Autor de jugadas memorables en el centro del campo que marcaron la historia del club.",
     "photo": ""
   }
