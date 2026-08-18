@@ -131,8 +131,8 @@ export const PalmaresView = {
                         ${l.role}
                     </div>
 
-                    <div style="font-size:0.8rem; font-family:var(--font-mono); color:var(--text-main); margin-bottom:12px; opacity:0.85;">
-                        ${l.stats}
+                    <div style="font-size:0.85rem; font-family:var(--font-mono); color:var(--club-primary); font-weight:800; margin-bottom:10px;">
+                        ⚽ ${l.goals || 0} Goles Totales
                     </div>
 
                     <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin:0;">
@@ -249,8 +249,8 @@ export const PalmaresView = {
                         </div>
 
                         <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Resumen / Estadísticas Destacadas</label>
-                            <input type="text" id="edit-legend-stats" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.stats || ''}" placeholder="Ej. 3 Temporadas • Portero Emblemático">
+                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles Totales</label>
+                            <input type="number" id="edit-legend-goals" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.goals || 0}">
                         </div>
 
                         <div>
@@ -381,7 +381,7 @@ export const PalmaresView = {
                 const name = (document.getElementById('edit-legend-name')?.value || '').trim();
                 const number = parseInt(document.getElementById('edit-legend-number')?.value) || 1;
                 const role = (document.getElementById('edit-legend-role')?.value || '').trim();
-                const stats = (document.getElementById('edit-legend-stats')?.value || '').trim();
+                const goals = parseInt(document.getElementById('edit-legend-goals')?.value) || 0;
                 const desc = (document.getElementById('edit-legend-desc')?.value || '').trim();
                 const fileInput = document.getElementById('edit-legend-file');
 
@@ -400,7 +400,7 @@ export const PalmaresView = {
                             name,
                             number,
                             role,
-                            stats,
+                            goals,
                             desc,
                             photo: photoVal
                         });
@@ -410,7 +410,7 @@ export const PalmaresView = {
                             target.name = name;
                             target.number = number;
                             target.role = role;
-                            target.stats = stats;
+                            target.goals = goals;
                             target.desc = desc;
                             if (photoVal) target.photo = photoVal;
                         }

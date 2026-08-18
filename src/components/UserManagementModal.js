@@ -140,7 +140,7 @@ export const UserManagementModal = {
                                     <div>
                                         <div style="font-weight:800; color:#fff; font-size:0.95rem;">${l.name} <span style="color:var(--club-primary);">#${l.number}</span></div>
                                         <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">${l.role}</div>
-                                        <div style="font-size:0.72rem; color:var(--text-main); font-family:var(--font-mono); margin-top:2px;">${l.stats}</div>
+                                        <div style="font-size:0.75rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:800; margin-top:2px;">⚽ ${l.goals || 0} Goles Totales</div>
                                     </div>
                                     <button class="btn-admin-edit-legend btn btn-secondary" data-legend-id="${l.id}" style="padding:6px 14px; font-size:0.75rem; font-weight:800; color:var(--club-primary);">
                                         ✏️ Editar
