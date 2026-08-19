@@ -1,17 +1,5 @@
 [
   {
-    "id": 2,
-    "season": "2024 / 2025",
-    "title": "Trofeo Fair Play & Juego Limpio",
-    "desc": "Reconocimiento otorgado al comportamiento y deportividad del equipo."
-  },
-  {
-    "id": 3,
-    "season": "2024 / 2025",
-    "title": "Bota de Oro de la Liga",
-    "desc": "Máximo goleador absoluto del campeonato."
-  },
-  {
     "id": 4,
     "season": "2025 / 2026",
     "title": "Subcampeón de Liga Regular",
