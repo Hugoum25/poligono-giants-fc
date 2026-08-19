@@ -501,6 +501,7 @@ export function saveHistoryStatsToStorage() {
     } catch (e) {
         console.error('[teamData] Error guardando estadísticas históricas:', e);
     }
+    GitHubSyncService.syncJsonFile('src/data/history_stats.json', teamData.historyStats, 'Actualización de estadísticas históricas del club desde la web Admin');
 }
 
 // Cargar premios/trofeos desde archivo JSON en disco si existe
@@ -517,6 +518,7 @@ export function saveTrophiesToStorage() {
     } catch (e) {
         console.error('[teamData] Error guardando premios:', e);
     }
+    GitHubSyncService.syncJsonFile('src/data/trophies.json', teamData.trophies, 'Actualización de palmarés/premios desde la web Admin');
 }
 
 // Cargar leyendas desde archivo JSON en disco si existe
@@ -533,6 +535,7 @@ export function saveLegendsToStorage() {
     } catch (e) {
         console.error('[teamData] Error guardando leyendas:', e);
     }
+    GitHubSyncService.syncJsonFile('src/data/legends.json', teamData.legends, 'Actualización de leyendas desde la web Admin');
 }
 
 // Cargar versiones actualizadas desde archivos JSON en disco (prioridad disco)
