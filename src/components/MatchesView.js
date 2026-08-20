@@ -57,10 +57,18 @@ export const MatchesView = {
     render() {
         const isAdmin = AuthService.isAdmin();
 
-        // Formateador de tipo de encuentro (Solo muestra el marcador numérico si el partido ha finalizado)
+        // Formateador de tipo de encuentro (Solo muestra el marcador numérico con distinción de color por resultado)
         const getMatchStatusHtml = (match) => {
             if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
-                return `<span class="match-score-badge">${match.ourScore} - ${match.opponentScore}</span>`;
+                let badgeStyle = 'padding:3px 10px; border-radius:4px; font-weight:800; font-family:var(--font-mono); font-size:0.95rem;';
+                if (match.ourScore > match.opponentScore) {
+                    badgeStyle += ' background:rgba(0,230,118,0.18); color:#00e676; border:1px solid #00e676;';
+                } else if (match.ourScore < match.opponentScore) {
+                    badgeStyle += ' background:rgba(255,68,68,0.18); color:#ff4444; border:1px solid #ff4444;';
+                } else {
+                    badgeStyle += ' background:rgba(255,179,0,0.18); color:#ffb300; border:1px solid #ffb300;';
+                }
+                return `<span style="${badgeStyle}">${match.ourScore} - ${match.opponentScore}</span>`;
             }
             return ``;
         };
@@ -76,8 +84,22 @@ export const MatchesView = {
                 jornadaText = `Jornada ${match.jornada}`;
             }
 
+            let cardExtraStyle = '';
+            if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
+                if (match.ourScore > match.opponentScore) {
+                    // Victoria: Borde verde brillante y fondo verde muy sutil (Sin emoticonos)
+                    cardExtraStyle = 'border-left:4px solid #00e676 !important; background:rgba(0,230,118,0.05) !important;';
+                } else if (match.ourScore < match.opponentScore) {
+                    // Derrota: Borde rojo sutil
+                    cardExtraStyle = 'border-left:4px solid #ff4444 !important; background:rgba(255,68,68,0.04) !important;';
+                } else {
+                    // Empate: Borde amarillo sutil
+                    cardExtraStyle = 'border-left:4px solid #ffb300 !important; background:rgba(255,179,0,0.04) !important;';
+                }
+            }
+
             return `
-                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
+                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important; ${cardExtraStyle}">
                     <!-- FILA 1: Jornada (Izquierda) y Fecha (Derecha) - SIN LÍNEA DIVISORIA -->
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <span style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
@@ -212,7 +234,7 @@ export const MatchesView = {
                             </div>
 
                             <div style="font-size:0.88rem; font-weight:800; color:#ffffff; margin-top:6px; line-height:1.3;">
-                                🍿 ${popcornBanner}
+                                ${popcornBanner}
                             </div>
                         </div>
                     </div>
@@ -478,15 +500,6 @@ export const MatchesView = {
                         </div>
 
                         <div>
-                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Estado del Partido</label>
-                            <select id="edit-match-type" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;">
-                                <option value="next" ${match.type === 'next' ? 'selected' : ''}>⭐ Próximo Partido (Destacado)</option>
-                                <option value="future" ${match.type === 'future' || !match.type ? 'selected' : ''}>📅 Programado / Por Jugar</option>
-                                <option value="past" ${match.type === 'past' ? 'selected' : ''}>✅ Finalizado con Resultado</option>
-                            </select>
-                        </div>
-
-                        <div>
                             <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Rival</label>
                             <select id="edit-opponent" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;" required>
                                 ${opponentOptionsHtml}
@@ -653,7 +666,6 @@ export const MatchesView = {
             ev.preventDefault();
 
             const newCompetition = document.getElementById('edit-competition').value.trim();
-            const newType = document.getElementById('edit-match-type').value;
             const newOpponent = document.getElementById('edit-opponent').value.trim();
             const newDate = document.getElementById('edit-date').value.trim();
             const newStadium = document.getElementById('edit-stadium').value.trim();
@@ -669,16 +681,8 @@ export const MatchesView = {
             match.stadium = newStadium;
             match.presidentComment = newPresidentComment;
 
-            if (newType === 'next') {
-                teamData.matches.forEach(m => {
-                    if (m.type === 'next') m.type = 'future';
-                });
-                match.type = 'next';
-            } else {
-                match.type = newType;
-            }
-
-            if (hasScore || newType === 'past') {
+            if (hasScore) {
+                match.type = 'past';
                 const ourScore = parseInt(ourScoreRaw) || 0;
                 const oppScore = parseInt(oppScoreRaw) || 0;
                 match.ourScore = ourScore;
