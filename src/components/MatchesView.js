@@ -22,9 +22,7 @@ export function formatMatchDateAndCountdown(dateStr) {
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     const day = matchDate.getDate();
     const monthName = months[matchDate.getMonth()];
-    const hours = String(matchDate.getHours()).padStart(2, '0');
-    const minutes = String(matchDate.getMinutes()).padStart(2, '0');
-    const formattedDate = `${day} de ${monthName} • ${hours}:${minutes}h`;
+    const formattedDate = `${day} de ${monthName}`;
 
     const now = new Date();
     const diffMs = matchDate.getTime() - now.getTime();
@@ -67,45 +65,41 @@ export const MatchesView = {
             return ``;
         };
 
-        // Crear listado de partidos (Muestra solo el enfrentamiento directo; abre modal emergente al hacer clic)
+        // Crear listado de partidos (Solo día y mes, sin Liga F7 ni hora; equipos centrados con sus escudos)
         const matchesListHtml = teamData.matches.map(match => {
             const dateObj = formatMatchDateAndCountdown(match.date);
             return `
                 <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
-                    <!-- Fecha y Competición -->
-                    <div style="flex:1; min-width:180px;">
-                        <div style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
-                            ${match.competition || 'Liga F7 Gijón'}
-                        </div>
-                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700; margin-top:2px;">
+                    <!-- Fecha (Solo Día y Mes, sin Liga F7 ni hora) -->
+                    <div style="flex:0 0 auto; min-width:110px;">
+                        <div style="font-size:0.85rem; color:var(--club-primary); font-weight:800;">
                             ${dateObj.formattedDate}
                         </div>
                     </div>
 
-                    <!-- Local vs Rival -->
-                    <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:center;">
+                    <!-- Local vs Rival (Centrados y con escudos ambos) -->
+                    <div style="display:flex; align-items:center; justify-content:center; gap:14px; flex:1; text-align:center;">
+                        <!-- Local (Polígono Giants) -->
                         <div style="display:flex; align-items:center; gap:8px;">
-                            ${ClubLogo.render(22)}
+                            ${ClubLogo.render(24)}
                             <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
                         </div>
 
-                        <!-- Resultado o Estado -->
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            ${getMatchStatusHtml(match)}
+                        <!-- Resultado o VS -->
+                        <div style="display:flex; align-items:center; padding:0 4px;">
+                            ${getMatchStatusHtml(match) || '<span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.88rem;">VS</span>'}
                         </div>
 
-                        <!-- Rival -->
-                        <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:flex-end; text-align:right;">
-                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
+                        <!-- Rival con Escudo -->
+                        <div style="display:flex; align-items:center; gap:8px;">
                             ${getRivalCrest(match.opponent) ? `
-                                <div style="width:28px; height:28px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                    <img src="${getRivalCrest(match.opponent)}" style="max-width:100%; max-height:100%; object-fit:contain;" />
-                                </div>
+                                <img src="${getRivalCrest(match.opponent)}" style="width:24px; height:24px; object-fit:contain; border-radius:50%; flex-shrink:0;" />
                             ` : `
-                                <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
+                                <div style="width:24px; height:24px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; flex-shrink:0; color:var(--text-muted);">
                                     ${match.opponentEmoji || '🛡️'}
                                 </div>
                             `}
+                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
                         </div>
                     </div>
 
