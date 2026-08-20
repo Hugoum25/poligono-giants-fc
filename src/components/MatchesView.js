@@ -176,39 +176,29 @@ export const MatchesView = {
             <div class="container" style="padding-top:20px; padding-bottom:80px;">
                 <!-- HERO CARD: PRÓXIMO PARTIDO (SENCILLO Y SIN ICONOS) -->
                 <div class="glass-card" style="padding:18px 20px; margin-bottom:24px; box-sizing:border-box; border:1.5px solid var(--club-primary); background:var(--bg-dark); border-radius:6px; box-shadow:none !important;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-                        <div style="flex:1; min-width:260px;">
-                            <div style="font-size:0.78rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:8px;">
-                                Próximo Partido
+                    <div>
+                        <div style="font-size:0.78rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:8px;">
+                            Próximo Partido
+                        </div>
+                        
+                        <div style="display:flex; align-items:center; gap:16px; margin:10px 0;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                ${ClubLogo.render(32)}
+                                <span style="font-size:1.05rem; font-weight:800; color:#fff;">${teamData.clubName}</span>
                             </div>
-                            
-                            <div style="display:flex; align-items:center; gap:16px; margin:10px 0;">
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    ${ClubLogo.render(32)}
-                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${teamData.clubName}</span>
-                                </div>
-                                <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.95rem;">VS</span>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    ${getRivalCrest(nextMatch.opponent) ? `<img src="${getRivalCrest(nextMatch.opponent)}" style="width:28px; height:28px; object-fit:contain; border-radius:50%;" />` : ''}
-                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${nextMatch.opponent}</span>
-                                </div>
-                            </div>
-
-                            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700; margin-bottom:10px;">
-                                ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • ${nextMatchInfo.formattedDate}
-                            </div>
-
-                            <div style="font-size:0.88rem; font-weight:800; color:#fff; background:rgba(255,42,133,0.12); border:1.5px solid var(--club-primary); padding:8px 14px; border-radius:6px; display:inline-flex; align-items:center; gap:8px; line-height:1.3; margin-top:4px;">
-                                <span style="font-size:1.15rem;">🍿</span>
-                                <span>${popcornBanner}</span>
+                            <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.95rem;">VS</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                ${getRivalCrest(nextMatch.opponent) ? `<img src="${getRivalCrest(nextMatch.opponent)}" style="width:28px; height:28px; object-fit:contain; border-radius:50%;" />` : ''}
+                                <span style="font-size:1.05rem; font-weight:800; color:#fff;">${nextMatch.opponent}</span>
                             </div>
                         </div>
 
-                        <div style="border-left:1px solid var(--border-color); padding-left:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:160px;">
-                            <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:800; margin-bottom:4px;">Cuenta Atrás</span>
-                            <div style="font-family:var(--font-mono); font-weight:800; font-size:1.4rem; color:var(--club-primary);">
-                                ${nextMatchInfo.countdownStr || 'Por disputar'}
-                            </div>
+                        <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700; margin-bottom:8px;">
+                            ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • ${nextMatchInfo.formattedDate}
+                        </div>
+
+                        <div style="font-size:0.88rem; font-weight:800; color:#ffffff; margin-top:6px; line-height:1.3;">
+                            🍿 ${popcornBanner}
                         </div>
                     </div>
                 </div>
