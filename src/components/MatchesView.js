@@ -59,15 +59,12 @@ export const MatchesView = {
     render() {
         const isAdmin = AuthService.isAdmin();
 
-        // Formateador de tipo de encuentro
+        // Formateador de tipo de encuentro (Solo muestra el marcador numérico si el partido ha finalizado)
         const getMatchStatusHtml = (match) => {
-            if (match.type === 'next') {
-                return `<span class="match-badge match-badge-next">PRÓXIMO</span>`;
-            }
             if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
                 return `<span class="match-score-badge">${match.ourScore} - ${match.opponentScore}</span>`;
             }
-            return `<span class="match-badge match-badge-pending">PROGRAMADO</span>`;
+            return ``;
         };
 
         // Crear listado de partidos (Muestra solo el enfrentamiento directo; abre modal emergente al hacer clic)
@@ -354,12 +351,8 @@ export const MatchesView = {
                             <div style="font-size:1.8rem; font-weight:900; font-family:var(--font-mono); color:#fff; line-height:1;">
                                 ${match.ourScore} - ${match.opponentScore}
                             </div>
-                            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); margin-top:3px; text-transform:uppercase;">
-                                ${match.outcome === 'win' ? 'Victoria' : match.outcome === 'loss' ? 'Derrota' : 'Empate'}
-                            </div>
                         ` : `
                             <div style="font-size:1.2rem; font-weight:800; color:var(--club-primary); font-family:var(--font-heading);">VS</div>
-                            ${countdownStr ? `<div style="font-size:0.68rem; color:var(--text-muted); font-weight:700; margin-top:2px;">${countdownStr}</div>` : ''}
                         `}
                     </div>
 

@@ -1,122 +1,42 @@
 [
-  {
-    "id": 102,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 2",
-    "opponent": "Feleches-Barciastur-Pesa",
-    "opponentEmoji": "🛠️",
-    "date": "2026-09-12T19:30",
-    "stadium": "La Camocha",
-    "isHome": true
-  },
-  {
-    "id": 103,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 3",
-    "opponent": "Aston Birra",
-    "opponentEmoji": "🍺",
-    "date": "2026-09-19T17:30",
-    "stadium": "La Braña",
-    "isHome": false
-  },
-  {
-    "id": 104,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 4",
-    "opponent": "Mesón el Refugio",
-    "opponentEmoji": "🍖",
-    "date": "2026-09-26T20:00",
-    "stadium": "La Inmaculada",
-    "isHome": true
-  },
-  {
-    "id": 105,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 5",
-    "opponent": "Casa Toni",
-    "opponentEmoji": "🍕",
-    "date": "2026-10-03T18:30",
-    "stadium": "La Camocha",
-    "isHome": false
-  },
-  {
-    "id": 106,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 6",
-    "opponent": "Samara FC",
-    "opponentEmoji": "⚽",
-    "date": "2026-10-10T19:00",
-    "stadium": "La Braña",
-    "isHome": true
-  },
-  {
-    "id": 107,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 7",
-    "opponent": "Puntolab",
-    "opponentEmoji": "🔬",
-    "date": "2026-10-17T18:00",
-    "stadium": "La Camocha",
-    "isHome": true
-  },
-  {
-    "id": 108,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 8",
-    "opponent": "Feleches-Barciastur-Pesa",
-    "opponentEmoji": "👑",
-    "date": "2026-10-24T20:00",
-    "stadium": "La Inmaculada",
-    "isHome": true
-  },
-  {
-    "id": 109,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 9",
-    "opponent": "El Equipo A",
-    "opponentEmoji": "🚐",
-    "date": "2026-11-01T17:00",
-    "stadium": "La Camocha",
-    "isHome": false
-  },
-  {
-    "id": 110,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 10",
-    "opponent": "Monos del Norte",
-    "opponentEmoji": "🐒",
-    "date": "2026-11-08T19:00",
-    "stadium": "La Braña",
-    "isHome": true
-  },
-  {
-    "id": 111,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 11",
-    "opponent": "Monsters United",
-    "opponentEmoji": "👾",
-    "date": "2026-11-15T18:30",
-    "stadium": "La Camocha",
-    "isHome": false
-  },
-  {
-    "id": 112,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 12",
-    "opponent": "Chatarrería Cebrián",
-    "opponentEmoji": "⚙️",
-    "date": "2026-11-22T20:00",
-    "stadium": "La Inmaculada",
-    "isHome": true
-  },
-  {
-    "id": 113,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 13",
-    "opponent": "Rayo La Arena",
-    "opponentEmoji": "⚡",
-    "date": "2026-11-29T17:30",
-    "stadium": "La Camocha",
-    "isHome": false
-  }
+    {
+        "id": 101,
+        "competition": "Liga F7 Gijón - Jornada 1",
+        "opponent": "Feleches-Barciastur-Pesa",
+        "date": "2026-09-05T18:00",
+        "stadium": "La Camocha",
+        "type": "next"
+    },
+    {
+        "id": 102,
+        "competition": "Liga F7 Gijón - Jornada 2",
+        "opponent": "Aston Birra",
+        "date": "2026-09-12T19:30",
+        "stadium": "La Camocha",
+        "type": "future"
+    },
+    {
+        "id": 103,
+        "competition": "Liga F7 Gijón - Jornada 3",
+        "opponent": "Inter de Gijón",
+        "date": "2026-09-19T17:30",
+        "stadium": "La Camocha",
+        "type": "future"
+    },
+    {
+        "id": 104,
+        "competition": "Liga F7 Gijón - Jornada 4",
+        "opponent": "At. Pinzales",
+        "date": "2026-09-26T20:00",
+        "stadium": "La Camocha",
+        "type": "future"
+    },
+    {
+        "id": 105,
+        "competition": "Liga F7 Gijón - Jornada 5",
+        "opponent": "Pinturas Rubén",
+        "date": "2026-10-03T18:30",
+        "stadium": "La Camocha",
+        "type": "future"
+    }
 ]
