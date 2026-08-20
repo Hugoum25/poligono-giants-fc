@@ -211,15 +211,14 @@ export const MatchesView = {
                         </div>
                     </div>
 
-                    <!-- Columna Derecha: Clasificación (Comprimida por defecto) -->
+                    <!-- Columna Derecha: Clasificación (Siempre visible y fija) -->
                     <div>
-                        <div id="toggle-standings-btn" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px; transition:background 0.2s ease;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px;">
                             <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
                                 Clasificación
                             </h3>
-                            <span id="standings-toggle-icon" style="font-size:0.8rem; color:var(--club-primary); font-weight:800; transition:transform 0.2s ease;">▼ Mostrar</span>
                         </div>
-                        <div id="standings-content-wrapper" class="glass-card standings-table-wrapper" style="display:none; box-shadow:none !important; border-color:var(--border-color) !important;">
+                        <div id="standings-content-wrapper" class="glass-card standings-table-wrapper" style="display:block; box-shadow:none !important; border-color:var(--border-color) !important;">
                             <table class="standings-table">
                                 <thead>
                                     <tr>
@@ -267,19 +266,6 @@ export const MatchesView = {
                 const isHidden = calWrapper.style.display === 'none';
                 calWrapper.style.display = isHidden ? 'grid' : 'none';
                 if (calIcon) calIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
-            });
-        }
-
-        // Plegar / Desplegar Clasificación
-        const stdBtn = document.getElementById('toggle-standings-btn');
-        const stdWrapper = document.getElementById('standings-content-wrapper');
-        const stdIcon = document.getElementById('standings-toggle-icon');
-
-        if (stdBtn && stdWrapper) {
-            stdBtn.addEventListener('click', () => {
-                const isHidden = stdWrapper.style.display === 'none';
-                stdWrapper.style.display = isHidden ? 'block' : 'none';
-                if (stdIcon) stdIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
             });
         }
     },
