@@ -65,7 +65,7 @@ export const MatchesView = {
             return ``;
         };
 
-        // Crear listado de partidos (Organizado en 2 filas: Fila 1 = Jornada y Día, Fila 2 = Equipos centrados y Resultado/VS)
+        // Crear listado de partidos (Fila 1: Jornada a la izq y Fecha a la der; Fila 2: VS en el centro exacto con equipos ajustados)
         const matchesListHtml = teamData.matches.map((match, index) => {
             const dateObj = formatMatchDateAndCountdown(match.date);
 
@@ -77,40 +77,40 @@ export const MatchesView = {
             }
 
             return `
-                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:10px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
-                    <!-- FILA 1: Número de Jornada y Día -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
-                                ${jornadaText}
-                            </span>
-                            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">
-                                • ${dateObj.formattedDate}
-                            </span>
-                        </div>
+                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
+                    <!-- FILA 1: Jornada (Izquierda) y Fecha (Derecha) - SIN LÍNEA DIVISORIA -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <span style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
+                            ${jornadaText}
+                        </span>
 
-                        ${isAdmin ? `
-                            <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${match.id}" style="font-size:0.7rem; padding:2px 8px; font-weight:800;">
-                                ✏️ Editar
-                            </button>
-                        ` : ''}
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700; text-align:right;">
+                                ${dateObj.formattedDate}
+                            </span>
+                            ${isAdmin ? `
+                                <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${match.id}" style="font-size:0.7rem; padding:2px 8px; font-weight:800;">
+                                    ✏️ Editar
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
 
-                    <!-- FILA 2: Equipos centrados con sus escudos y Resultado / VS -->
-                    <div style="display:flex; align-items:center; justify-content:center; gap:16px; width:100%; text-align:center;">
-                        <!-- Equipo Local (Polígono Giants) -->
-                        <div style="display:flex; align-items:center; gap:8px;">
+                    <!-- FILA 2: VS / Marcador en el CENTRO EXACTO; Equipos ajustados a los lados -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:2px;">
+                        <!-- Local (Alineado hacia el centro) -->
+                        <div style="flex:1; display:flex; align-items:center; justify-content:flex-end; gap:8px; text-align:right;">
+                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${teamData.clubName}</span>
                             ${ClubLogo.render(24)}
-                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
                         </div>
 
-                        <!-- Resultado o VS -->
-                        <div style="display:flex; align-items:center; padding:0 4px;">
+                        <!-- Centro Fijo: Marcador o VS -->
+                        <div style="flex:0 0 auto; padding:0 12px; min-width:48px; text-align:center;">
                             ${getMatchStatusHtml(match) || '<span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.88rem;">VS</span>'}
                         </div>
 
-                        <!-- Equipo Rival con Escudo -->
-                        <div style="display:flex; align-items:center; gap:8px;">
+                        <!-- Rival (Alineado desde el centro) -->
+                        <div style="flex:1; display:flex; align-items:center; justify-content:flex-start; gap:8px; text-align:left;">
                             ${getRivalCrest(match.opponent) ? `
                                 <img src="${getRivalCrest(match.opponent)}" style="width:24px; height:24px; object-fit:contain; border-radius:50%; flex-shrink:0;" />
                             ` : `
@@ -118,7 +118,7 @@ export const MatchesView = {
                                     ${match.opponentEmoji || '🛡️'}
                                 </div>
                             `}
-                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
+                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${match.opponent}</span>
                         </div>
                     </div>
                 </div>
