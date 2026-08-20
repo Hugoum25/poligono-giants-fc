@@ -293,6 +293,43 @@ export const SquadView = {
                     `;
                 });
 
+                modalHtml = `
+                    <div class="modal-overlay active" id="player-modal-overlay">
+                        <div class="glass-card player-modal" style="max-width:680px; position:relative; overflow:hidden;">
+                            <!-- NÚMERO GIGANTE OCUPANDO TODA LA TARJETA COMPLETA DE FONDO -->
+                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:32rem; font-family:'VT323', var(--font-mono); font-weight:900; color:rgba(255,42,133,0.15); user-select:none; pointer-events:none; z-index:0; line-height:0.7; white-space:nowrap; letter-spacing:-0.05em; text-align:center;">
+                                ${player.number}
+                            </div>
+
+                            <button class="modal-close" id="close-modal-btn" style="z-index:10;">✕</button>
+                            <div class="modal-grid" style="position:relative; z-index:1;">
+                                
+                                <!-- CABECERA: FOTO, NOMBRE, APODO Y POSICIÓN EN GRANDE -->
+                                <div class="modal-player-header" style="text-align:center; padding:24px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                                    ${player.photo 
+                                        ? `<div style="width:130px; height:130px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; overflow:visible;">
+                                             <img src="${player.photo}" class="player-png-feathered" draggable="false" oncontextmenu="return false;" />
+                                           </div>` 
+                                        : `<div style="width:105px; height:105px; margin:0 auto 12px auto; border-radius:50%; background:rgba(255,42,133,0.15); border:3px solid var(--club-primary); display:flex; align-items:center; justify-content:center;">
+                                             <span style="font-size:3.2rem;">${player.position.includes('Portero') ? '🧤' : '👤'}</span>
+                                           </div>`
+                                    }
+
+                                    <h2 style="font-size:2rem; margin-top:4px; font-weight:800; color:var(--text-main); font-family:var(--font-heading);">${player.name}</h2>
+                                    ${player.nickname ? `<div style="font-size:1.05rem; color:var(--club-primary); font-weight:800; font-style:italic; margin-top:2px;">"${player.nickname}"</div>` : ''}
+                                    
+                                    <!-- Posición en grande -->
+                                    <p style="color:var(--text-main); font-family:var(--font-heading); text-transform:uppercase; margin-top:6px; font-size:1.2rem; font-weight:800; letter-spacing:0.06em;">
+                                        ${player.position}
+                                    </p>
+
+                                    ${isAdmin ? `
+                                        <button class="btn btn-primary" id="btn-edit-player" data-player-id="${player.id}" style="margin-top:16px; width:100%; font-size:0.85rem; padding:8px 12px;">
+                                            ✏️ Editar Ficha del Jugador
+                                        </button>
+                                    ` : ''}
+                                </div>
+
                                 <!-- SECTOR ESTADÍSTICAS OFICIALES -->
                                 <div class="modal-player-stats" style="display:flex; flex-direction:column; gap:12px;">
                                     
