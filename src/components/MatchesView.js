@@ -65,21 +65,40 @@ export const MatchesView = {
             return ``;
         };
 
-        // Crear listado de partidos (Solo día y mes, sin Liga F7 ni hora; equipos centrados con sus escudos)
-        const matchesListHtml = teamData.matches.map(match => {
+        // Crear listado de partidos (Organizado en 2 filas: Fila 1 = Jornada y Día, Fila 2 = Equipos centrados y Resultado/VS)
+        const matchesListHtml = teamData.matches.map((match, index) => {
             const dateObj = formatMatchDateAndCountdown(match.date);
+
+            let jornadaText = `Jornada ${index + 1}`;
+            if (match.competition && match.competition.includes('Jornada')) {
+                jornadaText = match.competition.split('-').pop().trim();
+            } else if (match.jornada) {
+                jornadaText = `Jornada ${match.jornada}`;
+            }
+
             return `
-                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
-                    <!-- Fecha (Solo Día y Mes, sin Liga F7 ni hora) -->
-                    <div style="flex:0 0 auto; min-width:110px;">
-                        <div style="font-size:0.85rem; color:var(--club-primary); font-weight:800;">
-                            ${dateObj.formattedDate}
+                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:10px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
+                    <!-- FILA 1: Número de Jornada y Día -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
+                                ${jornadaText}
+                            </span>
+                            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">
+                                • ${dateObj.formattedDate}
+                            </span>
                         </div>
+
+                        ${isAdmin ? `
+                            <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${match.id}" style="font-size:0.7rem; padding:2px 8px; font-weight:800;">
+                                ✏️ Editar
+                            </button>
+                        ` : ''}
                     </div>
 
-                    <!-- Local vs Rival (Centrados y con escudos ambos) -->
-                    <div style="display:flex; align-items:center; justify-content:center; gap:14px; flex:1; text-align:center;">
-                        <!-- Local (Polígono Giants) -->
+                    <!-- FILA 2: Equipos centrados con sus escudos y Resultado / VS -->
+                    <div style="display:flex; align-items:center; justify-content:center; gap:16px; width:100%; text-align:center;">
+                        <!-- Equipo Local (Polígono Giants) -->
                         <div style="display:flex; align-items:center; gap:8px;">
                             ${ClubLogo.render(24)}
                             <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
@@ -90,7 +109,7 @@ export const MatchesView = {
                             ${getMatchStatusHtml(match) || '<span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.88rem;">VS</span>'}
                         </div>
 
-                        <!-- Rival con Escudo -->
+                        <!-- Equipo Rival con Escudo -->
                         <div style="display:flex; align-items:center; gap:8px;">
                             ${getRivalCrest(match.opponent) ? `
                                 <img src="${getRivalCrest(match.opponent)}" style="width:24px; height:24px; object-fit:contain; border-radius:50%; flex-shrink:0;" />
@@ -102,12 +121,6 @@ export const MatchesView = {
                             <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
                         </div>
                     </div>
-
-                    ${isAdmin ? `
-                        <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${match.id}" style="font-size:0.72rem; padding:4px 8px; font-weight:800; margin-left:8px;">
-                            ✏️ Editar
-                        </button>
-                    ` : ''}
                 </div>
             `;
         }).join('');
