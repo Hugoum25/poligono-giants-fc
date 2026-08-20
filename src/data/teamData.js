@@ -638,7 +638,10 @@ export const RIVAL_CRESTS = {
     'feleches': './src/assets/rivals/feleches-barciastur-presa.png',
     'feleches-barciastur-pesa': './src/assets/rivals/feleches-barciastur-presa.png',
     'feleches-barciastur-presa': './src/assets/rivals/feleches-barciastur-presa.png',
-    'barciastur': './src/assets/rivals/feleches-barciastur-presa.png'
+    'barciastur': './src/assets/rivals/feleches-barciastur-presa.png',
+    'sidrería el tendido': './src/assets/rivals/sidreria-el-tendido.png',
+    'sidreria el tendido': './src/assets/rivals/sidreria-el-tendido.png',
+    'tendido': './src/assets/rivals/sidreria-el-tendido.png'
 };
 
 export function getRivalCrest(teamName) {
