@@ -171,12 +171,14 @@ export const LineupView = {
             "At. Pinzales",
             "Pates Arriba",
             "La Samba Del Patio",
+            "Inter de Gijón",
+            "Club Atlético Zarracina",
+            "Pinturas Rubén",
             "Mesón el Refugio",
             "Casa Toni",
             "Galácticos F7",
             "Sporting La Camocha F7",
             "La Calzada F7",
-            "Inter Gijón",
             "Rayo Gijonés",
             "Atlético Cimavilla"
         ];

@@ -348,10 +348,12 @@ export const teamData = {
         { rank: 9,  name: "Monos del Norte",              played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 10, name: "Monsters United",             played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 11, name: "Chatarrería Cebrián",         played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 12, name: "La Camocha F7",               played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 13, name: "At. Pinzales",                played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 14, name: "Pates Arriba",                played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 15, name: "La Samba Del Patio",          played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false }
+        { rank: 12, name: "At. Pinzales",                played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 13, name: "Pates Arriba",                played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 14, name: "La Samba Del Patio",          played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 15, name: "Inter de Gijón",              played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 16, name: "Club Atlético Zarracina",     played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 17, name: "Pinturas Rubén",              played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false }
     ],
 
     // Noticias
