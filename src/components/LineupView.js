@@ -168,6 +168,9 @@ export const LineupView = {
         const defaultTeams = [
             "Feleches-Barciastur-Pesa",
             "Aston Birra",
+            "At. Pinzales",
+            "Pates Arriba",
+            "La Samba Del Patio",
             "Mesón el Refugio",
             "Casa Toni",
             "Galácticos F7",
