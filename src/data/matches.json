@@ -1,15 +1,5 @@
 [
   {
-    "id": 101,
-    "type": "future",
-    "competition": "Liga F7 Gijón - Jornada 1",
-    "opponent": "Feleches-Barciastur-Pesa",
-    "opponentEmoji": "🔴",
-    "date": "2026-09-05T18:00",
-    "stadium": "La Camocha",
-    "isHome": true
-  },
-  {
     "id": 102,
     "type": "future",
     "competition": "Liga F7 Gijón - Jornada 2",
