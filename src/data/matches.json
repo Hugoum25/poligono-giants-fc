@@ -1,11 +1,11 @@
 [
   {
     "id": 101,
-    "competition": "Jornada 13",
+    "competition": "Jornada 1",
     "opponent": "Feleches-Barciastur-Pesa",
     "date": "2026-09-05T18:00",
     "stadium": "La Camocha",
-    "type": "next",
+    "type": "past",
     "presidentComment": "",
     "ourScore": 3,
     "opponentScore": 1,
