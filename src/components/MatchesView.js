@@ -118,7 +118,7 @@ export const MatchesView = {
             `;
         }).join('');
 
-        // Crear tabla de posiciones (Solo números y datos, sin íconos)
+        // Crear tabla de posiciones con escudo entre posición y nombre del equipo
         const standingsRowsHtml = teamData.standings.map(row => {
             const isCurrentTeam = row.name === teamData.clubName;
             let rowStyle = '';
@@ -127,13 +127,27 @@ export const MatchesView = {
                 rowStyle = 'color:var(--club-primary); font-weight:800; background:rgba(255,42,133,0.1);';
             }
 
+            const crestUrl = getRivalCrest(row.name);
+            let crestHtml = '';
+
+            if (isCurrentTeam) {
+                crestHtml = ClubLogo.render(22);
+            } else if (crestUrl) {
+                crestHtml = `<img src="${crestUrl}" style="width:22px; height:22px; object-fit:contain; border-radius:50%; flex-shrink:0;" />`;
+            } else {
+                crestHtml = `<div style="width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0; color:var(--text-muted);">🛡️</div>`;
+            }
+
             return `
                 <tr style="${rowStyle}">
                     <td style="padding:7px; text-align:center;">
                         <strong>${row.rank}</strong>
                     </td>
                     <td style="padding:7px; text-align:left;">
-                        ${isCurrentTeam ? teamData.clubName : row.name}
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${crestHtml}
+                            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${isCurrentTeam ? teamData.clubName : row.name}</span>
+                        </div>
                     </td>
                     <td style="padding:7px; text-align:center;">${row.played}</td>
                     <td style="padding:7px; text-align:center; color:#00e676;">${row.wins}</td>
