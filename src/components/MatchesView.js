@@ -6,17 +6,17 @@ import { AuthService } from '../services/authService.js';
 
 // Helper para formatear fecha en español y calcular tiempo restante desde SYSDATE (Date.now())
 export function formatMatchDateAndCountdown(dateStr) {
-    if (!dateStr) return { formattedDate: 'Por determinar', countdownStr: '' };
+    if (!dateStr) return { formattedDate: 'Por determinar', countdownStr: '', days: 0, hoursLeft: 0, isFuture: false };
 
     let matchDate;
     if (dateStr.includes('-') || dateStr.includes('T')) {
         matchDate = new Date(dateStr);
     } else {
-        return { formattedDate: dateStr, countdownStr: '' };
+        return { formattedDate: dateStr, countdownStr: '', days: 0, hoursLeft: 0, isFuture: false };
     }
 
     if (isNaN(matchDate.getTime())) {
-        return { formattedDate: dateStr, countdownStr: '' };
+        return { formattedDate: dateStr, countdownStr: '', days: 0, hoursLeft: 0, isFuture: false };
     }
 
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -30,10 +30,15 @@ export function formatMatchDateAndCountdown(dateStr) {
     const diffMs = matchDate.getTime() - now.getTime();
 
     let countdownStr = '';
+    let days = 0;
+    let hoursLeft = 0;
+    let isFuture = false;
+
     if (diffMs > 0) {
+        isFuture = true;
         const totalMinutes = Math.floor(diffMs / (1000 * 60));
-        const days = Math.floor(totalMinutes / (60 * 24));
-        const hoursLeft = Math.floor((totalMinutes % (60 * 24)) / 60);
+        days = Math.floor(totalMinutes / (60 * 24));
+        hoursLeft = Math.floor((totalMinutes % (60 * 24)) / 60);
         const minsLeft = totalMinutes % 60;
 
         if (days > 0) {
@@ -47,30 +52,20 @@ export function formatMatchDateAndCountdown(dateStr) {
         countdownStr = 'Finalizado';
     }
 
-    return { formattedDate, countdownStr };
+    return { formattedDate, countdownStr, days, hoursLeft, isFuture };
 }
 
 export const MatchesView = {
     render() {
         // Formateador de tipo de encuentro
         const getMatchStatusHtml = (match) => {
-            if ((match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) || match.type === "past") {
-                const outcomeText = match.outcome === 'win' ? 'W' : match.outcome === 'loss' ? 'L' : 'D';
-                return `
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="match-score-badge">${match.ourScore} - ${match.opponentScore}</span>
-                        <span class="match-result-outcome outcome-${match.outcome}">${outcomeText}</span>
-                    </div>
-                `;
-            } else if (match.type === "next") {
-                return `
-                    <span style="font-size:0.85rem; padding:4px 8px; border-radius:var(--radius-sm); background:rgba(var(--club-primary-rgb), 0.15); color:var(--club-primary); font-weight:600; text-transform:uppercase;">
-                        Siguiente Partido
-                    </span>
-                `;
-            } else {
-                return ``;
+            if (match.type === 'next') {
+                return `<span class="match-badge match-badge-next">PRÓXIMO</span>`;
             }
+            if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
+                return `<span class="match-score-badge">${match.ourScore} - ${match.opponentScore}</span>`;
+            }
+            return `<span class="match-badge match-badge-pending">PROGRAMADO</span>`;
         };
 
         // Obtener posición en la tabla de un equipo
@@ -81,38 +76,44 @@ export const MatchesView = {
 
         // Crear listado de partidos (Muestra solo el enfrentamiento directo; abre modal emergente al hacer clic)
         const matchesListHtml = teamData.matches.map(match => {
-            let matchOutcomeClass = '';
-            if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
-                const outcome = match.outcome || (match.ourScore > match.opponentScore ? 'win' : match.ourScore < match.opponentScore ? 'loss' : 'draw');
-                matchOutcomeClass = `match-${outcome}`;
-            }
-
+            const dateObj = formatMatchDateAndCountdown(match.date);
             return `
-                <div class="glass-card static-match-card match-toggle-card ${matchOutcomeClass}" data-match-id="${match.id}" title="Haz clic para ver detalles del partido" style="padding:12px 16px; border-radius:8px; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; position:relative; cursor:pointer; user-select:none; transition:transform 0.15s ease, border-color 0.15s ease;">
-                    
-                    <!-- Local (Polígono Giants) -->
-                    <div style="display:flex; align-items:center; gap:10px; flex:1;">
-                        ${ClubLogo.render(30)}
-                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
+                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important;">
+                    <!-- Fecha y Competición -->
+                    <div style="flex:1; min-width:180px;">
+                        <div style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
+                            ${match.competition || 'Liga F7 Gijón'}
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700; margin-top:2px;">
+                            ${dateObj.formattedDate}
+                        </div>
                     </div>
 
-                    <!-- Resultado o Estado -->
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        ${getMatchStatusHtml(match)}
-                    </div>
+                    <!-- Local vs Rival -->
+                    <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:center;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${ClubLogo.render(22)}
+                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${teamData.clubName}</span>
+                        </div>
 
-                    <!-- Rival -->
-                    <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:flex-end; text-align:right;">
-                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
-                        ${getRivalCrest(match.opponent) ? `
-                            <div style="width:28px; height:28px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                <img src="${getRivalCrest(match.opponent)}" style="max-width:100%; max-height:100%; object-fit:contain;" />
-                            </div>
-                        ` : `
-                            <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
-                                ${match.opponentEmoji || '🛡️'}
-                            </div>
-                        `}
+                        <!-- Resultado o Estado -->
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            ${getMatchStatusHtml(match)}
+                        </div>
+
+                        <!-- Rival -->
+                        <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:flex-end; text-align:right;">
+                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
+                            ${getRivalCrest(match.opponent) ? `
+                                <div style="width:28px; height:28px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <img src="${getRivalCrest(match.opponent)}" style="max-width:100%; max-height:100%; object-fit:contain;" />
+                                </div>
+                            ` : `
+                                <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
+                                    ${match.opponentEmoji || '🛡️'}
+                                </div>
+                            `}
+                        </div>
                     </div>
                 </div>
             `;
@@ -162,6 +163,15 @@ export const MatchesView = {
         const nextMatch = teamData.matches.find(m => m.type === "next") || teamData.matches[0];
         const nextMatchInfo = formatMatchDateAndCountdown(nextMatch.date);
 
+        let popcornBanner = '';
+        if (nextMatchInfo.isFuture) {
+            const daysText = nextMatchInfo.days === 1 ? '1 día' : `${nextMatchInfo.days} días`;
+            const hoursText = nextMatchInfo.hoursLeft === 1 ? '1 hora' : `${nextMatchInfo.hoursLeft} horas`;
+            popcornBanner = `Preparen las palomitas porque quedan ${daysText} y ${hoursText} para este partido.`;
+        } else {
+            popcornBanner = `Preparen las palomitas porque este partido se disputará muy pronto.`;
+        }
+
         return `
             <div class="container" style="padding-top:20px; padding-bottom:80px;">
                 <!-- HERO CARD: PRÓXIMO PARTIDO (SENCILLO Y SIN ICONOS) -->
@@ -178,13 +188,19 @@ export const MatchesView = {
                                     <span style="font-size:1.05rem; font-weight:800; color:#fff;">${teamData.clubName}</span>
                                 </div>
                                 <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.95rem;">VS</span>
-                                <div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    ${getRivalCrest(nextMatch.opponent) ? `<img src="${getRivalCrest(nextMatch.opponent)}" style="width:28px; height:28px; object-fit:contain; border-radius:50%;" />` : ''}
                                     <span style="font-size:1.05rem; font-weight:800; color:#fff;">${nextMatch.opponent}</span>
                                 </div>
                             </div>
 
-                            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">
+                            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700; margin-bottom:10px;">
                                 ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • ${nextMatchInfo.formattedDate}
+                            </div>
+
+                            <div style="font-size:0.88rem; font-weight:800; color:#fff; background:rgba(255,42,133,0.12); border:1.5px solid var(--club-primary); padding:8px 14px; border-radius:6px; display:inline-flex; align-items:center; gap:8px; line-height:1.3; margin-top:4px;">
+                                <span style="font-size:1.15rem;">🍿</span>
+                                <span>${popcornBanner}</span>
                             </div>
                         </div>
 
