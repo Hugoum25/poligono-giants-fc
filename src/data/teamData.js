@@ -631,3 +631,16 @@ export function saveSponsorsToStorage() {
     GitHubSyncService.syncJsonFile('src/data/sponsors.json', teamData.sponsors, 'Actualización de patrocinadores desde la web Admin');
 }
 
+export const RIVAL_CRESTS = {
+    'aston birra': './src/assets/rivals/aston-birra.png'
+};
+
+export function getRivalCrest(teamName) {
+    if (!teamName) return null;
+    const key = teamName.toLowerCase().trim();
+    for (const [k, url] of Object.entries(RIVAL_CRESTS)) {
+        if (key.includes(k)) return url;
+    }
+    return null;
+}
+

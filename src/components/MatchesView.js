@@ -1,5 +1,5 @@
 import { state } from '../state.js';
-import { teamData, saveMatchesToStorage, savePlayersToStorage } from '../data/teamData.js';
+import { teamData, saveMatchesToStorage, savePlayersToStorage, getRivalCrest } from '../data/teamData.js';
 import { Icon3D } from './Icon3D.js';
 import { ClubLogo } from './ClubLogo.js';
 import { AuthService } from '../services/authService.js';
@@ -104,9 +104,15 @@ export const MatchesView = {
                     <!-- Rival -->
                     <div style="display:flex; align-items:center; gap:10px; flex:1; justify-content:flex-end; text-align:right;">
                         <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main);">${match.opponent}</span>
-                        <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
-                            ${match.opponentEmoji || '🛡️'}
-                        </div>
+                        ${getRivalCrest(match.opponent) ? `
+                            <div style="width:28px; height:28px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                <img src="${getRivalCrest(match.opponent)}" style="max-width:100%; max-height:100%; object-fit:contain;" />
+                            </div>
+                        ` : `
+                            <div style="width:28px; height:28px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800;">
+                                ${match.opponentEmoji || '🛡️'}
+                            </div>
+                        `}
                     </div>
                 </div>
             `;

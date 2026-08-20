@@ -4,7 +4,7 @@
    ========================================== */
 
 import { state } from '../state.js';
-import { teamData } from '../data/teamData.js';
+import { teamData, getRivalCrest } from '../data/teamData.js';
 import { AuthService } from '../services/authService.js';
 import { ClubLogo } from './ClubLogo.js';
 import { SponsorJaviFrey } from './SponsorJaviFrey.js';
@@ -383,6 +383,9 @@ export const LineupView = {
                                         <div style="font-size:1.05rem; color:#ffffff; font-weight:900; text-transform:uppercase; margin-top:4px; letter-spacing:0.02em; display:flex; align-items:center; gap:6px;">
                                             <span style="color:var(--club-primary); font-size:1.15rem; font-weight:900; font-style:italic; text-shadow:0 0 8px rgba(255,42,133,0.5);">VS</span>
                                             <span>${opponentName}</span>
+                                            ${getRivalCrest(opponentName) ? `
+                                                <img src="${getRivalCrest(opponentName)}" style="width:26px; height:26px; object-fit:contain; border-radius:50%; vertical-align:middle; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+                                            ` : ''}
                                         </div>
                                     </div>
                                 </div>
@@ -561,10 +564,14 @@ export const LineupView = {
                                     </div>
 
                                     <!-- ESCUDO RIVAL -->
-                                    <div style="width:96px; height:96px; border-radius:50%; background:rgba(255,255,255,0.08); border:3px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; padding:6px; box-sizing:border-box;">
-                                        <div style="font-size:0.9rem; font-weight:900; color:#ffffff; text-transform:uppercase; text-align:center; line-height:1.1; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">
-                                            ${opponentName}
-                                        </div>
+                                    <div style="width:96px; height:96px; border-radius:50%; background:rgba(255,255,255,0.08); border:3px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; padding:4px; box-sizing:border-box;">
+                                        ${getRivalCrest(opponentName) ? `
+                                            <img src="${getRivalCrest(opponentName)}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:50%;" />
+                                        ` : `
+                                            <div style="font-size:0.9rem; font-weight:900; color:#ffffff; text-transform:uppercase; text-align:center; line-height:1.1; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;">
+                                                ${opponentName}
+                                            </div>
+                                        `}
                                     </div>
                                 </div>
 
