@@ -166,8 +166,7 @@ export const LineupView = {
         }
 
         const defaultTeams = [
-            "Gijón United",
-            "Desatascos Pelayo",
+            "FELECHES-BARCIASTUR-PRESA",
             "Aston Birra",
             "Mesón el Refugio",
             "Casa Toni",

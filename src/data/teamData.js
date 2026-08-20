@@ -335,22 +335,20 @@ export const teamData = {
         }
 ],
 
-    // Clasificación de la Liga F7 Gijón (Tras 10 Jornadas)
+    // Clasificación de la Liga F7 Gijón
     standings: [
-        { rank: 1,  name: "Polígono Giants",     played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: true },
-        { rank: 2,  name: "Gijón United",         played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 3,  name: "Desatascos Pelayo",    played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 4,  name: "Aston Birra",          played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0,  points: 0, isCurrent: false },
-        { rank: 5,  name: "Mesón el Refugio",     played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0,  points: 0, isCurrent: false },
-        { rank: 6,  name: "Casa Toni",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 7,  name: "Samara FC",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 8,  name: "Puntolab",             played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 9,  name: "Leyendas Retiradas",   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 10, name: "El Equipo A",          played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 11, name: "Monos del Norte",       played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 12, name: "Monsters United",      played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 13, name: "Chatarrería Cebrián",  played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
-        { rank: 14, name: "La Camocha F7",        played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false }
+        { rank: 1,  name: "Polígono Giants",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: true },
+        { rank: 2,  name: "FELECHES-BARCIASTUR-PRESA",   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 3,  name: "Aston Birra",                 played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 4,  name: "Mesón el Refugio",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 5,  name: "Casa Toni",                   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 6,  name: "Samara FC",                   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 7,  name: "Puntolab",                    played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 8,  name: "El Equipo A",                 played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 9,  name: "Monos del Norte",              played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 10, name: "Monsters United",             played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 11, name: "Chatarrería Cebrián",         played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 12, name: "La Camocha F7",               played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false }
     ],
 
     // Noticias
@@ -632,7 +630,10 @@ export function saveSponsorsToStorage() {
 }
 
 export const RIVAL_CRESTS = {
-    'aston birra': './src/assets/rivals/aston-birra.png'
+    'aston birra': './src/assets/rivals/aston-birra.png',
+    'feleches': './src/assets/rivals/feleches-barciastur-presa.png',
+    'feleches-barciastur-presa': './src/assets/rivals/feleches-barciastur-presa.png',
+    'barciastur': './src/assets/rivals/feleches-barciastur-presa.png'
 };
 
 export function getRivalCrest(teamName) {
