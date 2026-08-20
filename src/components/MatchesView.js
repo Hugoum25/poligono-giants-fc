@@ -212,19 +212,22 @@ export const MatchesView = {
                 ` : ''}
 
                 <div class="matches-view-grid">
-                    <!-- Columna Izquierda: Calendario -->
+                    <!-- Columna Izquierda: Calendario (Desplegable y Contraíble) -->
                     <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px;">
+                        <div id="toggle-calendar-btn" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px; transition:background 0.2s ease;">
                             <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
                                 Calendario de Partidos
                             </h3>
-                            ${isAdmin ? `
-                                <button class="btn btn-primary" id="btn-add-new-match" style="font-size:0.75rem; padding:4px 10px; font-weight:800;">
-                                    ➕ Añadir Partido
-                                </button>
-                            ` : ''}
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                ${isAdmin ? `
+                                    <button class="btn btn-primary" id="btn-add-new-match" style="font-size:0.75rem; padding:4px 10px; font-weight:800;">
+                                        ➕ Añadir Partido
+                                    </button>
+                                ` : ''}
+                                <span id="calendar-toggle-icon" style="font-size:0.8rem; color:var(--club-primary); font-weight:700;">▲ Ocultar</span>
+                            </div>
                         </div>
-                        <div id="calendar-content-wrapper" class="matches-list">
+                        <div id="calendar-content-wrapper" class="matches-list" style="display:block;">
                             ${matchesListHtml}
                         </div>
                     </div>
@@ -262,6 +265,20 @@ export const MatchesView = {
     },
 
     bindEvents() {
+        // Evento para contraer/desplegar el calendario de partidos
+        const calBtn = document.getElementById('toggle-calendar-btn');
+        const calWrapper = document.getElementById('calendar-content-wrapper');
+        const calIcon = document.getElementById('calendar-toggle-icon');
+
+        if (calBtn && calWrapper) {
+            calBtn.addEventListener('click', (e) => {
+                if (e.target.closest('#btn-add-new-match')) return;
+                const isHidden = calWrapper.style.display === 'none';
+                calWrapper.style.display = isHidden ? 'block' : 'none';
+                if (calIcon) calIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
+            });
+        }
+
         // Evento clic en la tarjeta del partido para abrir vista emergente (modal)
         document.querySelectorAll('.match-toggle-card').forEach(card => {
             card.addEventListener('click', (e) => {
