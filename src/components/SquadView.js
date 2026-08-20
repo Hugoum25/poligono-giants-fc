@@ -10,7 +10,6 @@ import { AuthService } from '../services/authService.js';
 export const SquadView = {
     activeFilter: "todos", // todos, porteros, defensas, carrileros, medios, delanteros
     activeFormation: "3-2-1", // 3-2-1, 2-3-1, 2-2-2
-    modalStatsTab: "temporada", // temporada, historico
     draggedPlayerId: null, // ID del jugador que se está arrastrando
     
     // Alineación táctica
@@ -294,156 +293,45 @@ export const SquadView = {
                     `;
                 });
 
-                // Datos Históricos Acumulados
-                const histStats = player.historicalStats || {
-                    matches: (player.stats?.matches || 0) + 36,
-                    goals: (player.stats?.goals || 0) + (player.number === 9 ? 42 : player.number === 10 ? 18 : Math.floor((player.stats?.goals || 0) * 3)),
-                    assists: (player.stats?.assists || 0) + (player.number === 2 ? 31 : player.number === 10 ? 24 : Math.floor((player.stats?.assists || 0) * 3)),
-                    mvp: (player.stats?.mvp || 0) + (player.number === 9 ? 8 : player.number === 10 ? 6 : 3),
-                    seasons: player.info?.seasons || 3,
-                    titles: player.number === 9 ? "Copa F7 + Bota Oro" : "Copa F7 Gijón"
-                };
-
-                const hMatches = histStats.matches || 0;
-                const hGoalsPerMatch = hMatches > 0 ? ((histStats.goals || 0) / hMatches).toFixed(2) : "0.00";
-                const hAssistsPerMatch = hMatches > 0 ? ((histStats.assists || 0) / hMatches).toFixed(2) : "0.00";
-
-                const isTempActive = (this.modalStatsTab || 'temporada') === 'temporada';
-
-                modalHtml = `
-                    <div class="modal-overlay active" id="player-modal-overlay">
-                        <div class="glass-card player-modal" style="max-width:680px; position:relative; overflow:hidden;">
-                            <!-- NÚMERO GIGANTE OCUPANDO TODA LA TARJETA COMPLETA DE FONDO -->
-                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:32rem; font-family:'VT323', var(--font-mono); font-weight:900; color:rgba(255,42,133,0.15); user-select:none; pointer-events:none; z-index:0; line-height:0.7; white-space:nowrap; letter-spacing:-0.05em; text-align:center;">
-                                ${player.number}
-                            </div>
-
-                            <button class="modal-close" id="close-modal-btn" style="z-index:10;">✕</button>
-                            <div class="modal-grid" style="position:relative; z-index:1;">
-                                
-                                <!-- CABECERA: FOTO, NOMBRE, APODO Y POSICIÓN EN GRANDE -->
-                                <div class="modal-player-header" style="text-align:center; padding:24px 14px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                                    ${player.photo 
-                                        ? `<div style="width:130px; height:130px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; overflow:visible;">
-                                             <img src="${player.photo}" class="player-png-feathered" draggable="false" oncontextmenu="return false;" />
-                                           </div>` 
-                                        : `<div style="width:105px; height:105px; margin:0 auto 12px auto; border-radius:50%; background:rgba(255,42,133,0.15); border:3px solid var(--club-primary); display:flex; align-items:center; justify-content:center;">
-                                             <span style="font-size:3.2rem;">${player.position.includes('Portero') ? '🧤' : '👤'}</span>
-                                           </div>`
-                                    }
-
-                                    <h2 style="font-size:2rem; margin-top:4px; font-weight:800; color:var(--text-main); font-family:var(--font-heading);">${player.name}</h2>
-                                    ${player.nickname ? `<div style="font-size:1.05rem; color:var(--club-primary); font-weight:800; font-style:italic; margin-top:2px;">"${player.nickname}"</div>` : ''}
+                                <!-- SECTOR ESTADÍSTICAS OFICIALES -->
+                                <div class="modal-player-stats" style="display:flex; flex-direction:column; gap:12px;">
                                     
-                                    <!-- Posición en grande -->
-                                    <p style="color:var(--text-main); font-family:var(--font-heading); text-transform:uppercase; margin-top:6px; font-size:1.2rem; font-weight:800; letter-spacing:0.06em;">
-                                        ${player.position}
-                                    </p>
+                                    <div style="animation:fadeIn 0.2s ease;">
+                                        <!-- FILA 1: PARTIDOS | GOLES | ASISTENCIAS -->
+                                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+                                            ${mainBoxesHtml}
+                                        </div>
 
-                                    ${isAdmin ? `
-                                        <button class="btn btn-primary" id="btn-edit-player" data-player-id="${player.id}" style="margin-top:16px; width:100%; font-size:0.85rem; padding:8px 12px;">
-                                            ✏️ Editar Ficha del Jugador
-                                        </button>
-                                    ` : ''}
-                                </div>
+                                        <!-- FILA 2: GOLES/PJ | MVP | ASIS/PJ -->
+                                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;">
+                                            <div class="stat-box">
+                                                <div class="stat-val">${goalsPerMatch}</div>
+                                                <div class="stat-label">Goles / PJ</div>
+                                            </div>
+                                            <div class="stat-box">
+                                                <div class="stat-val">${mvpVal}</div>
+                                                <div class="stat-label">MVP</div>
+                                            </div>
+                                            <div class="stat-box">
+                                                <div class="stat-val">${assistsPerMatch}</div>
+                                                <div class="stat-label">Asis / PJ</div>
+                                            </div>
+                                        </div>
 
-                                <!-- SECTOR ESTADÍSTICAS CON 2 OPCIONES: TEMPORADA | HISTÓRICO -->
-                                <div class="modal-player-stats" style="display:flex; flex-direction:column; gap:16px;">
-                                    
-                                    <!-- Botones de 2 Opciones / Pestañas sencillas -->
-                                    <div class="squad-filters" style="margin:0; justify-content:center; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
-                                        <button class="modal-tab-btn filter-btn ${isTempActive ? 'active' : ''}" data-modal-tab="temporada">
-                                            Temporada
-                                        </button>
-                                        <button class="modal-tab-btn filter-btn ${!isTempActive ? 'active' : ''}" data-modal-tab="historico">
-                                            Histórico
-                                        </button>
+                                        <!-- FILA 3: AMARILLAS | ROJAS | AZULES -->
+                                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;">
+                                            ${cardBoxesHtml}
+                                        </div>
+
+                                        <div style="margin-top:12px;">
+                                            <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.05em;">
+                                                Partidos
+                                            </div>
+                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+                                                ${outcomeBoxesHtml}
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    ${isTempActive ? `
-                                        <!-- OPCIÓN 1: STATS DE LA TEMPORADA -->
-                                        <div style="animation:fadeIn 0.2s ease;">
-                                            <!-- FILA 1: PARTIDOS | GOLES | ASISTENCIAS -->
-                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-                                                ${mainBoxesHtml}
-                                            </div>
-
-                                            <!-- FILA 2: GOLES/PJ | MVP | ASIS/PJ -->
-                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;">
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${goalsPerMatch}</div>
-                                                    <div class="stat-label">Goles / PJ</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${mvpVal}</div>
-                                                    <div class="stat-label">MVP</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${assistsPerMatch}</div>
-                                                    <div class="stat-label">Asis / PJ</div>
-                                                </div>
-                                            </div>
-
-                                            <!-- FILA 3: AMARILLAS | ROJAS | AZULES -->
-                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;">
-                                                ${cardBoxesHtml}
-                                            </div>
-
-                                            <div style="margin-top:12px;">
-                                                <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.05em;">
-                                                    Partidos
-                                                </div>
-                                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-                                                    ${outcomeBoxesHtml}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ` : `
-                                        <!-- OPCIÓN 2: STATS HISTÓRICAS -->
-                                        <div style="animation:fadeIn 0.2s ease;">
-                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${histStats.matches}</div>
-                                                    <div class="stat-label">PJ Totales</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${histStats.goals}</div>
-                                                    <div class="stat-label">Goles Totales</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${histStats.assists}</div>
-                                                    <div class="stat-label">Asistencias</div>
-                                                </div>
-                                            </div>
-
-                                            <!-- PROMEDIOS HISTÓRICOS Y MVP TOT -->
-                                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px;">
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${hGoalsPerMatch}</div>
-                                                    <div class="stat-label">Goles / PJ (Hist.)</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${histStats.mvp || 0}</div>
-                                                    <div class="stat-label">MVP Totales</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val">${hAssistsPerMatch}</div>
-                                                    <div class="stat-label">Asis / PJ (Hist.)</div>
-                                                </div>
-                                            </div>
-
-                                            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:10px;">
-                                                <div class="stat-box">
-                                                    <div class="stat-val" style="font-size:1.1rem;">${histStats.seasons} Temporadas</div>
-                                                    <div class="stat-label">Trayectoria</div>
-                                                </div>
-                                                <div class="stat-box">
-                                                    <div class="stat-val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${histStats.titles}">${histStats.titles}</div>
-                                                    <div class="stat-label">Palmarés</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `}
 
                                 </div>
                             </div>
@@ -567,16 +455,6 @@ export const SquadView = {
             });
         });
 
-        // Evento de cambio de pestaña dentro del modal (Temporada vs Histórico)
-        document.querySelectorAll('.modal-tab-btn').forEach(btn => {
-            btn.onclick = () => {
-                const targetTab = btn.getAttribute('data-modal-tab');
-                if (targetTab && this.modalStatsTab !== targetTab) {
-                    this.modalStatsTab = targetTab;
-                    state.notify();
-                }
-            };
-        });
 
         // Evento de cerrado del modal de jugador
         const closeBtn = document.getElementById('close-modal-btn');
