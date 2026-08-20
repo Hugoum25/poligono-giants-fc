@@ -641,7 +641,9 @@ export const RIVAL_CRESTS = {
     'barciastur': './src/assets/rivals/feleches-barciastur-presa.png',
     'sidrería el tendido': './src/assets/rivals/sidreria-el-tendido.png',
     'sidreria el tendido': './src/assets/rivals/sidreria-el-tendido.png',
-    'tendido': './src/assets/rivals/sidreria-el-tendido.png'
+    'tendido': './src/assets/rivals/sidreria-el-tendido.png',
+    'puntolab': './src/assets/rivals/puntolab.png',
+    'punto lab': './src/assets/rivals/puntolab.png'
 };
 
 export function getRivalCrest(teamName) {
