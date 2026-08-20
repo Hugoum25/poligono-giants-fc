@@ -635,9 +635,10 @@ export function saveSponsorsToStorage() {
 
 export const RIVAL_CRESTS = {
     'aston birra': './src/assets/rivals/aston-birra.png',
-    'feleches': './src/assets/rivals/feleches-barciastur-pesa.png',
-    'feleches-barciastur-pesa': './src/assets/rivals/feleches-barciastur-pesa.png',
-    'barciastur': './src/assets/rivals/feleches-barciastur-pesa.png'
+    'feleches': './src/assets/rivals/feleches-barciastur-presa.png',
+    'feleches-barciastur-pesa': './src/assets/rivals/feleches-barciastur-presa.png',
+    'feleches-barciastur-presa': './src/assets/rivals/feleches-barciastur-presa.png',
+    'barciastur': './src/assets/rivals/feleches-barciastur-presa.png'
 };
 
 export function getRivalCrest(teamName) {
