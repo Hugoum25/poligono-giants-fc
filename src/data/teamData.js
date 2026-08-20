@@ -338,7 +338,7 @@ export const teamData = {
     // Clasificación de la Liga F7 Gijón
     standings: [
         { rank: 1,  name: "Polígono Giants",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: true },
-        { rank: 2,  name: "FELECHES-BARCIASTUR-PRESA",   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
+        { rank: 2,  name: "Feleches-Barciastur-Pesa",   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 3,  name: "Aston Birra",                 played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 4,  name: "Mesón el Refugio",            played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
         { rank: 5,  name: "Casa Toni",                   played: 0, wins: 0, draws: 0, losses: 0, goalsDiff: 0, points: 0, isCurrent: false },
@@ -631,9 +631,9 @@ export function saveSponsorsToStorage() {
 
 export const RIVAL_CRESTS = {
     'aston birra': './src/assets/rivals/aston-birra.png',
-    'feleches': './src/assets/rivals/feleches-barciastur-presa.png',
-    'feleches-barciastur-presa': './src/assets/rivals/feleches-barciastur-presa.png',
-    'barciastur': './src/assets/rivals/feleches-barciastur-presa.png'
+    'feleches': './src/assets/rivals/feleches-barciastur-pesa.png',
+    'feleches-barciastur-pesa': './src/assets/rivals/feleches-barciastur-pesa.png',
+    'barciastur': './src/assets/rivals/feleches-barciastur-pesa.png'
 };
 
 export function getRivalCrest(teamName) {

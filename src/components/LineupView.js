@@ -166,7 +166,7 @@ export const LineupView = {
         }
 
         const defaultTeams = [
-            "FELECHES-BARCIASTUR-PRESA",
+            "Feleches-Barciastur-Pesa",
             "Aston Birra",
             "Mesón el Refugio",
             "Casa Toni",
