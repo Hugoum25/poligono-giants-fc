@@ -16,6 +16,8 @@ import { MultimediaView } from './components/MultimediaView.js';
 import { PalmaresView } from './components/PalmaresView.js';
 import { GamesView } from './components/GamesView.js';
 import { Obj3DViewer } from './components/Obj3DViewer.js';
+import { Osd } from './components/Osd.js';
+import { tuneLogos } from './components/ui.js';
 
 import { AuthService } from './services/authService.js';
 
@@ -36,6 +38,9 @@ const routes = {
 };
 
 let currentView = null;
+
+// Paneles de modal que pueden hacer scroll propio
+const MODAL_CARD_SELECTOR = '.pg-modal, .glass-card, .player-modal, .video-player-modal';
 
 function renderApp() {
     const appContainer = document.getElementById('app');
@@ -99,9 +104,9 @@ function renderApp() {
     // 4. Inyectar Navbar, Contenido y Footer dentro de la pantalla
     screenContent.innerHTML = `
         ${Navbar.render()}
-        <div style="flex-grow: 1;">
+        <main class="tv-main" data-view="${state.activePage}">
             ${viewComponent.render()}
-        </div>
+        </main>
         ${Footer.render()}
     `;
 
@@ -112,6 +117,12 @@ function renderApp() {
 
     // 6. Inicializar visores 3D de modelos .OBJ
     Obj3DViewer.initAll();
+
+    // 6b. Rótulo OSD + transición de cambio de canal
+    Osd.update(state.activePage);
+
+    // 6c. Logos de patrocinadores con fondo opaco → fundidos con la pantalla
+    tuneLogos(screenContent);
 
     // 7. Restaurar la posición de scroll exacta (Evita saltos arriba al abrir modal)
     tvScreen.scrollTop = currentScrollTop;
@@ -127,15 +138,12 @@ function renderApp() {
         modal.style.height = viewHeight + 'px';
         modal.style.zIndex = '999999';
         modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
         modal.style.opacity = '1';
         modal.style.pointerEvents = 'all';
 
-        const card = modal.querySelector('.glass-card, .player-modal, .video-player-modal');
+        const card = modal.querySelector(MODAL_CARD_SELECTOR);
         if (card) {
-            card.style.margin = 'auto';
-            card.style.maxHeight = '85vh';
+            card.style.maxHeight = Math.round(viewHeight * 0.9) + 'px';
             card.style.overflowY = 'auto';
             card.style.webkitOverflowScrolling = 'touch';
         }
@@ -160,7 +168,7 @@ function preventBackgroundScroll(e) {
     const activeModal = document.querySelector('.modal-overlay.active');
     if (!activeModal) return;
 
-    const card = activeModal.querySelector('.glass-card, .player-modal, .video-player-modal');
+    const card = activeModal.querySelector(MODAL_CARD_SELECTOR);
     if (!card || !card.contains(e.target)) {
         if (e.cancelable) e.preventDefault();
     }

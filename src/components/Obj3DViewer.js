@@ -2,6 +2,29 @@
    FC HUB - RENDERIZADOR 3D DE ARCHIVOS .OBJ AUTÓNOMO CON CACHÉ INSTANTÁNEA
    ========================================== */
 
+// Luz desde arriba-izquierda, hacia el espectador
+const LIGHT = (() => { const v = [-0.35, 0.55, 0.76]; const l = Math.hypot(...v); return v.map(c => c / l); })();
+
+// Rampa de color: sombra casi negra → rosa club → brillo cálido
+const RAMP = [
+    [0.30, [42, 4, 20]],
+    [0.62, [255, 42, 133]],
+    [1.00, [255, 214, 232]]
+];
+function shade(light) {
+    const l = Math.max(RAMP[0][0], Math.min(1, light));
+    for (let i = 1; i < RAMP.length; i++) {
+        const [l1, c1] = RAMP[i];
+        const [l0, c0] = RAMP[i - 1];
+        if (l <= l1) {
+            const t = (l - l0) / (l1 - l0);
+            return { r: (c0[0] + (c1[0] - c0[0]) * t) | 0, g: (c0[1] + (c1[1] - c0[1]) * t) | 0, b: (c0[2] + (c1[2] - c0[2]) * t) | 0 };
+        }
+    }
+    const c = RAMP[RAMP.length - 1][1];
+    return { r: c[0], g: c[1], b: c[2] };
+}
+
 export const Obj3DViewer = {
     activeAnimators: new Map(),
     objCache: new Map(), // Cache en memoria para 0ms de retardo al re-renderizar
@@ -10,6 +33,11 @@ export const Obj3DViewer = {
      * Escanea todo el DOM e inicializa automáticamente los visores 3D para contenedores con clase .obj-3d-canvas-container
      */
     initAll() {
+        // Liberar los bucles de contenedores que ya no están en el DOM (cada render reemplaza el HTML)
+        this.activeAnimators.forEach((_, el) => {
+            if (!el.isConnected) this.destroy(el);
+        });
+
         requestAnimationFrame(() => {
             document.querySelectorAll('.obj-3d-canvas-container').forEach(el => {
                 const path = el.getAttribute('data-obj-path') || './src/assets/icons/media-icon.obj';
@@ -114,6 +142,7 @@ export const Obj3DViewer = {
         let rotZ = 0;
         let animId = null;
         let isVisible = true;
+        let boost = 1;
 
         // IntersectionObserver para pausar renderizado cuando el ícono 3D sale de pantalla en móviles
         if ('IntersectionObserver' in window) {
@@ -158,7 +187,11 @@ export const Obj3DViewer = {
 
             if (!modelData || modelData.vertices.length === 0) return;
 
-            const speed = options.autoRotateSpeed !== undefined ? options.autoRotateSpeed : 0.085;
+            const baseSpeed = options.autoRotateSpeed !== undefined ? options.autoRotateSpeed : 0.085;
+            // Aceleración suave en hover (containerEl._boost lo fija la vista)
+            const targetBoost = containerEl._boost || 1;
+            boost += (targetBoost - boost) * 0.08;
+            const speed = baseSpeed * boost;
 
             if (speed !== 0) {
                 if (options.rotateAxis === 'z') {
@@ -238,8 +271,17 @@ export const Obj3DViewer = {
                 // Culling suave de caras traseras
                 if (normalZ <= 0) continue;
 
-                // Iluminación simulada desde luz superior-derecha (0.6, 0.8, 1.0)
-                const lightIntensity = Math.min(1.0, Math.max(0.3, (normalZ / 1200)));
+                // Iluminación Lambert con la normal 3D real (independiente del tamaño del canvas)
+                const e1x = v1.x - v0.x, e1y = v1.y - v0.y, e1z = v1.z - v0.z;
+                const e2x = v2.x - v0.x, e2y = v2.y - v0.y, e2z = v2.z - v0.z;
+                let nx = e1y * e2z - e1z * e2y;
+                let ny = e1z * e2x - e1x * e2z;
+                let nz = e1x * e2y - e1y * e2x;
+                const nl = Math.hypot(nx, ny, nz) || 1;
+                nx /= nl; ny /= nl; nz /= nl;
+                if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+                const lambert = Math.max(0, nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2]);
+                const lightIntensity = 0.3 + 0.7 * lambert;
 
                 renderedFaces.push({
                     avgZ,
@@ -255,12 +297,10 @@ export const Obj3DViewer = {
             for (let i = 0; i < renderedFaces.length; i++) {
                 const f = renderedFaces[i];
 
-                const r = Math.floor(255 * f.light);
-                const g = Math.floor(42 * f.light);
-                const b = Math.floor(133 * Math.min(1.2, f.light + 0.3));
+                const { r, g, b } = shade(f.light);
 
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-                ctx.strokeStyle = `rgba(255, 42, 133, 0.4)`;
+                ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
                 ctx.lineWidth = 1;
 
                 ctx.beginPath();
@@ -276,13 +316,13 @@ export const Obj3DViewer = {
 
         renderFrame();
 
-        this.activeAnimators.set(containerEl, { animId, canvas });
+        this.activeAnimators.set(containerEl, { getId: () => animId, canvas });
     },
 
     destroy(containerEl) {
         if (this.activeAnimators.has(containerEl)) {
-            const { animId } = this.activeAnimators.get(containerEl);
-            cancelAnimationFrame(animId);
+            cancelAnimationFrame(this.activeAnimators.get(containerEl).getId());
+            if (containerEl._observer) containerEl._observer.disconnect();
             containerEl.innerHTML = '';
             this.activeAnimators.delete(containerEl);
         }

@@ -1,0 +1,118 @@
+/* ==========================================================
+   BASE — reset, tipografía, utilidades mínimas
+   ========================================================== */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--room);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-stretch: var(--stretch-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-display);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: var(--track-display);
+    text-transform: uppercase;
+}
+
+p { text-wrap: pretty; }
+
+a { color: inherit; text-decoration: none; }
+img, video, canvas, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+ul, ol { list-style: none; }
+strong { font-weight: 700; }
+
+::selection { background: var(--signal); color: var(--signal-ink); }
+
+:focus { outline: none; }
+:focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 2px;
+}
+
+/* ── Roles tipográficos ──────────────────────────────── */
+.t-display {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: var(--track-display);
+}
+.t-mono, .t-meta {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+.t-meta { color: var(--mute); }
+.t-signal { color: var(--signal); }
+.t-mute { color: var(--mute); }
+.t-num { font-variant-numeric: tabular-nums; }
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Layout ──────────────────────────────────────────── */
+.container,
+.pg-container {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.pg-view {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: var(--s-8) var(--gutter) var(--s-16);
+    animation: pg-rise var(--dur-3) var(--ease-out) both;
+}
+
+.pg-stack > * + * { margin-top: var(--s-6); }
+.pg-row { display: flex; align-items: center; gap: var(--s-3); }
+.pg-row--between { justify-content: space-between; }
+.pg-row--wrap { flex-wrap: wrap; }
+.pg-spacer { flex: 1; }
+
+/* ── Keyframes compartidos ───────────────────────────── */
+@keyframes pg-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes pg-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pg-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes pg-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Alias heredados usados por componentes */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

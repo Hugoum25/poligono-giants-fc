@@ -1,0 +1,96 @@
+/* ==========================================================
+   POLÍGONO GIANTS TV — DESIGN TOKENS
+   Un único origen de verdad para color, tipo, espacio y motion.
+   ========================================================== */
+
+:root {
+    /* ── Color ─────────────────────────────────────────── */
+    --room:        #050506;   /* fuera de la TV */
+    --ink:         #0a0a0b;   /* fondo de emisión */
+    --ink-2:       #111113;   /* superficie */
+    --ink-3:       #19191c;   /* superficie elevada */
+    --ink-4:       #232327;   /* hover / input */
+    --line:        rgba(243, 241, 236, 0.10);
+    --line-strong: rgba(243, 241, 236, 0.22);
+
+    --paper:       #f3f1ec;   /* texto principal (blanco cálido) */
+    --paper-2:     #c9c7c1;
+    --mute:        #8a8a90;
+    --mute-2:      #5d5d63;
+
+    --signal:      #ff2a85;   /* rosa club = color de señal */
+    --signal-rgb:  255, 42, 133;
+    --signal-ink:  #1a0010;   /* texto sobre rosa */
+    --signal-soft: rgba(255, 42, 133, 0.12);
+
+    --win:         #3ddc97;
+    --loss:        #ff5a4e;
+    --draw:        #f2c14e;
+
+    /* Compatibilidad con estilos/inline heredados */
+    --club-primary:     var(--signal);
+    --club-primary-rgb: var(--signal-rgb);
+    --bg-dark:          var(--ink);
+    --bg-surface:       var(--ink-2);
+    --bg-surface-glow:  var(--ink-3);
+    --border-color:     var(--line);
+    --border-color-glow:var(--line-strong);
+    --text-main:        var(--paper);
+    --text-muted:       var(--mute);
+
+    /* ── Tipografía ────────────────────────────────────── */
+    --font-display: 'Archivo', 'Arial Narrow', sans-serif;  /* usar con --stretch-display */
+    --font-body:    'Archivo', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+    --font-heading: var(--font-display);
+
+    --stretch-display: 62%;
+    --stretch-body:    100%;
+
+    --fs-2xs: 0.6875rem;  /* 11 */
+    --fs-xs:  0.75rem;    /* 12 */
+    --fs-sm:  0.875rem;   /* 14 */
+    --fs-md:  1rem;       /* 16 */
+    --fs-lg:  1.25rem;    /* 20 */
+    --fs-xl:  1.75rem;    /* 28 */
+    --fs-2xl: 2.5rem;     /* 40 */
+    --fs-3xl: 4rem;       /* 64 */
+    --fs-hero: clamp(3.5rem, 11vw, 10rem);
+
+    --track-mono: 0.14em;
+    --track-display: -0.005em;
+
+    /* ── Espacio (base 4) ──────────────────────────────── */
+    --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+    --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+    --s-12: 48px; --s-16: 64px; --s-20: 80px;
+
+    --gutter: clamp(16px, 3vw, 40px);
+    --maxw: 1440px;
+    --nav-h: 56px;
+
+    /* ── Forma ─────────────────────────────────────────── */
+    --radius: 0px;           /* todo es recto… */
+    --radius-crt: 22px;      /* …salvo el cristal */
+    --radius-sm: 0px; --radius-md: 0px; --radius-lg: 0px; --radius-full: 999px;
+
+    /* ── Motion ────────────────────────────────────────── */
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --dur-1: 120ms;
+    --dur-2: 220ms;
+    --dur-3: 420ms;
+    --transition: color var(--dur-2) var(--ease-out),
+                  background-color var(--dur-2) var(--ease-out),
+                  border-color var(--dur-2) var(--ease-out),
+                  opacity var(--dur-2) var(--ease-out),
+                  transform var(--dur-2) var(--ease-out);
+
+    /* ── Efectos CRT ───────────────────────────────────── */
+    --scanline-opacity: 0.05;
+    --grain-opacity: 0.035;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root { --dur-1: 0ms; --dur-2: 0ms; --dur-3: 0ms; }
+}

@@ -1,0 +1,183 @@
+/* ==========================================================
+   CHROME — navbar, guía de canales, footer
+   ========================================================== */
+
+/* ── Navbar ──────────────────────────────────────────── */
+.tv-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: rgba(10, 10, 11, 0.82);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid var(--line);
+}
+
+.tv-navbar-container {
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+    max-width: none;
+    padding: 0 var(--s-4) 0 var(--s-5);
+}
+
+.tv-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    flex-shrink: 0;
+    color: var(--paper);
+}
+.tv-logo__word {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-display);
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    transition: color var(--dur-2) var(--ease-out);
+}
+.tv-logo__sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--mute);
+    padding-left: var(--s-3);
+    border-left: 1px solid var(--line-strong);
+}
+.tv-logo:hover .tv-logo__word { color: var(--signal); }
+
+.tv-nav-links {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+}
+.tv-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 10px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper-2);
+    white-space: nowrap;
+    transition: var(--transition);
+}
+.tv-nav-item__ch { color: var(--mute-2); transition: color var(--dur-2) var(--ease-out); }
+.tv-nav-item:hover { color: var(--paper); }
+.tv-nav-item:hover .tv-nav-item__ch { color: var(--signal); }
+.tv-nav-item.active { background: var(--signal); color: var(--signal-ink); }
+.tv-nav-item.active .tv-nav-item__ch { color: rgba(26, 0, 16, 0.55); }
+
+.tv-nav-actions { display: flex; align-items: center; gap: var(--s-1); flex-shrink: 0; }
+.tv-nav-user.is-logged { color: var(--paper); }
+.tv-guide-toggle { display: none; }
+
+/* ── Guía de canales (móvil / tablet) ────────────────── */
+.pg-guide {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    height: calc(var(--screen-h, 100dvh) - var(--nav-h));
+    overflow-y: auto;
+    background: var(--ink);
+    padding: var(--s-6) var(--gutter) var(--s-16);
+    animation: pg-fade var(--dur-2) var(--ease-out);
+}
+.pg-guide[hidden] { display: none; }
+.pg-guide__head { padding-bottom: var(--s-4); border-bottom: 1px solid var(--line); }
+.pg-guide__item {
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    background: none;
+    color: var(--paper);
+}
+.pg-guide__ch { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--track-mono); color: var(--mute); }
+.pg-guide__label {
+    font-family: var(--font-display); font-stretch: var(--stretch-display); font-weight: 800;
+    font-size: clamp(2rem, 9vw, 3.25rem); line-height: 0.9; letter-spacing: 0;
+}
+.pg-guide__item .pg-ico { color: var(--mute); }
+.pg-guide__item.active { background: none; color: var(--signal); }
+.pg-guide__item.active .pg-guide__ch { color: var(--signal); }
+
+@media (max-width: 1180px) {
+    .tv-logo__sub { display: none; }
+    .tv-nav-item { padding: 0 7px; }
+    .tv-nav-item__ch { display: none; }
+}
+@media (max-width: 960px) {
+    .tv-nav-links { display: none; }
+    .tv-navbar-container { justify-content: space-between; }
+    .tv-guide-toggle { display: inline-flex; }
+}
+@media (max-width: 520px) {
+    .tv-navbar-container { padding: 0 var(--s-2) 0 var(--s-3); gap: var(--s-2); }
+    .tv-logo__word { font-size: 19px; }
+    .tv-nav-user__name { display: none; }
+    .tv-nav-actions .pg-btn--ghost { width: 32px; padding: 0; }
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+.tv-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    padding-bottom: 44px; /* aire para el OSD inferior */
+}
+.tv-footer__reel {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--s-6);
+    padding: var(--s-5) var(--gutter);
+    border-bottom: 1px solid var(--line);
+}
+.tv-footer__reel-label { white-space: nowrap; }
+.tv-footer__reel .pg-marquee__track { gap: var(--s-12); padding-right: var(--s-12); animation-duration: 50s; }
+.tv-footer__sponsor { display: inline-flex; align-items: center; height: 36px; opacity: 0.55; transition: opacity var(--dur-2) var(--ease-out); }
+.tv-footer__sponsor:hover { opacity: 1; }
+.tv-footer__logo {
+    height: 32px; width: auto; max-width: 120px; object-fit: contain;
+    filter: grayscale(1) brightness(1.6) contrast(0.9);
+    transition: filter var(--dur-2) var(--ease-out);
+}
+.tv-footer__sponsor:hover .tv-footer__logo { filter: none; }
+.pg-sponsor-logo--text {
+    font-family: var(--font-display); font-stretch: var(--stretch-display); font-weight: 800;
+    font-size: 18px; text-transform: uppercase; color: var(--paper); height: auto; filter: none;
+}
+
+.tv-footer__credits {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-6);
+    padding: var(--s-5) var(--gutter) 0;
+}
+.tv-footer__mark {
+    font-family: var(--font-display); font-stretch: var(--stretch-display); font-weight: 800;
+    font-size: var(--fs-lg); text-transform: uppercase;
+}
+.tv-footer__copy { margin-left: auto; color: var(--mute-2); }
+
+@media (max-width: 640px) {
+    .tv-footer__reel { grid-template-columns: 1fr; gap: var(--s-3); }
+    .tv-footer__copy { margin-left: 0; width: 100%; }
+}

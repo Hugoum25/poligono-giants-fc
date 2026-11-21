@@ -1,46 +1,51 @@
-/* ==========================================
-   FC HUB - ÍCONOS FIGURAS 3D Y ESTÁTICOS UNIFORMES
-   ========================================== */
+/* ==========================================================
+   ICON 3D — objetos .OBJ girando para los canales (estilo AWGE)
+   ========================================================== */
 
-import { ClubLogo } from './ClubLogo.js';
 import { state } from '../state.js';
 
+const OBJ_BY_CHANNEL = {
+    multimedia: 'media-icon.obj',
+    squad:      'noticias-icon.obj',
+    news:       'plantilla-icon.obj',
+    matches:    'partidos-icon.obj',
+    sponsors:   'patrocinadores-icon.obj',
+    games:      'juegos-icon.obj'
+};
+
+const ALIASES = {
+    '📸': 'multimedia', media: 'multimedia', video: 'multimedia',
+    '🏃': 'squad', plantilla: 'squad', jugadores: 'squad',
+    '📰': 'news', noticias: 'news',
+    '⚽': 'matches', partidos: 'matches',
+    '🤝': 'sponsors', patrocinadores: 'sponsors',
+    '🎮': 'games', juegos: 'games'
+};
+
+function sizeFor(size) {
+    const w = window.innerWidth || 1280;
+    if (size === 'lg') return w < 520 ? 180 : 240;
+    if (size === 'md') return w < 400 ? 120 : w < 720 ? 140 : w < 1280 ? 170 : 210;
+    return w < 520 ? 72 : 96;
+}
+
 export const Icon3D = {
-    /**
-     * Genera un ícono 3D rotatorio (.OBJ) para los 6 canales de la portada
-     * todos girando en el eje Y en la misma dirección y exactos a la misma velocidad.
-     */
     render(symbol, size = 'sm', extraOptions = {}) {
-        const pxDim = size === 'lg' ? 240 : size === 'md' ? 180 : 120;
+        const px = sizeFor(size);
+        const key = OBJ_BY_CHANNEL[symbol] ? symbol : (ALIASES[symbol] || 'multimedia');
+        const objPath = `./src/assets/icons/${OBJ_BY_CHANNEL[key] || OBJ_BY_CHANNEL.multimedia}`;
 
-        const isMultimedia = (symbol === '📸' || symbol === 'multimedia' || symbol === 'media' || symbol === 'video');
-        const isSquad = (symbol === '🏃' || symbol === 'squad' || symbol === 'plantilla' || symbol === 'jugadores');
-        const isNews = (symbol === '📰' || symbol === 'news' || symbol === 'noticias');
-        const isMatches = (symbol === '⚽' || symbol === 'matches' || symbol === 'partidos');
-        const isSponsors = (symbol === '🤝' || symbol === 'sponsors' || symbol === 'patrocinadores');
-        const isGames = (symbol === '🎮' || symbol === 'games' || symbol === 'juegos');
-
-        // Los íconos rotan en inicio a la misma velocidad uniforme (0.02 rad/frame)
         const isHome = state.activePage === 'home';
-        const speedVal = extraOptions.speed !== undefined ? extraOptions.speed : (isHome ? 0.02 : 0);
-
-        let objPath = './src/assets/icons/media-icon.obj';
-        if (isMultimedia) objPath = './src/assets/icons/media-icon.obj';
-        else if (isSquad) objPath = './src/assets/icons/noticias-icon.obj';
-        else if (isNews) objPath = './src/assets/icons/plantilla-icon.obj';
-        else if (isMatches) objPath = './src/assets/icons/partidos-icon.obj';
-        else if (isSponsors) objPath = './src/assets/icons/patrocinadores-icon.obj';
-        else if (isGames) objPath = './src/assets/icons/juegos-icon.obj';
+        const speed = extraOptions.speed !== undefined ? extraOptions.speed : (isHome ? 0.016 : 0);
 
         return `
-            <div class="obj-3d-canvas-container" 
-                 data-obj-path="${objPath}" 
-                 data-width="${pxDim}" 
-                 data-height="${pxDim}" 
-                 data-rotate-speed="${speedVal}"
-                 data-rotate-axis="y"
-                 style="width:${pxDim}px; height:${pxDim}px; display:inline-block; vertical-align:middle; filter:drop-shadow(0 0 10px rgba(var(--club-primary-rgb),0.85));">
-            </div>
+            <span class="obj-3d-canvas-container"
+                  data-obj-path="${objPath}"
+                  data-width="${px}"
+                  data-height="${px}"
+                  data-rotate-speed="${speed}"
+                  data-rotate-axis="y"
+                  style="width:${px}px;height:${px}px"></span>
         `;
     }
 };
