@@ -1,8 +1,9 @@
 import { state } from '../state.js';
 import { teamData, saveMatchesToStorage, savePlayersToStorage, getRivalCrest } from '../data/teamData.js';
-import { Icon3D } from './Icon3D.js';
 import { ClubLogo } from './ClubLogo.js';
 import { AuthService } from '../services/authService.js';
+import { I } from './Icons.js';
+import { LowerThird, ModalHead, Crest } from './ui.js';
 
 // Helper para formatear fecha en español y calcular tiempo restante desde SYSDATE (Date.now())
 export function formatMatchDateAndCountdown(dateStr) {
@@ -56,238 +57,153 @@ export function formatMatchDateAndCountdown(dateStr) {
 export const MatchesView = {
     render() {
         const isAdmin = AuthService.isAdmin();
+        const club = teamData.clubName;
+        const matches = teamData.matches || [];
+        const hasScore = m => m.ourScore !== undefined && m.ourScore !== null && m.opponentScore !== undefined && m.opponentScore !== null;
+        const result = m => !hasScore(m) ? '' : m.ourScore > m.opponentScore ? 'win' : m.ourScore < m.opponentScore ? 'loss' : 'draw';
+        const RESULT_LABEL = { win: 'V', loss: 'D', draw: 'E' };
 
-        // Formateador de tipo de encuentro (Solo muestra el marcador numérico con distinción de color por resultado)
-        const getMatchStatusHtml = (match) => {
-            if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
-                let badgeStyle = 'padding:3px 10px; border-radius:4px; font-weight:800; font-family:var(--font-mono); font-size:0.95rem;';
-                if (match.ourScore > match.opponentScore) {
-                    badgeStyle += ' background:rgba(0,230,118,0.18); color:#00e676; border:1px solid #00e676;';
-                } else if (match.ourScore < match.opponentScore) {
-                    badgeStyle += ' background:rgba(255,68,68,0.18); color:#ff4444; border:1px solid #ff4444;';
-                } else {
-                    badgeStyle += ' background:rgba(255,179,0,0.18); color:#ffb300; border:1px solid #ffb300;';
-                }
-                return `<span style="${badgeStyle}">${match.ourScore} - ${match.opponentScore}</span>`;
-            }
-            return ``;
+        const jornadaOf = (m, i) => {
+            const hit = (m.competition || '').match(/Jornada\s*(\d+)/i);
+            if (hit) return hit[1];
+            if (m.jornada) return m.jornada;
+            return i + 1;
+        };
+        const timeOf = str => {
+            const d = new Date(str);
+            return isNaN(d) ? '' : `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        };
+        const rival = (name, size) => Crest(getRivalCrest(name), name, size);
+
+        const played = matches.filter(hasScore);
+        const record = ['win', 'draw', 'loss'].map(r => played.filter(m => result(m) === r).length);
+
+        const SHORT_M = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+        const shortDate = str => {
+            const d = new Date(str);
+            return isNaN(d) ? (str || 'Por confirmar') : `${String(d.getDate()).padStart(2, '0')} ${SHORT_M[d.getMonth()]}`;
         };
 
-        // Crear listado de partidos (Fila 1: Jornada a la izq y Fecha a la der; Fila 2: VS en el centro exacto con equipos ajustados)
-        const matchesListHtml = teamData.matches.map((match, index) => {
-            const dateObj = formatMatchDateAndCountdown(match.date);
-
-            let jornadaText = `Jornada ${index + 1}`;
-            if (match.competition && match.competition.includes('Jornada')) {
-                jornadaText = match.competition.split('-').pop().trim();
-            } else if (match.jornada) {
-                jornadaText = `Jornada ${match.jornada}`;
-            }
-
-            let cardExtraStyle = '';
-            if (match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) {
-                if (match.ourScore > match.opponentScore) {
-                    // Victoria: Borde verde brillante y fondo verde muy sutil (Sin emoticonos)
-                    cardExtraStyle = 'border-left:4px solid #00e676 !important; background:rgba(0,230,118,0.05) !important;';
-                } else if (match.ourScore < match.opponentScore) {
-                    // Derrota: Borde rojo sutil
-                    cardExtraStyle = 'border-left:4px solid #ff4444 !important; background:rgba(255,68,68,0.04) !important;';
-                } else {
-                    // Empate: Borde amarillo sutil
-                    cardExtraStyle = 'border-left:4px solid #ffb300 !important; background:rgba(255,179,0,0.04) !important;';
-                }
-            }
-
+        const rowsHtml = matches.map((m, i) => {
+            const r = result(m);
+            const formattedDate = shortDate(m.date);
             return `
-                <div class="glass-card match-toggle-card" data-match-id="${match.id}" style="padding:12px 16px; margin-bottom:12px; display:flex; flex-direction:column; gap:8px; cursor:pointer; box-shadow:none !important; border-color:var(--border-color) !important; ${cardExtraStyle}">
-                    <!-- FILA 1: Jornada (Izquierda) y Fecha (Derecha) - SIN LÍNEA DIVISORIA -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span style="font-size:0.75rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
-                            ${jornadaText}
-                        </span>
-
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700; text-align:right;">
-                                ${dateObj.formattedDate}
-                            </span>
-                            ${isAdmin ? `
-                                <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${match.id}" style="font-size:0.7rem; padding:2px 8px; font-weight:800;">
-                                    ✏️ Editar
-                                </button>
-                            ` : ''}
-                        </div>
+                <li class="match-row match-toggle-card ${r ? 'match-' + r : 'is-upcoming'}" data-match-id="${m.id}" role="button" tabindex="0">
+                    <div class="match-row__when">
+                        <span class="match-row__j">J${String(jornadaOf(m, i)).padStart(2, '0')}</span>
+                        <span class="t-meta">${formattedDate}${timeOf(m.date) ? ' · ' + timeOf(m.date) : ''}</span>
                     </div>
-
-                    <!-- FILA 2: VS / Marcador en el CENTRO EXACTO; Equipos ajustados a los lados -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:2px;">
-                        <!-- Local (Alineado hacia el centro) -->
-                        <div style="flex:1; display:flex; align-items:center; justify-content:flex-end; gap:8px; text-align:right;">
-                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${teamData.clubName}</span>
-                            ${ClubLogo.render(24)}
-                        </div>
-
-                        <!-- Centro Fijo: Marcador o VS -->
-                        <div style="flex:0 0 auto; padding:0 12px; min-width:48px; text-align:center;">
-                            ${getMatchStatusHtml(match) || '<span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.88rem;">VS</span>'}
-                        </div>
-
-                        <!-- Rival (Alineado desde el centro) -->
-                        <div style="flex:1; display:flex; align-items:center; justify-content:flex-start; gap:8px; text-align:left;">
-                            ${getRivalCrest(match.opponent) ? `
-                                <img src="${getRivalCrest(match.opponent)}" style="width:24px; height:24px; object-fit:contain; border-radius:50%; flex-shrink:0;" />
-                            ` : `
-                                <div style="width:24px; height:24px; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; flex-shrink:0; color:var(--text-muted);">
-                                    ${match.opponentEmoji || '🛡️'}
-                                </div>
-                            `}
-                            <span style="font-family:var(--font-heading); font-weight:800; font-size:0.95rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${match.opponent}</span>
-                        </div>
+                    <div class="match-row__team match-row__team--home">
+                        <span class="match-row__name">${club}</span>
+                        ${ClubLogo.render(24)}
                     </div>
-                </div>
+                    <div class="match-row__score">
+                        ${hasScore(m) ? `<span class="t-num">${m.ourScore}</span><span class="match-row__dash">–</span><span class="t-num">${m.opponentScore}</span>` : `<span class="match-row__vs">VS</span>`}
+                    </div>
+                    <div class="match-row__team">
+                        ${rival(m.opponent, 'sm')}
+                        <span class="match-row__name">${m.opponent}</span>
+                    </div>
+                    <div class="match-row__tail">
+                        ${r ? `<span class="pg-badge pg-badge--${r}">${RESULT_LABEL[r]}</span>` : `<span class="t-meta">${m.stadium || ''}</span>`}
+                        ${isAdmin ? `<button type="button" class="pg-btn pg-btn--icon pg-btn--xs btn-edit-match-direct" data-match-id="${m.id}" title="Editar partido" aria-label="Editar partido">${I('edit')}</button>` : ''}
+                    </div>
+                </li>
             `;
         }).join('');
 
-        // Crear tabla de posiciones con escudo entre posición y nombre del equipo
-        const standingsRowsHtml = teamData.standings.map(row => {
-            const isCurrentTeam = row.name === teamData.clubName;
-            let rowStyle = '';
-
-            if (isCurrentTeam) {
-                rowStyle = 'color:var(--club-primary); font-weight:800; background:rgba(255,42,133,0.1);';
-            }
-
-            const crestUrl = getRivalCrest(row.name);
-            let crestHtml = '';
-
-            if (isCurrentTeam) {
-                crestHtml = ClubLogo.render(22);
-            } else if (crestUrl) {
-                crestHtml = `<img src="${crestUrl}" style="width:22px; height:22px; object-fit:contain; border-radius:50%; flex-shrink:0;" />`;
-            } else {
-                crestHtml = `<div style="width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.06); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0; color:var(--text-muted);">🛡️</div>`;
-            }
-
+        const standingsRows = (teamData.standings || []).map(row => {
+            const us = row.name === club;
             return `
-                <tr style="${rowStyle}">
-                    <td style="padding:7px; text-align:center;">
-                        <strong>${row.rank}</strong>
-                    </td>
-                    <td style="padding:7px; text-align:left;">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            ${crestHtml}
-                            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${isCurrentTeam ? teamData.clubName : row.name}</span>
-                        </div>
-                    </td>
-                    <td style="padding:7px; text-align:center;">${row.played}</td>
-                    <td style="padding:7px; text-align:center; color:#00e676;">${row.wins}</td>
-                    <td style="padding:7px; text-align:center; color:#ffb300;">${row.draws}</td>
-                    <td style="padding:7px; text-align:center; color:#ff4444;">${row.losses}</td>
-                    <td style="padding:7px; text-align:center; font-family:var(--font-mono);">${row.goalsDiff >= 0 ? '+' + row.goalsDiff : row.goalsDiff}</td>
-                    <td style="padding:7px; text-align:center; font-family:var(--font-mono); font-weight:800; color:${isCurrentTeam ? 'var(--club-primary)' : 'var(--text-main)'};">${row.points}</td>
+                <tr class="${us ? 'is-us' : ''}">
+                    <td class="st-rank">${String(row.rank).padStart(2, '0')}</td>
+                    <td><span class="st-team">${us ? ClubLogo.render(20) : rival(row.name, 'sm')}<span>${row.name}</span></span></td>
+                    <td class="is-num">${row.played}</td>
+                    <td class="is-num">${row.wins}</td>
+                    <td class="is-num">${row.draws}</td>
+                    <td class="is-num">${row.losses}</td>
+                    <td class="is-num t-mute">${row.goalsDiff >= 0 ? '+' + row.goalsDiff : row.goalsDiff}</td>
+                    <td class="is-num st-pts">${row.points}</td>
                 </tr>
             `;
         }).join('');
 
-        const nextMatch = teamData.matches.find(m => m.type === "next") || teamData.matches[0];
-        const nextMatchInfo = formatMatchDateAndCountdown(nextMatch ? nextMatch.date : '');
-
-        let popcornBanner = '';
-        if (nextMatchInfo.isFuture) {
-            const daysText = nextMatchInfo.days === 1 ? '1 día' : `${nextMatchInfo.days} días`;
-            const hoursText = nextMatchInfo.hoursLeft === 1 ? '1 hora' : `${nextMatchInfo.hoursLeft} horas`;
-            popcornBanner = `Preparen las palomitas porque quedan ${daysText} y ${hoursText} para este partido.`;
-        } else {
-            popcornBanner = `Preparen las palomitas porque este partido se disputará muy pronto.`;
+        const now = Date.now();
+        const nextMatch = matches.find(m => !hasScore(m) && new Date(m.date).getTime() > now) || matches.find(m => !hasScore(m));
+        let heroHtml = '';
+        if (nextMatch) {
+            const info = formatMatchDateAndCountdown(nextMatch.date);
+            const idx = matches.indexOf(nextMatch);
+            const banner = info.isFuture
+                ? `Preparen las palomitas: quedan ${info.days === 1 ? '1 día' : info.days + ' días'} y ${info.hoursLeft === 1 ? '1 hora' : info.hoursLeft + ' horas'}.`
+                : 'Preparen las palomitas: este partido se juega muy pronto.';
+            heroHtml = `
+                <section class="match-hero">
+                    <div class="match-hero__bar">
+                        <span class="pg-badge pg-badge--solid">Próximo partido</span>
+                        <span class="t-meta">Jornada ${jornadaOf(nextMatch, idx)} · ${info.formattedDate}${timeOf(nextMatch.date) ? ' · ' + timeOf(nextMatch.date) : ''} · ${nextMatch.stadium || 'La Camocha'}</span>
+                        ${isAdmin ? `<button type="button" class="pg-btn pg-btn--sm btn-edit-match-direct" data-match-id="${nextMatch.id}">${I('edit')} Editar</button>` : ''}
+                    </div>
+                    <div class="match-hero__board">
+                        <div class="match-hero__team">
+                            ${ClubLogo.render(72)}
+                            <span class="match-hero__name">${club}</span>
+                        </div>
+                        <div class="match-hero__center">
+                            ${info.isFuture ? `
+                                <div class="match-hero__count t-num">
+                                    <span>${String(info.days).padStart(2, '0')}<small>días</small></span>
+                                    <span class="match-hero__colon">:</span>
+                                    <span>${String(info.hoursLeft).padStart(2, '0')}<small>horas</small></span>
+                                </div>` : `<div class="match-hero__vs">VS</div>`}
+                        </div>
+                        <div class="match-hero__team match-hero__team--away">
+                            ${rival(nextMatch.opponent, 'xl')}
+                            <span class="match-hero__name">${nextMatch.opponent}</span>
+                        </div>
+                    </div>
+                    <p class="match-hero__tagline t-meta">${banner}</p>
+                </section>
+            `;
         }
 
         return `
-            <div class="container" style="padding-top:20px; padding-bottom:80px;">
-                <!-- HERO CARD: PRÓXIMO PARTIDO -->
-                ${nextMatch ? `
-                    <div class="glass-card" style="padding:18px 20px; margin-bottom:24px; box-sizing:border-box; border:1.5px solid var(--club-primary); background:var(--bg-dark); border-radius:6px; box-shadow:none !important;">
-                        <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div style="font-size:0.78rem; font-weight:800; color:var(--club-primary); letter-spacing:0.04em; text-transform:uppercase;">
-                                    Próximo Partido
-                                </div>
-                                ${isAdmin ? `
-                                    <button class="btn btn-secondary btn-edit-match-direct" data-match-id="${nextMatch.id}" style="font-size:0.72rem; padding:4px 10px; font-weight:800;">
-                                        ✏️ Editar Próximo Partido
-                                    </button>
-                                ` : ''}
-                            </div>
-                            
-                            <div style="display:flex; align-items:center; gap:16px; margin:10px 0;">
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    ${ClubLogo.render(32)}
-                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${teamData.clubName}</span>
-                                </div>
-                                <span style="font-family:var(--font-heading); font-weight:800; color:var(--club-primary); font-size:0.95rem;">VS</span>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    ${getRivalCrest(nextMatch.opponent) ? `<img src="${getRivalCrest(nextMatch.opponent)}" style="width:28px; height:28px; object-fit:contain; border-radius:50%;" />` : ''}
-                                    <span style="font-size:1.05rem; font-weight:800; color:#fff;">${nextMatch.opponent}</span>
-                                </div>
-                            </div>
+            <div class="pg-view">
+                ${LowerThird({
+                    page: 'matches',
+                    title: 'Temporada',
+                    sub: `Liga F7 Gijón · 26/27 · ${played.length} jugados · ${record[0]}V ${record[1]}E ${record[2]}D`,
+                    actions: isAdmin ? `<button type="button" class="pg-btn pg-btn--primary" id="btn-add-new-match">${I('plus')} Añadir partido</button>` : ''
+                })}
 
-                            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700; margin-bottom:8px;">
-                                ${nextMatch.stadium || 'Campo Municipal La Camocha (Gijón)'} • ${nextMatchInfo.formattedDate}
-                            </div>
-
-                            <div style="font-size:0.88rem; font-weight:800; color:#ffffff; margin-top:6px; line-height:1.3;">
-                                ${popcornBanner}
-                            </div>
-                        </div>
-                    </div>
-                ` : ''}
+                ${heroHtml}
 
                 <div class="matches-view-grid">
-                    <!-- Columna Izquierda: Calendario (Desplegable y Contraíble) -->
-                    <div>
-                        <div id="toggle-calendar-btn" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px; transition:background 0.2s ease;">
-                            <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
-                                Calendario de Partidos
-                            </h3>
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                ${isAdmin ? `
-                                    <button class="btn btn-primary" id="btn-add-new-match" style="font-size:0.75rem; padding:4px 10px; font-weight:800;">
-                                        ➕ Añadir Partido
-                                    </button>
-                                ` : ''}
-                                <span id="calendar-toggle-icon" style="font-size:0.8rem; color:var(--club-primary); font-weight:700;">▲ Ocultar</span>
-                            </div>
+                    <section>
+                        <div class="pg-h">
+                            <h2 class="pg-h__title">Calendario</h2>
+                            <button type="button" class="pg-btn pg-btn--ghost pg-btn--xs" id="toggle-calendar-btn" aria-expanded="true">
+                                <span id="calendar-toggle-icon">Ocultar</span>
+                            </button>
                         </div>
-                        <div id="calendar-content-wrapper" class="matches-list" style="display:block;">
-                            ${matchesListHtml}
-                        </div>
-                    </div>
+                        <ol id="calendar-content-wrapper" class="match-list">${rowsHtml}</ol>
+                    </section>
 
-                    <!-- Columna Derecha: Clasificación (Siempre visible y fija) -->
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:4px;">
-                            <h3 style="font-size:1.1rem; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase; letter-spacing:0.05em; margin:0;">
-                                Clasificación
-                            </h3>
+                    <section>
+                        <div class="pg-h">
+                            <h2 class="pg-h__title">Clasificación</h2>
+                            <span class="pg-h__meta">Liga F7 Gijón</span>
                         </div>
-                        <div id="standings-content-wrapper" class="glass-card standings-table-wrapper" style="display:block; box-shadow:none !important; border-color:var(--border-color) !important;">
-                            <table class="standings-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pos</th>
-                                        <th style="text-align:left;">Equipo</th>
-                                        <th>PJ</th>
-                                        <th style="color:#00e676;">G</th>
-                                        <th style="color:#ffb300;">E</th>
-                                        <th style="color:#ff4444;">P</th>
-                                        <th>DG</th>
-                                        <th style="color:var(--club-primary);">Pts</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="standings-table-body">
-                                    ${standingsRowsHtml}
-                                </tbody>
+                        <div id="standings-content-wrapper" class="pg-table-wrap">
+                            <table class="pg-table standings-table">
+                                <thead><tr>
+                                    <th>Pos</th><th>Equipo</th><th class="is-num">PJ</th><th class="is-num">G</th>
+                                    <th class="is-num">E</th><th class="is-num">P</th><th class="is-num">DG</th><th class="is-num">Pts</th>
+                                </tr></thead>
+                                <tbody id="standings-table-body">${standingsRows}</tbody>
                             </table>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
         `;
@@ -302,14 +218,16 @@ export const MatchesView = {
         if (calBtn && calWrapper) {
             calBtn.addEventListener('click', (e) => {
                 if (e.target.closest('#btn-add-new-match')) return;
-                const isHidden = calWrapper.style.display === 'none';
-                calWrapper.style.display = isHidden ? 'block' : 'none';
-                if (calIcon) calIcon.textContent = isHidden ? '▲ Ocultar' : '▼ Mostrar';
+                const isHidden = calWrapper.hidden;
+                calWrapper.hidden = !isHidden;
+                calBtn.setAttribute('aria-expanded', String(isHidden));
+                if (calIcon) calIcon.textContent = isHidden ? 'Ocultar' : 'Mostrar';
             });
         }
 
         // Evento clic en la tarjeta del partido para abrir vista emergente (modal)
         document.querySelectorAll('.match-toggle-card').forEach(card => {
+            card.addEventListener('keydown', (e) => { if (e.key === 'Enter') card.click(); });
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.btn-edit-match-direct') || e.target.closest('.modal-overlay')) return;
                 const matchId = parseInt(card.getAttribute('data-match-id'));
@@ -376,66 +294,43 @@ export const MatchesView = {
         const modalWrapper = document.createElement('div');
         modalWrapper.className = 'modal-overlay active';
         modalWrapper.id = 'match-details-modal-overlay';
+        const hasRes = match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null;
+        const res = !hasRes ? '' : match.ourScore > match.opponentScore ? 'win' : match.ourScore < match.opponentScore ? 'loss' : 'draw';
+        const scorers = (match.scorers || []).map(sc => {
+            const p = teamData.players.find(pl => pl.id === sc.playerId);
+            return p ? `${p.name}${sc.goals > 1 ? ' ×' + sc.goals : ''}` : null;
+        }).filter(Boolean);
+
         modalWrapper.innerHTML = `
-            <div class="glass-card" style="max-width:440px; width:100%; padding:20px; position:relative; animation:slideUp 0.2s ease; box-sizing:border-box; border:1.5px solid var(--club-primary); box-shadow:none !important; background:var(--bg-dark);">
-                <button class="modal-close" id="close-match-details-modal" style="position:absolute; top:12px; right:14px; background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; line-height:1;">✕</button>
-
-                <div style="font-size:0.8rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; padding-right:30px;">
-                    <span>${jornadaTitle}</span>
-                    <span style="color:var(--text-muted); font-family:var(--font-mono); font-size:0.75rem;">${formattedDate}</span>
-                </div>
-
-                <div style="border:1px solid var(--border-color); border-radius:4px; padding:12px 10px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; text-align:center; background:rgba(255,255,255,0.02);">
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
-                        ${ClubLogo.render(32)}
-                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.85rem; color:#fff; line-height:1.1;">${teamData.clubName}</span>
-                        <span style="font-size:0.68rem; color:var(--club-primary); font-family:var(--font-mono); font-weight:700;">${ourRank} en tabla</span>
+            <div class="pg-modal match-modal">
+                ${ModalHead({ kicker: `${jornadaTitle} · ${formattedDate}`, title: res ? { win: 'Victoria', loss: 'Derrota', draw: 'Empate' }[res] : (countdownStr && countdownStr !== 'Finalizado' ? `Faltan ${countdownStr}` : 'Partido'), closeId: 'close-match-details-modal' })}
+                <div class="match-modal__board ${res ? 'match-' + res : ''}">
+                    <div class="match-modal__team">
+                        ${ClubLogo.render(48)}
+                        <span class="match-modal__name">${teamData.clubName}</span>
+                        <span class="t-meta">${ourRank} en tabla</span>
                     </div>
-
-                    <div style="padding:0 10px;">
-                        ${(match.ourScore !== undefined && match.ourScore !== null && match.opponentScore !== undefined && match.opponentScore !== null) ? `
-                            <div style="font-size:1.8rem; font-weight:900; font-family:var(--font-mono); color:#fff; line-height:1;">
-                                ${match.ourScore} - ${match.opponentScore}
-                            </div>
-                        ` : `
-                            <div style="font-size:1.2rem; font-weight:800; color:var(--club-primary); font-family:var(--font-heading);">VS</div>
-                        `}
-                    </div>
-
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
-                        <span style="font-family:var(--font-heading); font-weight:800; font-size:0.85rem; color:#fff; line-height:1.1;">${match.opponent}</span>
-                        <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">${oppRank} en tabla</span>
+                    <div class="match-modal__score t-num">${hasRes ? `${match.ourScore}<span>–</span>${match.opponentScore}` : '<span class="match-row__vs">VS</span>'}</div>
+                    <div class="match-modal__team">
+                        ${Crest(getRivalCrest(match.opponent), match.opponent, 'lg')}
+                        <span class="match-modal__name">${match.opponent}</span>
+                        <span class="t-meta">${oppRank} en tabla</span>
                     </div>
                 </div>
-
-                ${(match.scorers && match.scorers.length > 0) ? `
-                    <div style="border:1px solid var(--border-color); padding:8px 10px; border-radius:4px; margin-bottom:10px; font-size:0.78rem;">
-                        <span style="color:var(--club-primary); font-weight:800;">Goleadores: </span>
-                        <span style="font-weight:700; color:#fff;">${
-                            match.scorers.map(s => {
-                                const p = teamData.players.find(pl => pl.id === s.playerId);
-                                return p ? `${p.name} (${s.goals})` : null;
-                            }).filter(Boolean).join(', ')
-                        }</span>
-                    </div>
-                ` : ''}
-
-                <div style="border:1px solid var(--border-color); border-radius:4px; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.01);">
-                    <div style="font-size:0.72rem; font-weight:800; color:var(--club-primary); text-transform:uppercase; margin-bottom:4px;">
-                        Comentario del Presidente
-                    </div>
-                    <div style="font-size:0.78rem; font-style:italic; color:#d0d0d0; line-height:1.35;">
-                        "${match.presidentComment || 'Confiamos plenamente en el trabajo del equipo para seguir luchando por cada punto.'}"
+                <div class="pg-modal__body match-modal__body">
+                    ${scorers.length ? `
+                        <div class="match-modal__block">
+                            <div class="pg-label">Goleadores</div>
+                            <p>${scorers.join(' · ')}</p>
+                        </div>` : ''}
+                    <div class="match-modal__block">
+                        <div class="pg-label">Comentario del presidente</div>
+                        <blockquote>“${match.presidentComment || 'Confiamos plenamente en el trabajo del equipo para seguir luchando por cada punto.'}”</blockquote>
                     </div>
                 </div>
-
-                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700; border-top:1px solid var(--border-color); padding-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="color:#fff; font-weight:800;">${stadiumName}</span>
-                    ${isAdmin ? `
-                        <button class="btn btn-secondary" id="btn-edit-from-modal" style="font-size:0.72rem; font-weight:700; padding:3px 8px;">
-                            ✏️ Editar Partido
-                        </button>
-                    ` : ''}
+                <div class="pg-modal__foot match-modal__foot">
+                    <span class="t-meta">${I('pin')} ${stadiumName}</span>
+                    ${isAdmin ? `<button type="button" class="pg-btn pg-btn--sm" id="btn-edit-from-modal">${I('edit')} Editar partido</button>` : ''}
                 </div>
             </div>
         `;
@@ -485,122 +380,63 @@ export const MatchesView = {
         modalWrapper.className = 'modal-overlay active';
         modalWrapper.id = 'edit-match-modal-overlay';
         modalWrapper.innerHTML = `
-            <div class="glass-card" style="max-width:520px; width:100%; padding:28px; position:relative; animation:slideUp 0.3s ease; box-sizing:border-box; border:1.5px solid var(--club-primary);">
-                <button class="modal-close" id="close-edit-match-modal" style="position:absolute; top:14px; right:14px; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">✕</button>
-                
-                <h3 style="font-size:1.3rem; margin-bottom:16px; font-family:var(--font-heading); color:#fff;">
-                    ${isNew ? '➕ Añadir Partido al Calendario' : '✏️ Editar Partido'}
-                </h3>
+            <div class="pg-modal pg-modal--md">
+                ${ModalHead({ kicker: 'Admin · Temporada', title: isNew ? 'Añadir partido' : 'Editar partido', closeId: 'close-edit-match-modal' })}
+                <form id="edit-match-form" class="pg-form pg-modal__body">
+                    <div class="pg-form__row">
+                        <div class="pg-field"><label class="pg-label" for="edit-competition">Competición / jornada</label><input type="text" id="edit-competition" class="pg-input" value="${match.competition || 'Liga F7 Gijón'}" required></div>
+                        <div class="pg-field"><label class="pg-label" for="edit-opponent">Rival</label><select id="edit-opponent" class="pg-input" required>${opponentOptionsHtml}</select></div>
+                    </div>
+                    <div class="pg-form__row">
+                        <div class="pg-field"><label class="pg-label" for="edit-date">Fecha y hora</label><input type="datetime-local" id="edit-date" class="pg-input" value="${match.date && match.date.includes('T') ? match.date : '2026-09-05T18:00'}" required></div>
+                        <div class="pg-field"><label class="pg-label" for="edit-stadium">Campo</label><select id="edit-stadium" class="pg-input" required>${stadiumOptionsHtml}</select></div>
+                    </div>
 
-                <form id="edit-match-form">
-                    <div style="display:flex; flex-direction:column; gap:14px;">
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Competición / Jornada</label>
-                            <input type="text" id="edit-competition" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.competition || 'Liga F7 Gijón'}" required>
+                    <fieldset class="pg-fieldset">
+                        <legend class="pg-label">Resultado (opcional) <span id="auto-outcome-badge"></span></legend>
+                        <div class="pg-form__row">
+                            <div class="pg-field"><label class="pg-label" for="edit-our-score">Giants</label><input type="number" id="edit-our-score" min="0" class="pg-input" value="${match.ourScore !== undefined && match.ourScore !== null ? match.ourScore : ''}"></div>
+                            <div class="pg-field"><label class="pg-label" for="edit-opp-score">Rival</label><input type="number" id="edit-opp-score" min="0" class="pg-input" value="${match.opponentScore !== undefined && match.opponentScore !== null ? match.opponentScore : ''}"></div>
                         </div>
+                    </fieldset>
 
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Rival</label>
-                            <select id="edit-opponent" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;" required>
-                                ${opponentOptionsHtml}
-                            </select>
-                        </div>
+                    <div class="pg-field">
+                        <label class="pg-label" for="edit-president-comment">Comentario del presidente</label>
+                        <textarea id="edit-president-comment" class="pg-input" rows="2" placeholder="La opinión del presidente sobre el encuentro…">${match.presidentComment || ''}</textarea>
+                    </div>
 
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                            <div>
-                                <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Fecha y hora</label>
-                                <input type="datetime-local" id="edit-date" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.date && match.date.includes('T') ? match.date : '2026-09-05T18:00'}" required>
-                            </div>
-                            <div>
-                                <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Campo / Estadio</label>
-                                <select id="edit-stadium" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; cursor:pointer;" required>
-                                    ${stadiumOptionsHtml}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:4px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Resultado (Opcional)</span>
-                                <div id="auto-outcome-badge" style="font-size:0.75rem;"></div>
-                            </div>
-                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                                <div>
-                                    <label style="font-size:0.75rem; color:var(--club-primary); font-weight:700; display:block; margin-bottom:4px;">Giants</label>
-                                    <input type="number" id="edit-our-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.ourScore !== undefined && match.ourScore !== null ? match.ourScore : ''}">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Rival</label>
-                                    <input type="number" id="edit-opp-score" min="0" class="form-input" style="width:100%; padding:8px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${match.opponentScore !== undefined && match.opponentScore !== null ? match.opponentScore : ''}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Comentario del Presidente</label>
-                            <textarea id="edit-president-comment" class="form-input" rows="2" style="width:100%; padding:8px 10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; font-family:var(--font-main); font-size:0.8rem;" placeholder="Escribe la opinión o comentario del presidente sobre el encuentro...">${match.presidentComment || ''}</textarea>
-                        </div>
-
-                        <!-- Goles, asistencias y tarjetas -->
-                        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:12px; border-radius:4px;">
-                            <div style="font-size:0.82rem; font-weight:700; color:var(--text-main); margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">
-                                Goles, asistencias y tarjetas de los jugadores
-                            </div>
-                            <div style="max-height:200px; overflow-y:auto; padding-right:4px;">
-                                <table style="width:100%; font-size:0.72rem; border-collapse:collapse;">
-                                    <thead>
-                                        <tr style="color:var(--text-muted); text-align:center; border-bottom:1px solid var(--border-color);">
-                                            <th style="text-align:left; padding:4px;">Jugador</th>
-                                            <th style="padding:4px;">Jugó</th>
-                                            <th style="padding:4px;">Gol</th>
-                                            <th style="padding:4px;">Asis</th>
-                                            <th style="padding:4px; color:#ffb300;">🟨</th>
-                                            <th style="padding:4px; color:#ff4444;">🟥</th>
-                                            <th style="padding:4px; color:#00b0ff;">🟦</th>
+                    <fieldset class="pg-fieldset">
+                        <legend class="pg-label">Goles, asistencias y tarjetas</legend>
+                        <div class="pg-table-wrap match-stats-editor">
+                            <table class="pg-table pg-table--compact">
+                                <thead><tr>
+                                    <th>Jugador</th><th class="is-c">Jugó</th><th class="is-c">Gol</th><th class="is-c">Asis</th>
+                                    <th class="is-c"><span class="card-ct card-ct--y"></span></th>
+                                    <th class="is-c"><span class="card-ct card-ct--r"></span></th>
+                                    <th class="is-c"><span class="card-ct card-ct--b"></span></th>
+                                </tr></thead>
+                                <tbody>
+                                    ${teamData.players.map(p => `
+                                        <tr>
+                                            <td><span class="t-meta">#${p.number}</span> ${p.name}</td>
+                                            <td class="is-c"><input type="checkbox" class="match-p-played" data-player-id="${p.id}"></td>
+                                            <td class="is-c"><input type="number" min="0" value="0" class="match-p-goals pg-input pg-input--mini" data-player-id="${p.id}"></td>
+                                            <td class="is-c"><input type="number" min="0" value="0" class="match-p-assists pg-input pg-input--mini" data-player-id="${p.id}"></td>
+                                            <td class="is-c"><input type="number" min="0" max="2" value="0" class="match-p-yellows pg-input pg-input--mini" data-player-id="${p.id}"></td>
+                                            <td class="is-c"><input type="number" min="0" max="1" value="0" class="match-p-reds pg-input pg-input--mini" data-player-id="${p.id}"></td>
+                                            <td class="is-c"><input type="number" min="0" max="1" value="0" class="match-p-blues pg-input pg-input--mini" data-player-id="${p.id}"></td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${teamData.players.map(p => `
-                                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                                                <td style="padding:4px 2px; text-align:left; font-weight:700;">
-                                                    #${p.number} ${p.name}
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="checkbox" class="match-p-played" data-player-id="${p.id}">
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="number" min="0" value="0" class="match-p-goals form-input" data-player-id="${p.id}" style="width:36px; padding:2px 4px; text-align:center; background:var(--bg-dark); color:#fff; border:1px solid var(--border-color); border-radius:3px;">
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="number" min="0" value="0" class="match-p-assists form-input" data-player-id="${p.id}" style="width:36px; padding:2px 4px; text-align:center; background:var(--bg-dark); color:#fff; border:1px solid var(--border-color); border-radius:3px;">
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="number" min="0" max="2" value="0" class="match-p-yellows form-input" data-player-id="${p.id}" style="width:36px; padding:2px 4px; text-align:center; background:var(--bg-dark); color:#fff; border:1px solid var(--border-color); border-radius:3px;">
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="number" min="0" max="1" value="0" class="match-p-reds form-input" data-player-id="${p.id}" style="width:36px; padding:2px 4px; text-align:center; background:var(--bg-dark); color:#fff; border:1px solid var(--border-color); border-radius:3px;">
-                                                </td>
-                                                <td style="padding:4px 2px; text-align:center;">
-                                                    <input type="number" min="0" max="1" value="0" class="match-p-blues form-input" data-player-id="${p.id}" style="width:36px; padding:2px 4px; text-align:center; background:var(--bg-dark); color:#fff; border:1px solid var(--border-color); border-radius:3px;">
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    `).join('')}
+                                </tbody>
+                            </table>
                         </div>
+                    </fieldset>
 
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                            ${!isNew ? `
-                                <button type="button" class="btn btn-secondary" id="btn-delete-match" style="padding:8px 14px; background:rgba(255,68,68,0.2); color:#ff4444; border:1px solid #ff4444; border-radius:4px; font-weight:800; cursor:pointer;">
-                                    🗑️ Eliminar
-                                </button>
-                            ` : '<div></div>'}
-                            
-                            <div style="display:flex; gap:10px;">
-                                <button type="button" class="btn btn-secondary" id="cancel-edit-match-btn" style="padding:10px 18px;">Cancelar</button>
-                                <button type="submit" class="btn btn-primary" style="padding:10px 22px;">Guardar Partido</button>
-                            </div>
+                    <div class="pg-row pg-row--between">
+                        ${!isNew ? `<button type="button" class="pg-btn pg-btn--danger" id="btn-delete-match">${I('trash')} Eliminar</button>` : '<span></span>'}
+                        <div class="pg-row">
+                            <button type="button" class="pg-btn" id="cancel-edit-match-btn">Cancelar</button>
+                            <button type="submit" class="pg-btn pg-btn--primary">${I('check')} Guardar partido</button>
                         </div>
                     </div>
                 </form>
@@ -621,13 +457,8 @@ export const MatchesView = {
             const badgeEl = document.getElementById('auto-outcome-badge');
             if (!badgeEl) return;
 
-            if (ourScore > oppScore) {
-                badgeEl.innerHTML = '<span style="background:rgba(0,230,118,0.2); color:#00e676; padding:2px 8px; border-radius:3px; font-weight:800; border:1px solid #00e676;">Victoria</span>';
-            } else if (ourScore < oppScore) {
-                badgeEl.innerHTML = '<span style="background:rgba(255,68,68,0.2); color:#ff4444; padding:2px 8px; border-radius:3px; font-weight:800; border:1px solid #ff4444;">Derrota</span>';
-            } else {
-                badgeEl.innerHTML = '<span style="background:rgba(255,179,0,0.2); color:#ffb300; padding:2px 8px; border-radius:3px; font-weight:800; border:1px solid #ffb300;">Empate</span>';
-            }
+            const r = ourScore > oppScore ? ['win', 'Victoria'] : ourScore < oppScore ? ['loss', 'Derrota'] : ['draw', 'Empate'];
+            badgeEl.innerHTML = `<span class="pg-badge pg-badge--${r[0]}">${r[1]}</span>`;
         };
 
         updateAutoOutcomeBadge();
