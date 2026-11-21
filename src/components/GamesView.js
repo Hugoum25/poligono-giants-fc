@@ -3,8 +3,9 @@
    ========================================== */
 
 import { state } from '../state.js';
-import { Icon3D } from './Icon3D.js';
 import { AuthService } from '../services/authService.js';
+import { I } from './Icons.js';
+import { LowerThird } from './ui.js';
 
 export const GamesView = {
     // Estado del Quiz Carnet de Poligonero
@@ -71,159 +72,103 @@ export const GamesView = {
     ],
 
     getQuizCardHtml() {
+        const total = this.questions.length;
+
         if (!this.quizState.isStarted) {
             return `
-                <div style="text-align:center; padding:24px 16px; animation:fadeIn 0.4s ease;">
-                    <h3 style="font-size:1.8rem; font-family:'VT323', var(--font-mono); color:var(--club-primary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em;">
-                        CARNET DE POLIGONERO
-                    </h3>
-                    <p style="font-size:1.05rem; font-family:var(--font-heading); color:var(--text-main); max-width:620px; margin:0 auto 24px; line-height:1.5; font-weight:600;">
-                        Este es el examen oficial de poligonero, para aprobar tienes que sacar más de un 5, no como en la ESO.
-                    </p>
-                    <button class="btn btn-primary" id="btn-start-quiz" style="padding:12px 32px; font-size:1.15rem; font-family:'VT323', var(--font-mono); letter-spacing:0.08em; text-transform:uppercase; box-shadow:0 0 20px rgba(var(--club-primary-rgb),0.5);">
-                        INICIAR QUIZ (10 PREGUNTAS)
-                    </button>
+                <div class="quiz-intro">
+                    <p class="quiz-intro__lead">Este es el examen oficial de poligonero. Para aprobar hay que sacar más de un 5, no como en la ESO.</p>
+                    <button type="button" class="pg-btn pg-btn--primary" id="btn-start-quiz">${I('play')} Empezar · ${total} preguntas</button>
                 </div>
             `;
         }
 
         if (this.quizState.isCompleted) {
-            const isPassed = this.quizState.score > 5;
+            const passed = this.quizState.score > 5;
             return `
-                <div style="text-align:center; padding:24px 16px; animation:fadeIn 0.4s ease;">
-                    <div class="glass-card" style="max-width:480px; margin:0 auto 20px; padding:20px; border:2px solid ${isPassed ? 'var(--club-primary)' : 'rgba(255,50,50,0.5)'}; border-radius:12px; background:rgba(255,255,255,0.03);">
-                        <h3 style="font-size:1.7rem; font-family:'VT323', var(--font-mono); color:${isPassed ? 'var(--club-primary)' : '#ff4444'}; margin-bottom:8px; text-transform:uppercase;">
-                            ${isPassed ? '¡CARNET DE POLIGONERO APROBADO!' : 'CARNET NO CONSEGUIDO'}
-                        </h3>
-                        <p style="font-size:1.15rem; font-family:var(--font-mono); color:var(--text-main); margin-bottom:12px;">
-                            Resultado: <strong style="color:${isPassed ? 'var(--club-primary)' : '#ff4444'}; font-size:1.4rem;">${this.quizState.score}</strong> / 10 aciertos
-                        </p>
-                        <p style="font-size:0.88rem; color:var(--text-muted); margin:0; line-height:1.4;">
-                            ${isPassed 
-                                ? '¡Enhorabuena! Has aprobado con más de un 5 el examen oficial de poligonero.' 
-                                : 'Has obtenido 5 o menos aciertos. Para aprobar necesitas más de un 5, ¡no como en la ESO!'}
-                        </p>
-                    </div>
-
-                    <button class="btn btn-primary" id="btn-restart-quiz" style="padding:10px 24px; font-size:1rem; font-family:'VT323', var(--font-mono); letter-spacing:0.08em; text-transform:uppercase;">
-                        REINTENTAR QUIZ
-                    </button>
+                <div class="quiz-result ${passed ? 'is-pass' : 'is-fail'}">
+                    <span class="pg-badge ${passed ? 'pg-badge--solid' : 'pg-badge--loss'}">${passed ? 'Carnet aprobado' : 'Carnet no conseguido'}</span>
+                    <div class="quiz-result__score t-num">${this.quizState.score}<span>/${total}</span></div>
+                    <p class="quiz-result__msg">${passed
+                        ? 'Enhorabuena: has aprobado con más de un 5 el examen oficial de poligonero.'
+                        : 'Cinco o menos. Para aprobar necesitas más de un 5, ¡no como en la ESO!'}</p>
+                    <button type="button" class="pg-btn" id="btn-restart-quiz">${I('refresh')} Reintentar</button>
                 </div>
             `;
         }
 
         const qIdx = this.quizState.currentQuestion;
-        const qData = this.questions[qIdx];
-        const totalQ = this.questions.length;
-
-        const optionsHtml = qData.options.map((opt, idx) => {
-            let btnStyle = "background:rgba(255,255,255,0.04); border:1px solid var(--border-color); color:var(--text-main);";
-            let iconStr = "";
-
+        const q = this.questions[qIdx];
+        const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+        const optionsHtml = q.options.map((opt, idx) => {
+            let cls = '';
             if (this.quizState.isAnswered) {
-                if (idx === qData.correct) {
-                    btnStyle = "background:rgba(0, 230, 118, 0.2); border:2px solid #00e676; color:#00e676; font-weight:800;";
-                    iconStr = "✔";
-                } else if (idx === this.quizState.selectedOption) {
-                    btnStyle = "background:rgba(255, 42, 133, 0.25); border:2px solid var(--club-primary); color:var(--club-primary); font-weight:800;";
-                    iconStr = "✖";
-                }
+                if (idx === q.correct) cls = 'is-correct';
+                else if (idx === this.quizState.selectedOption) cls = 'is-wrong';
+                else cls = 'is-dim';
             }
-
             return `
-                <button class="quiz-option-btn" data-opt-idx="${idx}" ${this.quizState.isAnswered ? 'disabled' : ''} style="width:100%; padding:12px 16px; text-align:left; border-radius:8px; font-size:0.92rem; font-family:var(--font-heading); cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:space-between; ${btnStyle}">
-                    <span>${opt}</span>
-                    <span style="font-size:1rem; font-weight:800;">${iconStr}</span>
+                <button type="button" class="quiz-option quiz-option-btn ${cls}" data-opt-idx="${idx}" ${this.quizState.isAnswered ? 'disabled' : ''}>
+                    <span class="quiz-option__letter">${LETTERS[idx]}</span>
+                    <span class="quiz-option__text">${opt}</span>
+                    ${cls === 'is-correct' ? I('check') : cls === 'is-wrong' ? I('close') : ''}
                 </button>
             `;
         }).join('');
 
         return `
-            <div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
-                    <span style="font-family:'VT323', var(--font-mono); font-size:1.3rem; color:var(--club-primary); text-transform:uppercase;">
-                        Pregunta ${qIdx + 1} de ${totalQ}
-                    </span>
-                    <span style="font-family:var(--font-mono); font-size:0.88rem; color:var(--text-muted); font-weight:700;">
-                        Aciertos: ${this.quizState.score} / ${totalQ} (Mínimo > 5 para aprobar)
-                    </span>
+            <div class="quiz-q">
+                <div class="quiz-q__meta">
+                    <span class="t-meta t-signal">Pregunta ${String(qIdx + 1).padStart(2, '0')} / ${total}</span>
+                    <span class="t-meta">Aciertos ${this.quizState.score}</span>
                 </div>
-
-                <h3 style="font-size:1.15rem; font-family:var(--font-heading); color:var(--text-main); margin-bottom:18px; line-height:1.35;">
-                    ${qData.question}
-                </h3>
-
-                <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
-                    ${optionsHtml}
-                </div>
-
+                <div class="quiz-progress"><span style="width:${(qIdx / total) * 100}%"></span></div>
+                <h3 class="quiz-q__text">${q.question.replace(/^\d+\.\s*/, '')}</h3>
+                <div class="quiz-options">${optionsHtml}</div>
                 ${this.quizState.isAnswered ? `
-                    <div style="display:flex; justify-content:flex-end;">
-                        <button class="btn btn-primary" id="btn-next-quiz-q" style="padding:10px 22px; font-size:0.95rem; font-family:'VT323', var(--font-mono); text-transform:uppercase; letter-spacing:0.08em;">
-                            ${qIdx + 1 === totalQ ? 'Ver Calificación del Carnet' : 'Siguiente Pregunta ➔'}
-                        </button>
-                    </div>
-                ` : ''}
+                    <div class="quiz-q__next">
+                        <button type="button" class="pg-btn pg-btn--primary" id="btn-next-quiz-q">${qIdx + 1 === total ? 'Ver nota' : 'Siguiente'} ${I('arrowR')}</button>
+                    </div>` : ''}
             </div>
         `;
     },
 
     render() {
         if (!AuthService.isAdmin()) {
-            return `
-                <div class="container" style="padding-top:60px; padding-bottom:80px; text-align:center;">
-                    <div class="glass-card" style="max-width:520px; margin:0 auto; padding:40px 24px; border:1px solid var(--border-color-glow);">
-                        <div style="font-size:3.5rem; margin-bottom:16px;">🔒</div>
-                        <h2 style="font-family:'VT323', var(--font-mono); font-size:2.2rem; color:var(--club-primary); margin-bottom:12px;">ACCESO RESTRINGIDO A ADMINISTRADORES</h2>
-                        <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.5; margin-bottom:0;">
-                            El apartado de juegos solo está disponible para usuarios con rol de administrador.
-                        </p>
-                    </div>
-                </div>
-            `;
+            return `<div class="pg-view"><div class="pg-empty">${I('lock', 'pg-ico--lg')}<br>Acceso restringido a administradores</div></div>`;
         }
 
         return `
-            <div class="container" style="padding-top:40px; padding-bottom:80px;">
-                <h2 class="section-title" style="display:flex; align-items:center; gap:10px; font-family:'VT323', var(--font-mono); font-size:2.2rem;">
-                    ${Icon3D.render('games', 'md', { speed: 0 })} JUEGOS OFICIALES DE POLÍGONO GIANTS
-                </h2>
-                <p style="color:var(--text-muted); margin-bottom:36px; max-width:650px; font-size:1.05rem; line-height:1.4;">
-                    Bienvenido al área oficial de entrenamiento mental y juegos interactivos del club. Demuestra cuánto sabes sobre Polígono Giants FC o pon a prueba tus habilidades.
-                </p>
+            <div class="pg-view">
+                ${LowerThird({ page: 'games', title: 'Juegos', sub: 'Entrenamiento mental oficial · Demuestra cuánto sabes del club' })}
 
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap:24px; align-items:start;">
-                    
-                    <!-- JUEGO 1: CARNET DE POLIGONERO (QUIZ DE 10 PREGUNTAS) -->
-                    <div class="glass-card" style="padding:26px; box-sizing:border-box;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:2px solid var(--border-color-glow); padding-bottom:10px;">
-                            <h2 style="font-size:1.5rem; margin:0; font-family:'VT323', var(--font-mono); color:var(--text-main); text-transform:uppercase;">
-                                CARNET DE POLIGONERO
-                            </h2>
-                            <span style="font-size:0.82rem; font-family:var(--font-mono); color:var(--club-primary); font-weight:700;">
-                                EXAMEN OFICIAL • 10 PREGUNTAS
-                            </span>
-                        </div>
-
-                        <div id="games-quiz-card-content-wrapper">
+                <div class="games-grid">
+                    <section class="game-card game-card--live">
+                        <header class="game-card__head">
+                            <div>
+                                <span class="t-meta t-signal">Juego 01 · Examen oficial</span>
+                                <h2 class="game-card__title">Carnet de Poligonero</h2>
+                            </div>
+                            <span class="pg-badge pg-badge--signal"><span class="pg-dot pg-dot--live"></span>En juego</span>
+                        </header>
+                        <div id="games-quiz-card-content-wrapper" class="game-card__body">
                             ${this.getQuizCardHtml()}
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- JUEGO 2: PRÓXIMO JUEGO (PRÓXIMAMENTE) -->
-                    <div class="glass-card" style="padding:32px 26px; box-sizing:border-box; text-align:center; opacity:0.85;">
-                        <div style="font-size:3.5rem; margin-bottom:16px;">🕹️</div>
-                        <h3 style="font-size:1.7rem; font-family:'VT323', var(--font-mono); color:var(--club-primary); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;">
-                            PRÓXIMO MINIJUEGO
-                        </h3>
-                        <p style="font-size:0.95rem; color:var(--text-muted); line-height:1.5; margin-bottom:24px;">
-                            Estamos preparando el siguiente juego oficial de Polígono Giants FC. ¡Permanece atento para nuevos retos y clasificaciones!
-                        </p>
-                        <button class="btn btn-secondary" disabled style="padding:10px 24px; font-size:0.95rem; font-family:'VT323', var(--font-mono); text-transform:uppercase; cursor:not-allowed;">
-                            🔒 PRÓXIMAMENTE DISPONIBLE
-                        </button>
-                    </div>
-
+                    <section class="game-card game-card--soon">
+                        <header class="game-card__head">
+                            <div>
+                                <span class="t-meta">Juego 02</span>
+                                <h2 class="game-card__title">Próximamente</h2>
+                            </div>
+                            ${I('gamepad', 'pg-ico--lg')}
+                        </header>
+                        <div class="game-card__body">
+                            <p class="t-mute">Estamos preparando el siguiente minijuego oficial de Polígono Giants. Atentos a la parrilla.</p>
+                            <div class="game-card__noise" aria-hidden="true">Sin señal</div>
+                        </div>
+                    </section>
                 </div>
             </div>
         `;
