@@ -1,19 +1,13 @@
-/* ==========================================
-   POLÍGONO GIANTS F7 - ESCUDO OFICIAL (IMAGEN ORIGINAL)
-   ========================================== */
+/* ==========================================================
+   ESCUDO OFICIAL POLÍGONO GIANTS F7
+   ========================================================== */
 
 export const ClubLogo = {
     /**
-     * Renderiza la imagen original sin modificar facilitada por el usuario.
-     * @param {number|string} size - Tamaño en píxeles.
-     * @param {string} extraClass - Clases CSS adicionales.
+     * @param {number} size     tamaño en px
+     * @param {string} extraClass
      */
     render(size = 48, extraClass = '') {
-        return `
-            <img src="./src/assets/club/club-logo.png" 
-                 alt="Escudo Oficial Polígono Giants F7" 
-                 class="club-official-logo ${extraClass}" 
-                 style="width:${size}px; height:${size}px; object-fit:contain; border-radius:50%; vertical-align:middle; display:inline-block;" />
-        `;
+        return `<img src="./src/assets/club/club-logo.png" alt="Escudo Polígono Giants F7" width="${size}" height="${size}" class="club-official-logo ${extraClass}" style="width:${size}px;height:${size}px" draggable="false" />`;
     }
 };

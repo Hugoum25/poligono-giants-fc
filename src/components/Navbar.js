@@ -1,84 +1,81 @@
-/* ==========================================
-   FC HUB - NAV SMART TV CON AUTENTICACIÓN Y MODO RETRO
-   ========================================== */
+/* ==========================================================
+   NAVBAR — barra de emisión + guía de canales (móvil)
+   ========================================================== */
 
 import { state } from '../state.js';
 import { ClubLogo } from './ClubLogo.js';
 import { AuthService } from '../services/authService.js';
 import { LoginModal } from './LoginModal.js';
 import { UserManagementModal } from './UserManagementModal.js';
+import { CHANNELS, getChannel } from './ui.js';
+import { I } from './Icons.js';
 
 export const Navbar = {
+    guideOpen: false,
+
     render() {
         const currentUser = AuthService.getCurrentUser();
         const isAdmin = AuthService.isAdmin();
-        const navItems = [
-            { id: 'news',       label: 'Noticias' },
-            { id: 'squad',      label: 'Plantilla' },
-            ...(isAdmin ? [{ id: 'lineup', label: 'IG' }] : []),
-            { id: 'matches',    label: 'Temporada' },
-            { id: 'sponsors',   label: 'Patrocinadores' },
-            { id: 'multimedia', label: 'Media' },
-            ...(isAdmin ? [{ id: 'games',      label: 'Juegos' }] : []),
-            ...(isAdmin ? [{ id: 'palmares',   label: 'Historia del Club' }] : [])
-        ];
+        const active = getChannel(state.activePage).id;
+        const items = CHANNELS.filter(c => c.id !== 'home' && (!c.admin || isAdmin));
 
-        const navLinksHtml = navItems.map(item => {
-            const activeClass = state.activePage === item.id ? 'active' : '';
-            return `
-                <li>
-                    <span class="tv-nav-item ${activeClass}" data-page="${item.id}">
-                        ${item.label}
-                    </span>
-                </li>
-            `;
-        }).join('');
+        const linksHtml = items.map(c => `
+            <li>
+                <button type="button" class="tv-nav-item ${active === c.id ? 'active' : ''}" data-page="${c.id}" ${active === c.id ? 'aria-current="page"' : ''}>
+                    <span class="tv-nav-item__ch">${c.ch}</span>${c.short}
+                </button>
+            </li>
+        `).join('');
 
-        const userButtonHtml = currentUser ? `
-            <button class="theme-toggle-btn" id="user-profile-btn" style="background:rgba(255,42,133,0.15); border-color:var(--club-primary);" title="Perfil de ${currentUser.name}">
-                <span class="theme-icon">👤</span>
-                <span class="theme-label" style="color:var(--club-primary);">${currentUser.name.split(' ')[0]}</span>
-            </button>
-        ` : `
-            <button class="theme-toggle-btn" id="user-profile-btn" title="Iniciar Sesión">
-                <span class="theme-icon">🔑</span>
-                <span class="theme-label">Entrar</span>
-            </button>
-        `;
+        const guideHtml = items.map(c => `
+            <li>
+                <button type="button" class="pg-guide__item tv-nav-item ${active === c.id ? 'active' : ''}" data-page="${c.id}">
+                    <span class="pg-guide__ch">CH ${c.ch}</span>
+                    <span class="pg-guide__label">${c.label}</span>
+                    ${I('arrowR')}
+                </button>
+            </li>
+        `).join('');
 
-        const adminMgmtButtonHtml = isAdmin ? `
-            <button class="theme-toggle-btn" id="btn-admin-manage-users" style="background:rgba(0,230,118,0.15); border-color:#00e676;" title="Logs de Acceso y Gestión de Usuarios">
-                <span class="theme-icon">📜</span>
-                <span class="theme-label" style="color:#00e676;">Logs & Usuarios</span>
-            </button>
-        ` : '';
+        const userBtn = currentUser
+            ? `<button type="button" class="pg-btn pg-btn--sm pg-btn--ghost tv-nav-user is-logged" id="user-profile-btn" title="Perfil de ${currentUser.name}">
+                   <span class="pg-dot t-signal"></span>${I('user')}<span class="tv-nav-user__name">${currentUser.name.split(' ')[0]}</span>
+               </button>`
+            : `<button type="button" class="pg-btn pg-btn--sm pg-btn--ghost tv-nav-user" id="user-profile-btn" title="Iniciar sesión">
+                   ${I('key')}<span class="tv-nav-user__name">Entrar</span>
+               </button>`;
+
+        const adminBtn = isAdmin
+            ? `<button type="button" class="pg-btn pg-btn--sm pg-btn--ghost" id="btn-admin-manage-users" title="Logs de acceso y gestión de usuarios">
+                   ${I('logs')}<span class="tv-nav-user__name">Logs</span>
+               </button>`
+            : '';
 
         return `
-            <div class="tv-navbar">
+            <nav class="tv-navbar ${this.guideOpen ? 'is-guide-open' : ''}" aria-label="Canales">
                 <div class="tv-navbar-container">
-                    <!-- Logo Oficial Polígono Giants F7 -->
-                    <div class="tv-logo" data-page="home" title="Ir a Inicio - Polígono Giants">
-                        <div class="logo-shield-badge">
-                            ${ClubLogo.render(32)}
-                        </div>
-                        <div style="display:flex; flex-direction:column; line-height:1.1;">
-                            <span class="tv-logo-badge" style="font-size:clamp(0.95rem, 4vw, 1.25rem); font-family:var(--font-heading); font-weight:800; color:var(--club-primary); letter-spacing:0.04em;">POLÍGONO GIANTS F7</span>
-                            <span class="tv-logo-sub" style="font-size:0.68rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Official Club Hub</span>
-                        </div>
-                    </div>
+                    <button type="button" class="tv-logo" data-page="home" title="Inicio · Polígono Giants">
+                        ${ClubLogo.render(30)}
+                        <span class="tv-logo__word">Polígono Giants</span>
+                        <span class="tv-logo__sub">F7 · Gijón</span>
+                    </button>
 
-                    <!-- Navegación sin cajas ni íconos -->
-                    <ul class="tv-nav-links">
-                        ${navLinksHtml}
-                    </ul>
+                    <ul class="tv-nav-links">${linksHtml}</ul>
 
-                    <!-- Controles: Usuario -->
-                    <div class="tv-nav-actions" style="display:flex; gap:8px; align-items:center;">
-                        ${adminMgmtButtonHtml}
-                        ${userButtonHtml}
+                    <div class="tv-nav-actions">
+                        ${adminBtn}
+                        ${userBtn}
+                        <button type="button" class="pg-btn pg-btn--sm tv-guide-toggle" id="btn-guide-toggle" aria-expanded="${this.guideOpen}" aria-controls="pg-guide">
+                            ${this.guideOpen ? I('close') : I('menu')}<span>${this.guideOpen ? 'Cerrar' : 'Guía'}</span>
+                        </button>
                     </div>
                 </div>
-            </div>
+
+                <div class="pg-guide" id="pg-guide" ${this.guideOpen ? '' : 'hidden'}>
+                    <div class="pg-guide__head t-meta">Guía de canales · ${items.length} en emisión</div>
+                    <ul>${guideHtml}</ul>
+                </div>
+            </nav>
             ${LoginModal.render()}
             ${UserManagementModal.render()}
         `;
@@ -88,36 +85,29 @@ export const Navbar = {
         LoginModal.bindEvents();
         UserManagementModal.bindEvents();
 
-        // Evento clic en logo
-        const logoEl = document.querySelector('.tv-logo');
-        if (logoEl) {
-            logoEl.addEventListener('click', () => {
-                state.update({ activePage: 'home' });
-            });
-        }
+        const go = (page) => {
+            this.guideOpen = false;
+            const screen = document.getElementById('main-tv-screen');
+            if (screen) screen.scrollTop = 0;
+            state.update({ activePage: page });
+        };
 
-        // Eventos clic en links de navegación
-        document.querySelectorAll('.tv-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const targetPage = item.getAttribute('data-page');
-                state.update({ activePage: targetPage });
-            });
+        document.querySelectorAll('.tv-logo, .tv-nav-item').forEach(el => {
+            el.addEventListener('click', () => go(el.getAttribute('data-page')));
         });
 
-        // Evento abrir modal de usuario / login
-        const userBtn = document.getElementById('user-profile-btn');
-        if (userBtn) {
-            userBtn.addEventListener('click', () => {
-                LoginModal.open('login');
+        const guideBtn = document.getElementById('btn-guide-toggle');
+        if (guideBtn) {
+            guideBtn.addEventListener('click', () => {
+                this.guideOpen = !this.guideOpen;
+                state.notify();
             });
         }
 
-        // Evento abrir panel de administración de usuarios y logs
+        const userBtn = document.getElementById('user-profile-btn');
+        if (userBtn) userBtn.addEventListener('click', () => LoginModal.open('login'));
+
         const adminMgmtBtn = document.getElementById('btn-admin-manage-users');
-        if (adminMgmtBtn) {
-            adminMgmtBtn.addEventListener('click', () => {
-                UserManagementModal.open();
-            });
-        }
+        if (adminMgmtBtn) adminMgmtBtn.addEventListener('click', () => UserManagementModal.open());
     }
 };

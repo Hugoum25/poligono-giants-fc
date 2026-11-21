@@ -7,6 +7,8 @@ import { state } from '../state.js';
 import { ClubLogo } from './ClubLogo.js';
 import { teamData, saveLegendsToStorage, saveTrophiesToStorage, saveHistoryStatsToStorage } from '../data/teamData.js';
 import { AuthService } from '../services/authService.js';
+import { I } from './Icons.js';
+import { LowerThird, ModalHead } from './ui.js';
 
 export const PalmaresView = {
     activeTab: 'palmares', // 'palmares' | 'leyendas' | 'camisetas'
@@ -65,226 +67,114 @@ export const PalmaresView = {
 
     renderPalmaresContent() {
         const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
-
-        // 1. Estadísticas Históricas del Equipo (Editables por Admin)
         const stats = teamData.historyStats || { matches: 48, wins: 32, draws: 8, losses: 8 };
-
-        // 2. Premios por Temporada (Contraídos por Defecto)
         const seasonKeys = ["2026 / 2027", "2025 / 2026", "2024 / 2025"];
         const trophiesList = teamData.trophies || [];
+        const winRate = stats.matches ? Math.round((stats.wins / stats.matches) * 100) : 0;
 
-        const seasonsTrophiesHtml = seasonKeys.map(seasonName => {
-            const isExpanded = !!this.expandedSeasons[seasonName];
-            const seasonTrophies = trophiesList.filter(t => t.season === seasonName);
-
-            const itemsHtml = seasonTrophies.length > 0 ? seasonTrophies.map(t => `
-                <div class="glass-card" style="padding:16px 20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between;">
-                    <div>
-                        <h4 style="font-size:1.05rem; font-family:var(--font-heading); margin:0 0 6px 0; color:var(--text-main); font-weight:800;">
-                            ${t.title}
-                        </h4>
-                        <p style="font-size:0.85rem; color:var(--text-muted); margin:0; line-height:1.4;">
-                            ${t.desc}
-                        </p>
+        const tapes = seasonKeys.map((seasonName, i) => {
+            const open = !!this.expandedSeasons[seasonName];
+            const items = trophiesList.filter(t => t.season === seasonName);
+            const itemsHtml = items.length ? items.map(t => `
+                <article class="trophy">
+                    ${I('trophy', 'pg-ico--lg')}
+                    <div class="trophy__body">
+                        <h4 class="trophy__title">${t.title}</h4>
+                        <p class="trophy__desc">${t.desc}</p>
                     </div>
-
-                    ${isAdmin ? `
-                        <div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; text-align:right;">
-                            <button class="btn btn-secondary btn-edit-trophy" data-trophy-id="${t.id}" style="font-size:0.72rem; padding:4px 10px; font-weight:800; color:var(--club-primary);">
-                                Editar Premio
-                            </button>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('') : `
-                <div style="grid-column:1/-1; font-size:0.85rem; color:var(--text-muted); padding:12px; background:rgba(255,255,255,0.01); border-radius:4px;">
-                    No hay premios registrados en esta temporada.
-                </div>
-            `;
+                    ${isAdmin ? `<button type="button" class="pg-btn pg-btn--icon pg-btn--xs btn-edit-trophy" data-trophy-id="${t.id}" title="Editar premio" aria-label="Editar premio">${I('edit')}</button>` : ''}
+                </article>
+            `).join('') : `<div class="pg-empty trophy-empty">Cinta vacía · sin premios registrados</div>`;
 
             return `
-                <div class="glass-card" style="margin-bottom:16px; border:1px solid var(--border-color); overflow:hidden;">
-                    <div class="season-trophies-header" data-season="${seasonName}" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; cursor:pointer; background:rgba(255,255,255,0.03); user-select:none;">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <span style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--club-primary); text-transform:uppercase;">
-                                Temporada ${seasonName} (${seasonTrophies.length} Premios)
-                            </span>
-                        </div>
-                        
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            ${isAdmin ? `
-                                <button class="btn btn-secondary btn-add-trophy" data-season="${seasonName}" onclick="event.stopPropagation();" style="font-size:0.72rem; padding:4px 10px; font-weight:800;">
-                                    Añadir Premio
-                                </button>
-                            ` : ''}
-                            <span style="font-size:1rem; font-weight:900; color:var(--text-muted); transition:transform 0.3s ease; transform:rotate(${isExpanded ? '180deg' : '0deg'}); display:inline-block;">
-                                ▼
-                            </span>
-                        </div>
+                <div class="tape ${open ? 'is-open' : ''}">
+                    <div class="tape__label season-trophies-header" data-season="${seasonName}" role="button" tabindex="0" aria-expanded="${open}">
+                        <span class="tape__side">VHS · ${String(seasonKeys.length - i).padStart(2, '0')}</span>
+                        <span class="tape__title">Temporada ${seasonName}</span>
+                        <span class="tape__count t-meta">${items.length} ${items.length === 1 ? 'premio' : 'premios'}</span>
+                        ${isAdmin ? `<button type="button" class="pg-btn pg-btn--xs btn-add-trophy" data-season="${seasonName}" onclick="event.stopPropagation();">${I('plus')} Premio</button>` : ''}
+                        <span class="tape__chev">${I('chevronD')}</span>
                     </div>
-
-                    ${isExpanded ? `
-                        <div style="padding:16px 20px 20px 20px; border-top:1px solid var(--border-color); animation:fadeIn 0.3s ease;">
-                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
-                                ${itemsHtml}
-                            </div>
-                        </div>
-                    ` : ''}
+                    ${open ? `<div class="tape__body">${itemsHtml}</div>` : ''}
                 </div>
             `;
         }).join('');
 
         return `
-            <div style="animation:fadeIn 0.3s ease;">
-                <!-- Panel de Administración de Stats Históricas -->
-                ${isAdmin ? `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(255,42,133,0.1); border:1px solid var(--club-primary); padding:10px 16px; border-radius:6px;">
-                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">Estadísticas Totales del Club</span>
-                        <button class="btn btn-primary" id="btn-edit-history-stats" style="font-size:0.75rem; padding:6px 14px; font-weight:800;">
-                            Editar Partidos y Récords
-                        </button>
-                    </div>
-                ` : ''}
-
-                <!-- Récords y Estadísticas Generales (Partidos Jugados, Victorias, Empates, Derrotas) -->
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:14px; margin-bottom:32px;">
-                    <div class="glass-card" style="padding:16px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Partidos Jugados</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:var(--text-main); font-weight:800; margin-top:4px;">${stats.matches || 0}</div>
-                    </div>
-                    <div class="glass-card" style="padding:16px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Victorias</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#00e676; font-weight:800; margin-top:4px;">${stats.wins || 0}</div>
-                    </div>
-                    <div class="glass-card" style="padding:16px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Empates</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ffb300; font-weight:800; margin-top:4px;">${stats.draws || 0}</div>
-                    </div>
-                    <div class="glass-card" style="padding:16px; text-align:center;">
-                        <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; font-weight:700;">Derrotas</div>
-                        <div style="font-size:1.9rem; font-family:var(--font-heading); color:#ff4444; font-weight:800; margin-top:4px;">${stats.losses || 0}</div>
-                    </div>
+            <div class="history-block">
+                <div class="pg-h">
+                    <h2 class="pg-h__title">Números del club</h2>
+                    ${isAdmin ? `<button type="button" class="pg-btn pg-btn--sm" id="btn-edit-history-stats">${I('edit')} Editar récords</button>` : `<span class="pg-h__meta">Desde la fundación</span>`}
                 </div>
-
-                <!-- Premios del Equipo Divididos por Temporadas (Contraídos por defecto) -->
-                <div>
-                    ${seasonsTrophiesHtml}
+                <div class="pg-stats history-stats">
+                    <div class="pg-stat"><div class="pg-stat__value">${stats.matches || 0}</div><div class="pg-stat__label">Partidos</div></div>
+                    <div class="pg-stat pg-stat--signal"><div class="pg-stat__value">${stats.wins || 0}</div><div class="pg-stat__label">Victorias</div></div>
+                    <div class="pg-stat"><div class="pg-stat__value">${stats.draws || 0}</div><div class="pg-stat__label">Empates</div></div>
+                    <div class="pg-stat"><div class="pg-stat__value">${stats.losses || 0}</div><div class="pg-stat__label">Derrotas</div></div>
+                    <div class="pg-stat"><div class="pg-stat__value">${winRate}<small>%</small></div><div class="pg-stat__label">% victorias</div></div>
                 </div>
+            </div>
+            <div class="history-block">
+                <div class="pg-h"><h2 class="pg-h__title">Palmarés</h2><span class="pg-h__meta">Archivo por temporadas</span></div>
+                <div class="tapes">${tapes}</div>
             </div>
         `;
     },
 
     renderLeyendasContent() {
-        const legendsList = teamData.legends || [];
+        const legends = teamData.legends || [];
         const isAdmin = AuthService.isAdmin() || AuthService.isLoggedIn();
 
-        const legendsHtml = legendsList.map(l => {
-            const isPortero = (l.role || '').toLowerCase() === 'portero';
-            const statsText = isPortero ? `${l.matches || 0} Partidos` : `${l.matches || 0} Partidos • ${l.goals || 0} Goles`;
-
+        const cards = legends.map(l => {
+            const gk = (l.role || '').toLowerCase() === 'portero';
             return `
-                <div class="glass-card" style="padding:20px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); display:flex; flex-direction:column; justify-content:space-between; position:relative;">
-                    <div>
-                        ${l.photo ? `
-                            <div style="width:70px; height:70px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
-                                <img src="${l.photo}" class="player-png-feathered" draggable="false" style="max-height:100%; max-width:100%; object-fit:contain;" />
-                            </div>
-                        ` : ''}
-
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <h3 style="font-size:1.25rem; font-family:var(--font-heading); margin:0; color:var(--text-main); font-weight:800;">
-                                ${l.name}
-                            </h3>
-                            <span style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--club-primary);">
-                                #${l.number}
-                            </span>
+                <article class="legend">
+                    <span class="legend__num" aria-hidden="true">${l.number}</span>
+                    ${l.photo ? `<img src="${l.photo}" class="legend__img" alt="" draggable="false" />` : ''}
+                    <div class="legend__body">
+                        <span class="t-meta t-signal">#${l.number} · ${l.role}</span>
+                        <h3 class="legend__name">${l.name}</h3>
+                        <div class="legend__stats t-meta">
+                            <span><b>${l.matches || 0}</b> PJ</span>
+                            ${gk ? '' : `<span><b>${l.goals || 0}</b> Goles</span>`}
                         </div>
-
-                        <div style="font-size:0.85rem; font-family:var(--font-heading); color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:10px;">
-                            ${l.role}
-                        </div>
-
-                        <div style="font-size:0.85rem; font-family:var(--font-mono); color:var(--club-primary); font-weight:800; margin-bottom:10px;">
-                            ${statsText}
-                        </div>
-
-                        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin:0;">
-                            ${l.desc}
-                        </p>
+                        <p class="legend__desc">${l.desc || ''}</p>
                     </div>
-
-                    ${isAdmin ? `
-                        <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; text-align:right;">
-                            <button class="btn btn-secondary btn-edit-legend" data-legend-id="${l.id}" style="font-size:0.75rem; padding:5px 12px; font-weight:800; color:var(--club-primary);">
-                                Editar Leyenda
-                            </button>
-                        </div>
-                    ` : ''}
-                </div>
+                    ${isAdmin ? `<button type="button" class="pg-btn pg-btn--icon pg-btn--xs legend__edit btn-edit-legend" data-legend-id="${l.id}" title="Editar leyenda" aria-label="Editar leyenda">${I('edit')}</button>` : ''}
+                </article>
             `;
         }).join('');
 
         return `
-            <div style="animation:fadeIn 0.3s ease;">
-                ${isAdmin ? `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; background:rgba(255,42,133,0.1); border:1px solid var(--club-primary); padding:10px 16px; border-radius:6px;">
-                        <span style="font-size:0.82rem; font-weight:800; color:#fff;">Panel de Administración de Leyendas del Club</span>
-                        <button class="btn btn-primary btn-add-legend" style="font-size:0.75rem; padding:6px 14px; font-weight:800;">
-                            Añadir Leyenda
-                        </button>
-                    </div>
-                ` : ''}
-
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
-                    ${legendsHtml}
+            <div class="history-block">
+                <div class="pg-h">
+                    <h2 class="pg-h__title">Leyendas</h2>
+                    ${isAdmin ? `<button type="button" class="pg-btn pg-btn--sm btn-add-legend">${I('plus')} Añadir leyenda</button>` : `<span class="pg-h__meta">Salón de la fama rosinegro</span>`}
                 </div>
+                ${legends.length ? `<div class="legends-grid">${cards}</div>` : `<div class="pg-empty">Sin leyendas todavía</div>`}
             </div>
         `;
     },
 
     renderCamisetasContent() {
-        const seasonsHtml = this.seasons.map(s => {
-            const renderJersey = (item) => {
-                if (item.isUpcoming) {
-                    return `
-                        <div style="flex:1; text-align:center; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.02); border-radius:8px;">
-                            <span style="font-size:0.9rem; font-weight:800; color:var(--text-main); font-family:var(--font-heading);">
-                                ${item.title}
-                            </span>
-                        </div>
-                    `;
-                }
-
-                return `
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; text-align:center;">
-                        <span style="font-size:0.9rem; font-weight:800; color:var(--text-main); font-family:var(--font-heading); margin-bottom:10px;">
-                            ${item.title}
-                        </span>
-                        <img src="${item.img}" alt="${item.title}" style="max-height:270px; width:auto; max-width:100%; object-fit:contain; display:block; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.6)); border-radius:8px;">
-                    </div>
-                `;
-            };
-
-            return `
-                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; padding:20px 24px; max-width:580px; width:100%; margin:0 auto 24px auto; box-sizing:border-box;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
-                        <h3 style="font-size:1.3rem; font-family:var(--font-heading); margin:0; color:var(--text-main); font-weight:800;">
-                            ${s.year}
-                        </h3>
-                        ${ClubLogo.render(28)}
-                    </div>
-
-                    <div style="display:flex; justify-content:space-around; align-items:flex-start; gap:20px; flex-wrap:wrap;">
-                        ${renderJersey(s.player)}
-                        ${s.gk ? renderJersey(s.gk) : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
+        const shirt = (item) => item.isUpcoming
+            ? `<figure class="kit kit--soon"><div class="kit__frame">${I('shirt', 'pg-ico--lg')}<span class="t-meta">Próximamente</span></div><figcaption class="t-meta">${item.title}</figcaption></figure>`
+            : `<figure class="kit"><div class="kit__frame"><img src="${item.img}" alt="${item.title}" loading="lazy" /></div><figcaption class="t-meta">${item.title}</figcaption></figure>`;
 
         return `
-            <div style="animation:fadeIn 0.3s ease;">
-                ${seasonsHtml}
+            <div class="history-block kits">
+                ${this.seasons.map(s => `
+                    <section class="kits__season">
+                        <header class="kits__head">
+                            <h3 class="kits__year">${s.year}</h3>
+                            ${ClubLogo.render(28)}
+                        </header>
+                        <div class="kits__row">
+                            ${shirt(s.player)}
+                            ${s.gk ? shirt(s.gk) : ''}
+                        </div>
+                    </section>
+                `).join('')}
             </div>
         `;
     },
@@ -292,50 +182,18 @@ export const PalmaresView = {
     renderEditHistoryStatsModal() {
         if (!this.editingHistoryStats) return '';
         const s = teamData.historyStats || { matches: 48, wins: 32, draws: 8, losses: 8 };
-
+        const f = (id, label, val) => `<div class="pg-field"><label class="pg-label" for="${id}">${label}</label><input type="number" id="${id}" class="pg-input" min="0" value="${val || 0}"></div>`;
         return `
             <div class="modal-overlay active" id="history-stats-edit-modal-overlay">
-                <div class="glass-card" style="max-width:440px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
-                    <button class="modal-close" id="close-history-stats-modal-btn">✕</button>
-
-                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
-                        Editar Estadísticas Históricas
-                    </h3>
-                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">
-                        Actualiza los totales globales del club visibles en la sección de Historia.
-                    </p>
-
-                    <div style="display:flex; flex-direction:column; gap:12px;">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos Jugados</label>
-                                <input type="number" id="edit-hs-matches" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.matches || 0}">
-                            </div>
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Victorias</label>
-                                <input type="number" id="edit-hs-wins" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.wins || 0}">
-                            </div>
-                        </div>
-
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Empates</label>
-                                <input type="number" id="edit-hs-draws" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.draws || 0}">
-                            </div>
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Derrotas</label>
-                                <input type="number" id="edit-hs-losses" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${s.losses || 0}">
-                            </div>
-                        </div>
-
-                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
-                            <button class="btn btn-secondary" id="btn-cancel-hs" style="font-size:0.8rem; padding:8px 14px;">
-                                Cancelar
-                            </button>
-                            <button class="btn btn-primary" id="btn-save-hs" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
-                                Guardar Estadísticas
-                            </button>
-                        </div>
+                <div class="pg-modal">
+                    ${ModalHead({ kicker: 'Admin · Historia', title: 'Récords del club', closeId: 'close-history-stats-modal-btn' })}
+                    <div class="pg-form pg-modal__body">
+                        <div class="pg-form__row">${f('edit-hs-matches', 'Partidos', s.matches)}${f('edit-hs-wins', 'Victorias', s.wins)}</div>
+                        <div class="pg-form__row">${f('edit-hs-draws', 'Empates', s.draws)}${f('edit-hs-losses', 'Derrotas', s.losses)}</div>
+                    </div>
+                    <div class="pg-modal__foot">
+                        <button type="button" class="pg-btn" id="btn-cancel-hs">Cancelar</button>
+                        <button type="button" class="pg-btn pg-btn--primary" id="btn-save-hs">${I('check')} Guardar</button>
                     </div>
                 </div>
             </div>
@@ -345,78 +203,34 @@ export const PalmaresView = {
     renderEditLegendModal() {
         if (!this.editingLegend) return '';
         const l = this.editingLegend;
-        const currentRole = l.role || 'Portero';
-
+        const role = l.role || 'Portero';
         return `
             <div class="modal-overlay active" id="legend-edit-modal-overlay">
-                <div class="glass-card" style="max-width:520px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
-                    <button class="modal-close" id="close-legend-modal-btn">✕</button>
-
-                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
-                        ${l.id ? 'Editar Leyenda del Club' : 'Añadir Nueva Leyenda'}
-                    </h3>
-                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:16px;">
-                        Modifica los datos que se mostrarán públicamente en la sección de Historia & Leyendas.
-                    </p>
-
-                    <div style="display:flex; flex-direction:column; gap:12px;">
-                        <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;">
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Nombre del Jugador</label>
-                                <input type="text" id="edit-legend-name" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.name || ''}" placeholder="Ej. Diego Mon">
-                            </div>
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Dorsal #</label>
-                                <input type="number" id="edit-legend-number" class="form-input" min="1" max="99" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.number || 1}">
-                            </div>
+                <div class="pg-modal">
+                    ${ModalHead({ kicker: 'Admin · Leyendas', title: l.id ? 'Editar leyenda' : 'Nueva leyenda', closeId: 'close-legend-modal-btn' })}
+                    <div class="pg-form pg-modal__body">
+                        <div class="pg-form__row">
+                            <div class="pg-field"><label class="pg-label" for="edit-legend-name">Nombre</label><input type="text" id="edit-legend-name" class="pg-input" value="${l.name || ''}" placeholder="Diego Mon"></div>
+                            <div class="pg-field"><label class="pg-label" for="edit-legend-number">Dorsal</label><input type="number" id="edit-legend-number" class="pg-input" min="1" max="99" value="${l.number || 1}"></div>
                         </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Posición / Rol</label>
-                            <select id="edit-legend-role" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
-                                <option value="Portero" ${currentRole === 'Portero' ? 'selected' : ''}>Portero</option>
-                                <option value="Defensa" ${currentRole === 'Defensa' ? 'selected' : ''}>Defensa</option>
-                                <option value="Medio" ${currentRole === 'Medio' ? 'selected' : ''}>Medio</option>
-                                <option value="Delantero" ${currentRole === 'Delantero' ? 'selected' : ''}>Delantero</option>
+                        <div class="pg-field">
+                            <label class="pg-label" for="edit-legend-role">Posición</label>
+                            <select id="edit-legend-role" class="pg-input">
+                                ${['Portero', 'Defensa', 'Medio', 'Delantero'].map(r => `<option value="${r}" ${role === r ? 'selected' : ''}>${r}</option>`).join('')}
                             </select>
                         </div>
-
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Partidos</label>
-                                <input type="number" id="edit-legend-matches" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.matches || 0}">
-                            </div>
-                            <div>
-                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Goles (Si no es Portero)</label>
-                                <input type="number" id="edit-legend-goals" class="form-input" min="0" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${l.goals || 0}">
-                            </div>
+                        <div class="pg-form__row">
+                            <div class="pg-field"><label class="pg-label" for="edit-legend-matches">Partidos</label><input type="number" id="edit-legend-matches" class="pg-input" min="0" value="${l.matches || 0}"></div>
+                            <div class="pg-field"><label class="pg-label" for="edit-legend-goals">Goles (no porteros)</label><input type="number" id="edit-legend-goals" class="pg-input" min="0" value="${l.goals || 0}"></div>
                         </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Descripción</label>
-                            <textarea id="edit-legend-desc" class="form-input" style="width:100%; height:80px; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; resize:vertical;">${l.desc || ''}</textarea>
-                        </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Foto PNG (Subir archivo)</label>
-                            <input type="file" id="edit-legend-file" accept="image/*" class="form-input" style="width:100%; padding:6px; font-size:0.8rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
-                        </div>
-
-                        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:12px;">
-                            ${l.id ? `
-                                <button class="btn btn-secondary" id="btn-delete-legend" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; font-size:0.8rem; padding:8px 14px;">
-                                    Eliminar
-                                </button>
-                            ` : '<div></div>'}
-                            
-                            <div style="display:flex; gap:8px;">
-                                <button class="btn btn-secondary" id="btn-cancel-legend" style="font-size:0.8rem; padding:8px 14px;">
-                                    Cancelar
-                                </button>
-                                <button class="btn btn-primary" id="btn-save-legend" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
-                                    Guardar Cambios
-                                </button>
-                            </div>
+                        <div class="pg-field"><label class="pg-label" for="edit-legend-desc">Descripción</label><textarea id="edit-legend-desc" class="pg-input" rows="3">${l.desc || ''}</textarea></div>
+                        <div class="pg-field"><label class="pg-label" for="edit-legend-file">Foto PNG</label><input type="file" id="edit-legend-file" accept="image/*" class="pg-input"></div>
+                    </div>
+                    <div class="pg-modal__foot pg-row--between">
+                        ${l.id ? `<button type="button" class="pg-btn pg-btn--danger" id="btn-delete-legend">${I('trash')} Eliminar</button>` : '<span></span>'}
+                        <div class="pg-row">
+                            <button type="button" class="pg-btn" id="btn-cancel-legend">Cancelar</button>
+                            <button type="button" class="pg-btn pg-btn--primary" id="btn-save-legend">${I('check')} Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -427,51 +241,25 @@ export const PalmaresView = {
     renderEditTrophyModal() {
         if (!this.editingTrophy) return '';
         const t = this.editingTrophy;
-
         return `
             <div class="modal-overlay active" id="trophy-edit-modal-overlay">
-                <div class="glass-card" style="max-width:480px; width:100%; padding:24px; position:relative; animation:slideUp 0.3s ease;">
-                    <button class="modal-close" id="close-trophy-modal-btn">✕</button>
-
-                    <h3 style="font-size:1.3rem; margin-bottom:6px; font-family:var(--font-heading); color:var(--club-primary);">
-                        ${t.id ? 'Editar Premio' : 'Añadir Nuevo Premio'}
-                    </h3>
-
-                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:14px;">
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Temporada</label>
-                            <select id="edit-trophy-season" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;">
-                                <option value="2026 / 2027" ${t.season === '2026 / 2027' ? 'selected' : ''}>2026 / 2027</option>
-                                <option value="2025 / 2026" ${t.season === '2025 / 2026' ? 'selected' : ''}>2025 / 2026</option>
-                                <option value="2024 / 2025" ${t.season === '2024 / 2025' ? 'selected' : ''}>2024 / 2025</option>
+                <div class="pg-modal">
+                    ${ModalHead({ kicker: 'Admin · Palmarés', title: t.id ? 'Editar premio' : 'Nuevo premio', closeId: 'close-trophy-modal-btn' })}
+                    <div class="pg-form pg-modal__body">
+                        <div class="pg-field">
+                            <label class="pg-label" for="edit-trophy-season">Temporada</label>
+                            <select id="edit-trophy-season" class="pg-input">
+                                ${['2026 / 2027', '2025 / 2026', '2024 / 2025'].map(y => `<option value="${y}" ${t.season === y ? 'selected' : ''}>${y}</option>`).join('')}
                             </select>
                         </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Título del Premio</label>
-                            <input type="text" id="edit-trophy-title" class="form-input" style="width:100%; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box;" value="${t.title || ''}" placeholder="Ej. Campeón de Copa F7 Gijón">
-                        </div>
-
-                        <div>
-                            <label style="font-size:0.72rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Descripción / Detalle</label>
-                            <textarea id="edit-trophy-desc" class="form-input" style="width:100%; height:80px; padding:8px; font-size:0.85rem; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff; box-sizing:border-box; resize:vertical;">${t.desc || ''}</textarea>
-                        </div>
-
-                        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:12px;">
-                            ${t.id ? `
-                                <button class="btn btn-secondary" id="btn-delete-trophy" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; font-size:0.8rem; padding:8px 14px;">
-                                    Eliminar
-                                </button>
-                            ` : '<div></div>'}
-                            
-                            <div style="display:flex; gap:8px;">
-                                <button class="btn btn-secondary" id="btn-cancel-trophy" style="font-size:0.8rem; padding:8px 14px;">
-                                    Cancelar
-                                </button>
-                                <button class="btn btn-primary" id="btn-save-trophy" style="font-size:0.8rem; padding:8px 18px; font-weight:800;">
-                                    Guardar Premio
-                                </button>
-                            </div>
+                        <div class="pg-field"><label class="pg-label" for="edit-trophy-title">Título</label><input type="text" id="edit-trophy-title" class="pg-input" value="${t.title || ''}" placeholder="Campeón de Copa F7 Gijón"></div>
+                        <div class="pg-field"><label class="pg-label" for="edit-trophy-desc">Detalle</label><textarea id="edit-trophy-desc" class="pg-input" rows="3">${t.desc || ''}</textarea></div>
+                    </div>
+                    <div class="pg-modal__foot pg-row--between">
+                        ${t.id ? `<button type="button" class="pg-btn pg-btn--danger" id="btn-delete-trophy">${I('trash')} Eliminar</button>` : '<span></span>'}
+                        <div class="pg-row">
+                            <button type="button" class="pg-btn" id="btn-cancel-trophy">Cancelar</button>
+                            <button type="button" class="pg-btn pg-btn--primary" id="btn-save-trophy">${I('check')} Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -480,45 +268,23 @@ export const PalmaresView = {
     },
 
     render() {
-        let contentHtml = '';
-        if (this.activeTab === 'leyendas') {
-            contentHtml = this.renderLeyendasContent();
-        } else if (this.activeTab === 'camisetas') {
-            contentHtml = this.renderCamisetasContent();
-        } else {
-            contentHtml = this.renderPalmaresContent();
-        }
-
         const tabs = [
             { id: 'palmares',  label: 'Palmarés' },
-            { id: 'leyendas',  label: 'Leyendas del Club' },
-            { id: 'camisetas', label: 'Camisetas Históricas' }
+            { id: 'leyendas',  label: 'Leyendas' },
+            { id: 'camisetas', label: 'Camisetas' }
         ];
-
-        const tabsHtml = tabs.map(t => {
-            const isActive = this.activeTab === t.id;
-            return `
-                <button class="history-tab-btn filter-btn ${isActive ? 'active' : ''}" data-tab="${t.id}">
-                    ${t.label}
-                </button>
-            `;
-        }).join('');
+        const content = this.activeTab === 'leyendas' ? this.renderLeyendasContent()
+            : this.activeTab === 'camisetas' ? this.renderCamisetasContent()
+            : this.renderPalmaresContent();
 
         return `
-            <div class="container" style="padding-top:28px; padding-bottom:60px;">
-                <h2 class="section-title" style="margin-bottom:20px;">
-                    Historia del Club
-                </h2>
-
-                <div class="squad-filters" style="margin-bottom:24px;">
-                    ${tabsHtml}
+            <div class="pg-view">
+                ${LowerThird({ page: 'palmares', title: 'Historia', sub: 'Archivo del club · Palmarés, leyendas y camisetas' })}
+                <div class="pg-tabs history-tabs" role="tablist">
+                    ${tabs.map(t => `<button type="button" role="tab" class="pg-tab history-tab-btn ${this.activeTab === t.id ? 'is-active' : ''}" data-tab="${t.id}" aria-selected="${this.activeTab === t.id}">${t.label}</button>`).join('')}
                 </div>
-
-                <div>
-                    ${contentHtml}
-                </div>
+                ${content}
             </div>
-
             ${this.renderEditHistoryStatsModal()}
             ${this.renderEditLegendModal()}
             ${this.renderEditTrophyModal()}
@@ -540,6 +306,7 @@ export const PalmaresView = {
         // EVENTOS COLAPSO/EXPANSIÓN DE TEMPORADAS DE PREMIOS
         // ------------------------------------
         document.querySelectorAll('.season-trophies-header').forEach(header => {
+            header.onkeydown = (e) => { if (e.key === 'Enter' && e.target === header) header.click(); };
             header.onclick = () => {
                 const season = header.getAttribute('data-season');
                 if (season) {

@@ -4,8 +4,9 @@
 
 import { state } from '../state.js';
 import { teamData, saveMediaToStorage } from '../data/teamData.js';
-import { Icon3D } from './Icon3D.js';
 import { AuthService } from '../services/authService.js';
+import { I } from './Icons.js';
+import { LowerThird, ModalHead } from './ui.js';
 
 export const MultimediaView = {
     activeTab: "videos", // videos, fotos
@@ -16,141 +17,115 @@ export const MultimediaView = {
         const canEdit = AuthService.hasPermission('edit_media') || AuthService.isAdmin();
         const videos = teamData.media.filter(m => m.type === 'video');
         const photos = teamData.media.filter(m => m.type === 'photo');
+        const editBtn = m => canEdit
+            ? `<button type="button" class="pg-btn pg-btn--icon pg-btn--xs media-card__edit btn-edit-media" data-media-id="${m.id}" title="Editar" aria-label="Editar">${I('edit')}</button>`
+            : '';
+        const tag = (prefix, i) => `${prefix} ${String(i + 1).padStart(2, '0')}`;
 
-        const videosHtml = videos.map(v => `
-            <div class="glass-card media-card video-card" data-video-id="${v.id}" style="padding:12px; position:relative;">
-                ${canEdit ? `
-                    <button class="btn-edit-media" data-media-id="${v.id}" title="Editar Título (Admin)" style="position:absolute; top:8px; right:8px; z-index:10; background:rgba(255,255,255,0.15); border:1px solid var(--border-color); color:#fff; border-radius:4px; padding:3px 7px; font-size:0.8rem; cursor:pointer;">
-                        ✏️
-                    </button>
-                ` : ''}
-
-                <div class="media-thumbnail-wrapper" style="height:160px; background:#0b0d18; border-radius:4px; overflow:hidden; position:relative;">
-                    ${v.image ? `
-                        <img src="${v.image}" style="width:100%; height:100%; object-fit:cover;" />
-                    ` : `
-                        <video src="${v.videoUrl}#t=0.5" preload="metadata" style="width:100%; height:100%; object-fit:cover; pointer-events:none;" muted></video>
-                    `}
-                    <div class="media-play-overlay">▶</div>
+        const videosHtml = videos.map((v, i) => `
+            <article class="media-card video-card" data-video-id="${v.id}" role="button" tabindex="0">
+                <div class="media-card__frame">
+                    ${v.image
+                        ? `<img src="${v.image}" alt="" loading="lazy" />`
+                        : `<video src="${v.videoUrl}#t=0.5" preload="metadata" muted playsinline></video>`}
+                    <span class="media-card__osd media-card__osd--tl"><span class="pg-dot pg-dot--live"></span>${tag('Tape', i)}</span>
+                    <span class="media-card__osd media-card__osd--br">${I('play')} Play</span>
+                    <span class="media-card__play" aria-hidden="true">${I('play')}</span>
                 </div>
-                <div style="padding-top:10px; text-align:center;">
-                    <h4 style="font-size:0.95rem; margin:0; line-height:1.3; font-weight:600;">${v.title}</h4>
+                <div class="media-card__caption">
+                    <h3 class="media-card__title">${v.title}</h3>
+                    ${v.category ? `<span class="t-meta">${v.category}</span>` : ''}
                 </div>
-            </div>
+                ${editBtn(v)}
+            </article>
         `).join('');
 
-        const photosHtml = photos.map(p => `
-            <div class="glass-card media-card photo-card" data-photo-id="${p.id}" style="padding:12px; position:relative;">
-                ${canEdit ? `
-                    <button class="btn-edit-media" data-media-id="${p.id}" title="Editar Pie de Foto (Admin)" style="position:absolute; top:8px; right:8px; z-index:10; background:rgba(255,255,255,0.15); border:1px solid var(--border-color); color:#fff; border-radius:4px; padding:3px 7px; font-size:0.8rem; cursor:pointer;">
-                        ✏️
-                    </button>
-                ` : ''}
-
-                <div class="media-thumbnail-wrapper" style="height:170px; border-radius:4px; overflow:hidden;">
-                    <img src="${p.image}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover; display:block;" />
-                    <div class="media-zoom-overlay">🔍</div>
+        const photosHtml = photos.map((p, i) => `
+            <article class="media-card photo-card ${i === 0 ? 'photo-card--feature' : ''}" data-photo-id="${p.id}" role="button" tabindex="0">
+                <div class="media-card__frame">
+                    <img src="${p.image}" alt="${p.title}" loading="lazy" />
+                    <span class="media-card__osd media-card__osd--tl">${tag('Foto', i)}</span>
                 </div>
-                <div style="padding-top:10px; text-align:center;">
-                    <h4 style="font-size:0.95rem; margin:0; line-height:1.3; font-weight:600;">${p.title}</h4>
+                <div class="media-card__caption">
+                    <h3 class="media-card__title">${p.title}</h3>
                 </div>
-            </div>
+                ${editBtn(p)}
+            </article>
         `).join('');
 
-        // Modal reproductor de vídeo
         let videoModalHtml = '';
-        if (state.activeVideoId !== null) {
-            const activeVideo = teamData.media.find(m => m.id === state.activeVideoId);
-            if (activeVideo) {
+        if (state.activeVideoId !== null && state.activeVideoId !== undefined) {
+            const v = teamData.media.find(m => m.id === state.activeVideoId);
+            if (v) {
                 videoModalHtml = `
-                    <div class="modal-overlay active" id="video-player-overlay">
-                        <div class="glass-card video-player-modal">
-                            <button class="modal-close" id="close-video-btn">✕</button>
-                            <div class="video-container-wrapper">
-                                <video class="html5-video-player" controls autoplay poster="">
-                                    <source src="${activeVideo.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}" type="video/mp4">
-                                    Tu navegador no soporta reproductor HTML5.
-                                </video>
-                            </div>
-                            <div style="margin-top:14px; text-align:center;">
-                                <h3 style="font-size:1.1rem; margin:0;">${activeVideo.title}</h3>
-                            </div>
+                    <div class="modal-overlay active media-viewer" id="video-player-overlay">
+                        <div class="pg-modal pg-modal--xl video-player-modal">
+                            ${ModalHead({ kicker: 'Media · Vídeo', title: v.title, closeId: 'close-video-btn' })}
+                            <video class="html5-video-player" controls autoplay playsinline>
+                                <source src="${v.videoUrl || ''}" type="video/mp4">
+                                Tu navegador no soporta vídeo HTML5.
+                            </video>
                         </div>
                     </div>
                 `;
             }
         }
 
-        // Modal de foto
         let photoModalHtml = '';
-        if (state.activePhotoId !== null) {
-            const activePhoto = teamData.media.find(m => m.id === state.activePhotoId);
-            if (activePhoto) {
+        if (state.activePhotoId !== null && state.activePhotoId !== undefined) {
+            const ph = teamData.media.find(m => m.id === state.activePhotoId);
+            if (ph) {
                 photoModalHtml = `
-                    <div class="modal-overlay active" id="photo-viewer-overlay">
-                        <div class="glass-card" style="max-width:820px; width:100%; padding:24px; text-align:center; position:relative; animation:slideUp 0.35s ease;">
-                            <button class="modal-close" id="close-photo-btn">✕</button>
-                            <div style="margin-bottom:14px; max-height:500px; overflow:hidden; border-radius:var(--radius-md); border:1px solid var(--border-color); background:#000;">
-                                <img src="${activePhoto.image}" alt="${activePhoto.title}" style="width:100%; max-height:500px; object-fit:contain; display:block; margin:0 auto;" />
-                            </div>
-                            <h3 style="font-size:1.1rem; margin:0;">${activePhoto.title}</h3>
+                    <div class="modal-overlay active media-viewer" id="photo-viewer-overlay">
+                        <div class="pg-modal pg-modal--xl">
+                            ${ModalHead({ kicker: 'Media · Fotografía', title: ph.title, closeId: 'close-photo-btn' })}
+                            <img class="media-viewer__img" src="${ph.image}" alt="${ph.title}" />
                         </div>
                     </div>
                 `;
             }
         }
 
-        // Modal de añadir contenido multimedia (Vídeo o Foto)
         let addMediaModalHtml = '';
         if (this.showAddMediaModal) {
             addMediaModalHtml = `
                 <div class="modal-overlay active" id="add-media-modal-overlay">
-                    <div class="glass-card customizer-card" style="max-width:540px; width:100%; padding:28px; position:relative; animation:slideUp 0.35s ease;">
-                        <button class="modal-close" id="close-add-media-btn">✕</button>
-                        <h3 style="font-size:1.3rem; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-                            ${Icon3D.render('🎬', 'sm')} Subir Contenido Multimedia
-                        </h3>
-                        <form id="add-media-form">
-                            <div class="form-group" style="margin-bottom:12px;">
-                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Tipo de Contenido *</label>
-                                <select id="input-media-type" class="form-input" style="width:100%; background:var(--bg-dark); color:#fff; padding:8px;">
-                                    <option value="video" ${this.activeTab === 'videos' ? 'selected' : ''}>🎥 Vídeo (Se guardará en la pestaña Vídeos)</option>
-                                    <option value="photo" ${this.activeTab === 'fotos' ? 'selected' : ''}>📸 Fotografía (Se guardará en la pestaña Fotografías)</option>
-                                </select>
+                    <div class="pg-modal">
+                        ${ModalHead({ kicker: 'Admin · Media', title: 'Subir contenido', closeId: 'close-add-media-btn' })}
+                        <form id="add-media-form" class="pg-form pg-modal__body">
+                            <div class="pg-form__row">
+                                <div class="pg-field">
+                                    <label class="pg-label" for="input-media-type">Tipo *</label>
+                                    <select id="input-media-type" class="pg-input">
+                                        <option value="video" ${this.activeTab === 'videos' ? 'selected' : ''}>Vídeo</option>
+                                        <option value="photo" ${this.activeTab === 'fotos' ? 'selected' : ''}>Fotografía</option>
+                                    </select>
+                                </div>
+                                <div class="pg-field">
+                                    <label class="pg-label" for="input-media-category">Categoría</label>
+                                    <select id="input-media-category" class="pg-input">
+                                        <option value="partidos">Partidos</option>
+                                        <option value="fichajes">Fichajes</option>
+                                        <option value="entrenos">Entrenamientos</option>
+                                        <option value="entrevistas">Entrevistas</option>
+                                    </select>
+                                </div>
                             </div>
-
-                            <div class="form-group" style="margin-bottom:12px;">
-                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Título / Pie de Foto *</label>
-                                <input type="text" id="input-media-title" class="form-input" placeholder="Ej: Golazo de Rubén Montes #10 vs Galácticos" required />
+                            <div class="pg-field">
+                                <label class="pg-label" for="input-media-title">Título / pie de foto *</label>
+                                <input type="text" id="input-media-title" class="pg-input" placeholder="Golazo de Rubén Montes #10" required />
                             </div>
-
-                            <div class="form-group" style="margin-bottom:12px;">
-                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Categoría</label>
-                                <select id="input-media-category" class="form-input" style="width:100%; background:var(--bg-dark); color:#fff; padding:8px;">
-                                    <option value="partidos">Partidos</option>
-                                    <option value="fichajes">Fichajes</option>
-                                    <option value="entrenos">Entrenamientos</option>
-                                    <option value="entrevistas">Entrevistas</option>
-                                </select>
+                            <div class="pg-field">
+                                <label class="pg-label" for="input-media-file">Archivo (.mp4, .webm, .jpg, .png)</label>
+                                <input type="file" id="input-media-file" class="pg-input" accept="video/*,image/*" />
                             </div>
-                            
-                            <div class="form-group" style="background:rgba(255,255,255,0.02); padding:12px; border:2px dashed var(--border-color-glow); border-radius:4px; margin-bottom:12px;">
-                                <label style="color:var(--club-primary); font-weight:700; font-size:0.8rem; display:block;">📁 Opción A: Subir Archivo (.mp4, .png, .jpg, .webm)</label>
-                                <input type="file" id="input-media-file" class="form-input" accept="video/*,image/*" style="padding:8px; margin-top:6px; cursor:pointer; width:100%; box-sizing:border-box;" />
+                            <div class="pg-field">
+                                <label class="pg-label" for="input-media-url">…o enlace URL</label>
+                                <input type="url" id="input-media-url" class="pg-input" placeholder="https://…" />
                             </div>
-
-                            <div style="text-align:center; color:var(--text-muted); font-size:0.75rem; margin:8px 0; font-weight:700;">
-                                — O BIEN —
-                            </div>
-
-                            <div class="form-group" style="margin-bottom:16px;">
-                                <label style="font-weight:700; font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">🌐 Opción B: Enlace URL (Imagen o Vídeo)</label>
-                                <input type="url" id="input-media-url" class="form-input" placeholder="https://..." />
-                            </div>
-
-                            <div style="display:flex; gap:12px; margin-top:20px;">
-                                <button type="submit" class="btn btn-primary" style="flex:1; font-weight:800; padding:10px;">Guardar Contenido</button>
-                                <button type="button" class="btn btn-secondary" id="cancel-add-media-btn" style="padding:10px;">Cancelar</button>
+                            <div class="pg-row" style="justify-content:flex-end">
+                                <button type="button" class="pg-btn" id="cancel-add-media-btn">Cancelar</button>
+                                <button type="submit" class="pg-btn pg-btn--primary">${I('upload')} Guardar</button>
                             </div>
                         </form>
                     </div>
@@ -158,34 +133,23 @@ export const MultimediaView = {
             `;
         }
 
-        // Modal para editar media (Solo Admins)
         let editMediaModalHtml = '';
         if (this.editingMediaId !== null && this.editingMediaId !== undefined) {
-            const editingMedia = teamData.media.find(m => m.id === this.editingMediaId);
-            if (editingMedia) {
-                const isVideo = editingMedia.type === 'video';
+            const m = teamData.media.find(x => x.id === this.editingMediaId);
+            if (m) {
                 editMediaModalHtml = `
                     <div class="modal-overlay active" id="edit-media-overlay">
-                        <div class="glass-card" style="max-width:500px; width:100%; padding:28px; position:relative; animation:slideUp 0.3s ease;">
-                            <button class="modal-close" id="close-edit-media-btn">✕</button>
-                            <h3 style="font-size:1.3rem; margin-bottom:16px;">
-                                ✏️ Editar Pie de ${isVideo ? 'Vídeo' : 'Foto'}
-                            </h3>
-                            <form id="form-edit-media">
-                                <input type="hidden" id="edit-media-id" value="${editingMedia.id}">
-                                
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Título / Pie de Foto *</label>
-                                    <input type="text" id="edit-media-title" class="form-input" style="width:100%; padding:10px; border-radius:4px; background:var(--bg-dark); border:1px solid var(--border-color); color:#fff;" value="${editingMedia.title}" required>
+                        <div class="pg-modal">
+                            ${ModalHead({ kicker: 'Admin · Media', title: m.type === 'video' ? 'Editar vídeo' : 'Editar foto', closeId: 'close-edit-media-btn' })}
+                            <form id="form-edit-media" class="pg-form pg-modal__body">
+                                <input type="hidden" id="edit-media-id" value="${m.id}">
+                                <div class="pg-field">
+                                    <label class="pg-label" for="edit-media-title">Título / pie de foto *</label>
+                                    <input type="text" id="edit-media-title" class="pg-input" value="${m.title}" required>
                                 </div>
-
-                                <div style="display:flex; gap:12px;">
-                                    <button type="submit" class="btn btn-primary" style="flex:1; padding:10px; font-weight:700;">
-                                        💾 Guardar
-                                    </button>
-                                    <button type="button" id="btn-delete-media" class="btn" style="background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; padding:10px; font-weight:700; cursor:pointer;">
-                                        🗑️ Eliminar
-                                    </button>
+                                <div class="pg-row">
+                                    <button type="submit" class="pg-btn pg-btn--primary" style="flex:1">${I('check')} Guardar</button>
+                                    <button type="button" id="btn-delete-media" class="pg-btn pg-btn--danger">${I('trash')} Eliminar</button>
                                 </div>
                             </form>
                         </div>
@@ -194,34 +158,26 @@ export const MultimediaView = {
             }
         }
 
-        return `
-            <div class="container" style="padding-top:24px; padding-bottom:80px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-                    <div class="squad-filters" style="margin:0;">
-                        <button class="filter-btn ${this.activeTab === 'videos' ? 'active' : ''}" id="tab-btn-videos">
-                            Vídeos (${videos.length})
-                        </button>
-                        <button class="filter-btn ${this.activeTab === 'fotos' ? 'active' : ''}" id="tab-btn-fotos">
-                            Fotografías (${photos.length})
-                        </button>
-                    </div>
+        const isVideos = this.activeTab === 'videos';
+        const list = isVideos ? videos : photos;
 
-                    ${canEdit ? `
-                        <button class="btn btn-primary" id="btn-open-add-media" style="padding:8px 16px; font-size:0.85rem; font-weight:800; display:flex; align-items:center; gap:6px;">
-                            <span>➕ Subir Contenido (Vídeo / Foto)</span>
-                        </button>
-                    ` : ''}
+        return `
+            <div class="pg-view">
+                ${LowerThird({
+                    page: 'multimedia',
+                    title: 'Media',
+                    sub: `${videos.length} vídeos · ${photos.length} fotografías · Archivo del club`,
+                    actions: canEdit ? `<button type="button" class="pg-btn pg-btn--primary" id="btn-open-add-media">${I('upload')} Subir contenido</button>` : ''
+                })}
+
+                <div class="pg-tabs media-tabs" role="tablist">
+                    <button type="button" role="tab" class="pg-tab ${isVideos ? 'is-active' : ''}" id="tab-btn-videos" aria-selected="${isVideos}">Vídeos <span class="t-mute">${videos.length}</span></button>
+                    <button type="button" role="tab" class="pg-tab ${!isVideos ? 'is-active' : ''}" id="tab-btn-fotos" aria-selected="${!isVideos}">Fotografías <span class="t-mute">${photos.length}</span></button>
                 </div>
 
-                ${this.activeTab === 'videos' ? `
-                    <div class="squad-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:20px;">
-                        ${videosHtml}
-                    </div>
-                ` : `
-                    <div class="squad-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:20px;">
-                        ${photosHtml}
-                    </div>
-                `}
+                ${list.length
+                    ? `<div class="${isVideos ? 'media-grid' : 'media-grid media-grid--photos'}">${isVideos ? videosHtml : photosHtml}</div>`
+                    : `<div class="pg-empty">Sin ${isVideos ? 'vídeos' : 'fotografías'} todavía</div>`}
             </div>
 
             ${videoModalHtml}
@@ -369,6 +325,10 @@ export const MultimediaView = {
                 }
             });
         }
+
+        document.querySelectorAll('.media-card').forEach(card => {
+            card.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target === card) card.click(); });
+        });
 
         // Reproductor de vídeos
         document.querySelectorAll('.video-card').forEach(card => {
